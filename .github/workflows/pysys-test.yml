@@ -47,7 +47,11 @@ jobs:
         with:
           java-version: ${{matrix.java-version}}
           java-package: jdk
-       
+          settings-path: ${{ github.workspace }} # avoids runners overwriting each other's settings in $HOME
+
+      - name: Download testing dependencies with Maven
+        run: mvn initialize --file pom.xml
+
       - uses: actions/setup-python@v2
         with:
           python-version: ${{matrix.python-version}}
