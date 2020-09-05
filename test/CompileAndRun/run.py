@@ -9,5 +9,6 @@ class PySysTest(BaseTest):
 
 	def validate(self):
 		self.logFileContents('java-hello.err')
+		self.assertGrep('java-hello.err', ".*", contains=False, ignores=['Picked .*'])
 		self.assertGrep('java-hello.out', "Hello world - 'Hi there!'")
 	
