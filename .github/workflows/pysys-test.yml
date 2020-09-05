@@ -15,18 +15,27 @@ jobs:
       fail-fast: false
       
       matrix:
-        # TODO: a range of OS, Python and Java versions!
+        # A selection range of OS, Python and Java versions
         include:
-          - test-run-id: ubuntu-java8
+          - test-run-id: ubuntu-java8-py3.6
             os: ubuntu-latest
             java-version: 8
             python-version: 3.6
             
-          #- test-run-id: macos
-          #  os: macos-latest
-            
-          #- test-run-id: win
-          #  os: windows-latest
+          - test-run-id: macos-java14-py3.8
+            os: macos-latest
+            java-version: 14
+            python-version: 3.8
+
+          - test-run-id: win-java8-py3.6
+            os: windows-latest
+            java-version: 8
+            python-version: 3.6
+
+          - test-run-id: win-java14-py3.8
+            os: windows-latest
+            java-version: 14
+            python-version: 3.8
             
     runs-on: ${{matrix.os}}
     
