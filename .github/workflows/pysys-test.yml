@@ -15,29 +15,38 @@ jobs:
       fail-fast: false
       
       matrix:
+        # TODO: a range of OS, Python and Java versions!
         include:
-          - test-run-id: ubuntu
+          - test-run-id: ubuntu-java8
             os: ubuntu-latest
+            java-version: 8
+            python-version: 3.6
             
-          - test-run-id: macos
-            os: macos-latest
+          #- test-run-id: macos
+          #  os: macos-latest
             
-          - test-run-id: win
-            os: windows-latest
+          #- test-run-id: win
+          #  os: windows-latest
             
     runs-on: ${{matrix.os}}
     
     steps:
       # Install the desired version of Python and PySys
       - uses: actions/checkout@v2
+
+      - uses: actions/setup-java@v1
+        with:
+          java-version: ${{matrix.java-version}}
+          java-package: jdk
+       
       - uses: actions/setup-python@v2
         with:
-          python-version: 3.8
+          python-version: ${{matrix.python-version}}
       - name: Install Python dependencies
         id: deps
         run: |
           python -m pip install --upgrade pip
-          pip install pysys==1.6.2
+          pip install pysys==1.6.1
 
           # Use older version of coverage as 5.0 requires an SQLite version that doesn't work on this macos image currently
           pip install coverage==4.5.4
