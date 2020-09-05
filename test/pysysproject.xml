@@ -47,9 +47,10 @@
 		</writer>
 		
 		<!-- Code coverage for .py files -->
-		<writer classname="pysys.writer.testoutput.PythonCoverageWriter">
+		<writer classname="pysysjava_internal.pythonselfcoverage.PythonSelfCoverageWriter">
 			<property name="destDir" value="__coverage_python.${outDirName}"/>
-			<property name="pythonCoverageArgs" value="--rcfile=${testRootDir}/pysys-extensions/python.coveragerc"/>
+			<property name="includeThisPySysProcess" value="True"/>
+			<property name="pythonCoverageConfigFile" value="${testRootDir}/pysys-extensions/python.coveragerc"/>
 		</writer>
 		
 		<writer classname="pysys.writer.ci.GitHubActionsCIWriter"></writer>
