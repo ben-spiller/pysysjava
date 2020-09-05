@@ -57,7 +57,17 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: ${{matrix.python-version}}
-      - name: Install Python dependencies
+          
+      - id: pip-cache
+        run: |
+            python -m pip install -U "pip>=20.1"
+            echo "::set-output name=dir::$(pip cache dir)"
+      - uses: actions/cache@v1
+        with:
+            path: ${{ steps.pip-cache.outputs.dir }}
+            key: ${{ test-run-id }}-pip
+
+      - name: Python dependencies - install
         id: deps
         run: |
           python -m pip install --upgrade pip
