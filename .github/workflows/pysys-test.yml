@@ -47,6 +47,12 @@ jobs:
         with:
           java-version: ${{matrix.java-version}}
           java-package: jdk
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ matrix.test-run-id }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ matrix.test-run-id }}-m2
 
       - name: Download testing dependencies with Maven
         run: mvn initialize --file pom.xml
@@ -62,10 +68,10 @@ jobs:
         run: |
             python -m pip install -U "pip>=20.1"
             echo "::set-output name=dir::$(pip cache dir)"
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
         with:
             path: ${{ steps.pip-cache.outputs.dir }}
-            key: ${{ test-run-id }}-pip
+            key: ${{ matrix.test-run-id }}-pip
 
       - name: Python dependencies - install
         id: deps
