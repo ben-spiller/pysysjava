@@ -1,0 +1,54 @@
+name: Build the HTML documentation
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Cache Python deps (get location)
+        id: pip-cache
+        run: |
+            python -m pip install -U "pip>=20.1"
+            echo "::set-output name=dir::$(pip cache dir)"
+      - name: Cache Python deps
+        uses: actions/cache@v2
+        with:
+            path: ${{ steps.pip-cache.outputs.dir }}
+            key: generate-doc-pip
+
+      - name: Python dependencies - install
+        id: deps
+        run: |
+          pip install pysys
+          # Peg these versions so we only upgrade when we want to
+          pip install docutils==0.16 sphinx==3.0.1 sphinx_rtd_theme==0.4.3 sphinx-autodocgen==1.2
+
+      - name: Sphinx
+        shell: bash
+        run: |
+		  mkdir docs/build_output
+		  
+		  # Build the documentation with warnings as errors so we notice problems
+		  python -m sphinx -M html docs docs/build_output -w docs/build_output/doc_warnings.txt -W
+
+          # Include some other useful files with the documentation
+          cp *.rst LICENSE docs/build_output/autodocgen_documented_items.txt docs/build_output/html/
+		  cd docs/build_output/html/
+		  zip -r --quiet ../../../docs.zip .
+       
+      - name: Upload documentation artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: docs
+          path: docs/build_output/html/*

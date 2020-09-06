@@ -1,3 +1,6 @@
+"""
+About the module
+"""
 import sys
 import os
 import json
@@ -37,7 +40,7 @@ def walkDirTree(dir, dirIgnores=None, followlinks=False):
 		when using this option. 
 	:return (str,list[DirEntry]): Returns a generator that yields a tuple ``(dirpath: str, contents: list[DirEntry])`` 
 		for each (non-ignored) directory in the tree. If running on Windows, the returned paths will have the long path 
-		prefix ``\\?\`` which can be removed using `pysys.utils.fileutils.fromLongPathSafe()` if needed. 
+		prefix ``\\?\`` which can be removed using `pysys.utils.fileutils.fromLongPathSafe` if needed. 
 		
 	"""
 	
@@ -89,7 +92,7 @@ def walkDirTreeContents(dir, dirIgnores=None, followlinks=False):
 		when using this option. 
 	:return (str,list[DirEntry]): Returns a generator that yields a tuple ``(dirpath: str, contents: list[DirEntry])`` 
 		for each (non-ignored) directory in the tree. If running on Windows, the returned paths will have the long path 
-		prefix ``\\?\`` which can be removed using `pysys.utils.fileutils.fromLongPathSafe()` if needed. 
+		prefix ``\\?\`` which can be removed using `pysys.utils.fileutils.fromLongPathSafe` if needed. 
 		
 	"""
 
@@ -134,6 +137,8 @@ class JavaTestPlugin(object):
 	
 	You can assign to self.defaultClasspath within a test to update the default that will be used for later 
 	compilation or Java execution tasks, for example::
+	
+		TODO - add example
 	
 	"""
 
@@ -233,7 +238,7 @@ class JavaTestPlugin(object):
 		:param list[str] args: List of compiler arguments such as ``--Werror`` or ``-nowarn`` (to control warn 
 			behaviour). If not specified, the ``defaultCompilerArgs`` plugin property is used. 
 		:param kwargs: Additional keyword arguments such as ``timeout=`` will be passed to 
-			`pysys.basetest.BaseTest.startProcess()`. 
+			`pysys.basetest.BaseTest.startProcess`. 
 		"""
 		# need to escape windows \ else it gets removed; do this the same on all platforms for consistency)
 		if args is None: args = shlex.split(self.defaultCompilerArgs.replace(u'\\',u'\\\\'))
@@ -338,7 +343,7 @@ class JavaTestPlugin(object):
 			adding the ``disableCoverage`` group to the ``pysystest.xml``.
 		
 		:param kwargs: Additional keyword arguments such as ``stdouterr=``, ``timeout=``, ``onError=`` and 
-			``background=`` will be passed to `pysys.basetest.BaseTest.startProcess()`. 
+			``background=`` will be passed to `pysys.basetest.BaseTest.startProcess`. 
 		
 		"""
 		
