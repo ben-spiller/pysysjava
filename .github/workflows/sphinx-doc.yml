@@ -37,15 +37,15 @@ jobs:
       - name: Sphinx
         shell: bash
         run: |
-		  mkdir docs/build_output
-		  
-		  # Build the documentation with warnings as errors so we notice problems
-		  python -m sphinx -M html docs docs/build_output -w docs/build_output/doc_warnings.txt -W
+          mkdir docs/build_output
+          
+          # Build the documentation with warnings as errors so we notice problems
+          python -m sphinx -M html docs docs/build_output -w docs/build_output/doc_warnings.txt -W
 
           # Include some other useful files with the documentation
           cp *.rst LICENSE docs/build_output/autodocgen_documented_items.txt docs/build_output/html/
-		  cd docs/build_output/html/
-		  zip -r --quiet ../../../docs.zip .
+          cd docs/build_output/html/
+          zip -r --quiet ../../../docs.zip .
        
       - name: Upload documentation artifact
         uses: actions/upload-artifact@v2
