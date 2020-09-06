@@ -30,6 +30,7 @@ jobs:
       - name: Python dependencies - install
         id: deps
         run: |
+          echo GitHub ref = {{github.ref}}.
           pip install pysys
           # Peg these versions so we only upgrade when we want to
           pip install docutils==0.16 sphinx==3.0.1 sphinx_rtd_theme==0.4.3 sphinx-autodocgen==1.2
@@ -46,7 +47,7 @@ jobs:
           cp *.rst LICENSE docs/build_output/autodocgen_documented_items.txt docs/build_output/html/
           cd docs/build_output/html/
           zip -r --quiet ../../../docs.zip .
-       
+          
       #- name: Upload to artifact
       #  uses: actions/upload-artifact@v2
       #  with:
@@ -55,7 +56,7 @@ jobs:
 
       - name: Upload to gh-pages
         uses: JamesIves/github-pages-deploy-action@3.5.9
-        if: github.ref == 'ref/head/main'
+        if: endsWith( github.ref, 'main' )
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages
