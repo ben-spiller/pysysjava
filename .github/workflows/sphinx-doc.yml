@@ -30,7 +30,6 @@ jobs:
       - name: Python dependencies - install
         id: deps
         run: |
-          echo GitHub ref = {{github.ref}}.
           pip install pysys
           # Peg these versions so we only upgrade when we want to
           pip install docutils==0.16 sphinx==3.0.1 sphinx_rtd_theme==0.4.3 sphinx-autodocgen==1.2
@@ -56,6 +55,7 @@ jobs:
 
       - name: Upload to gh-pages
         uses: JamesIves/github-pages-deploy-action@3.5.9
+        # Ultimately we only want to publish on the release branch, but for now do it every time
         if: endsWith( github.ref, 'main' )
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

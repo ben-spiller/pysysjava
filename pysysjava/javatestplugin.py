@@ -1,5 +1,5 @@
 """
-About the module
+About the module. Yeehaw!
 """
 import sys
 import os
