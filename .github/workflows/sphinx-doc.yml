@@ -2,7 +2,7 @@ name: Build the HTML documentation
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, release ]
   pull_request:
     branches: [ main ]
 
@@ -55,6 +55,7 @@ jobs:
 
       - name: Upload to gh-pages
         uses: JamesIves/github-pages-deploy-action@3.5.9
+        if: {{ github.ref == 'ref/head/main' }}
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages
