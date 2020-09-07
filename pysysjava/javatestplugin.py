@@ -102,7 +102,7 @@ def walkDirTreeContents(dir, dirIgnores=None, followlinks=False):
 
 class JavaTestPlugin(object):
 	"""
-	This is a PySys test plugin for compiling, running and testing Java applications. 
+	This is a PySys test plugin that for compiling and running Java applications from a PySys testcase. 
 	
 	You can access the methods of this class from any test using ``self.java.XXX`` if you add it to your project 
 	configuration with an alias such as ``java``::
@@ -120,25 +120,32 @@ class JavaTestPlugin(object):
 	You may also want to add other options such as ``-source`` and ``-target`` release version. 
 	"""
 	
+	# TODO: maybe simplify by only have these as userData?
+	
 	defaultJVMArgs = '-Xmx512m -XX:+HeapDumpOnOutOfMemoryError'
 	"""
-	A space-delimited string of JVM arguments to use by default when running ``java`` processes. 
-		
+	A space-delimited string of JVM arguments to use by default when running ``java`` processes, unless overridden 
+	by a per-test/dirconfig ``java.jvmArgs`` or a ``jvmArgs=`` argument.  
+	
 	By default the maximum heap size is limited to 512MB, but you may wish to set a larger heap limit if you are 
 	starting processes that require more memory - but be careful that the test machine has sufficient resources to 
 	cope with multiple tests running concurrently without risking out of memory conditions. 
+	
+	This is converted to a ``list[str]`` when the plugin is setup ready for use by the test. 
+	If a key named ``java.jvmArgs`` exists in the test or directory descriptor's ``user-data`` that value takes 
+	precedence over the plugin property. 
 	"""
 
 	defaultClasspath = ''
 	"""
-	A default classpath that will be used for Java compilation and execution unless overridden. 
+	A default classpath that will be used for Java compilation and execution, unless overridden by a per-test/dirconfig 
+	classpath or a jvmArgs= argument. 
 	
 	For details of how this plugin handles delimiters in the classpath string see `toClasspathList()`.
-	
-	You can assign to self.defaultClasspath within a test to update the default that will be used for later 
-	compilation or Java execution tasks, for example::
-	
-		TODO - add example
+
+	This is converted to a ``list[str]`` when the plugin is setup ready for use by the test. 
+	If a key named ``java.jvmArgs`` exists in the test or directory descriptor's ``user-data`` that value takes 
+	precedence over the plugin property. 
 	
 	"""
 
@@ -150,6 +157,7 @@ class JavaTestPlugin(object):
 
 	def setup(self, testObj):
 		self.owner = self.testObj = testObj
+		self.project = self.owner.project
 		
 		# This message isn't useful for debugging errors so suppress it
 		self.owner.logFileContentsDefaultExcludes.append('Picked up JAVA_TOOL_OPTIONS:')
@@ -160,11 +168,18 @@ class JavaTestPlugin(object):
 		
 		exeSuffix = '.exe' if IS_WINDOWS else ''
 		
-		self.javacExecutable = os.path.normpath(self.javaHome+'/bin/javac'+exeSuffix)
+		self.compilerExecutable = os.path.normpath(self.javaHome+'/bin/javac'+exeSuffix) # TODO: make configurable
 		"""The full path of the javac compiler executable. """
 
 		self.javaExecutable = os.path.normpath(self.javaHome+'/bin/java'+exeSuffix)
 		"""The full path of the java console executable. """
+		
+		# Assume both of these methods make a copy of the static value (which makes it safe for tests to mutate the 
+		# lists)
+		self.defaultClasspath = self.toClasspathList(self.project.expandProperties(
+			self.testObj.descriptor.userData.get('java.classpath', self.defaultClasspath)))
+		self.defaultJVMArgs = self._splitShellArgs(self.project.expandProperties(
+			self.testObj.descriptor.userData.get('java.jvmArgs', self.defaultJVMArgs)))
 	
 	def toClasspathList(self, classpath):
 		"""
@@ -172,7 +187,8 @@ class JavaTestPlugin(object):
 		already a list). Glob expressions such as ``*.jar`` will be expanded if the parent directory exists and there 
 		is at least one match. 
 		
-		If None is specified, the `defaultClasspath` is used. 
+		If None is specified, the `defaultClasspath` is used (either from the test/dir descriptor's ``classpath`` 
+		user-data or the ``defaultClasspath`` plugin property). 
 		
 		In this PySys plugin classpath strings can be delimited with the usual OS separator ``os.pathsep`` 
 		(e.g. ``:`` or ``;``), but to allow for platform-independence (given Windows uses ``:`` for drive letters), 
@@ -196,15 +212,15 @@ class JavaTestPlugin(object):
 		True
 		
 		"""
-		if classpath is None: return self.toClasspathList(self.defaultClasspath)
+		if classpath is None: 
+			assert self.defaultClasspath is not None
+			return self.toClasspathList(self.defaultClasspath) # call it again in case user has messed with it
 		
 		if isstring(classpath): # assume it's already split unless it's a string
-			if '\n' in classpath:
-				classpath = classpath.split('\n')
-			elif ';' in classpath:
-				classpath = classpath.split(';')
+			if ';' in classpath:
+				classpath = classpath.replace('\n',';').split(';')
 			else:
-				classpath = classpath.split(os.pathsep)
+				classpath = classpath.replace('\n',os.pathsep).split(os.pathsep)
 			classpath = [c.strip() for c in classpath if len(c.strip())>0]
 			
 		# glob expansion
@@ -217,13 +233,17 @@ class JavaTestPlugin(object):
 				continue
 				
 			globbed = sorted(glob.glob(c))
-			if not globbed: 
-				self.log.debug('Classpath glob entry had no matches: %s', c)
-				expanded.append(c)
+			if len(globbed)==0: # Fail in an obvious way in this case
+				raise Exception('Classpath glob entry has no matches: "%s"', c)
 			else:
 				expanded.extend(globbed)
 		return expanded
 
+	@staticmethod
+	def _splitShellArgs(commandstring):
+		# need to escape windows \ else it gets removed; do this the same on all platforms for consistency)
+		return shlex.split(commandstring.replace(u'\\',u'\\\\'))
+		
 	def compile(self, input=None, output='javaclasses', classpath=None, args=None, **kwargs):
 		"""Compile Java source files into classes. By default we compile Java files from the test's input directory to 
 		``self.output/javaclasses``. 
@@ -241,7 +261,7 @@ class JavaTestPlugin(object):
 			`pysys.basetest.BaseTest.startProcess`. 
 		"""
 		# need to escape windows \ else it gets removed; do this the same on all platforms for consistency)
-		if args is None: args = shlex.split(self.defaultCompilerArgs.replace(u'\\',u'\\\\'))
+		if args is None: args = self._splitShellArgs(self.defaultCompilerArgs)
 		if input is None: input = self.owner.input
 		
 		if isstring(input): input = [input]
@@ -257,7 +277,7 @@ class JavaTestPlugin(object):
 					if entry.is_file() and entry.name.endswith('.java'):
 						inputfiles.append(fromLongPathSafe(entry.path) if len(entry.path) < 256 else entry.path)
 			else: 
-				assert False, 'Input path does not exist: %s'%i
+				assert False, 'Compilation input path does not exist: %s'%i
 		assert inputfiles, 'No .java files found to compile in %s'%input		
 		displayName = kwargs.pop('displayName', 'javac<%s -> %s>'%(os.path.basename(input[0]), os.path.basename(output)))
 		
@@ -291,10 +311,10 @@ class JavaTestPlugin(object):
 			for a in args:
 				f.write('"%s"'%a.replace('\\','\\\\')+'\n')
 		
-		process = self.owner.startProcess(self.javacExecutable, ['@'+argsFilename], stdouterr=stdouterr, displayName=displayName, 
+		process = self.owner.startProcess(self.compilerExecutable, ['@'+argsFilename], stdouterr=stdouterr, displayName=displayName, 
 			onError=lambda process: [
 				self.owner.logFileContents(process.stderr, maxLines=0, 
-					logFunction=lambda line:
+					logFunction=lambda line: # colouring the main lines in red makes this a lot easier to read
 						self.log.info(u'  %s', line, extra=pysys.utils.logutils.BaseLogFormatter.tag(
 							LOG_ERROR if ': error:' in line else 
 							LOG_WARN if ': warning:' in line else 
@@ -348,7 +368,7 @@ class JavaTestPlugin(object):
 		"""
 		
 		if jvmArgs is None: 
-			jvmArgs = shlex.split(self.defaultJVMArgs.replace(u'\\',u'\\\\'))
+			jvmArgs = list(self.defaultJVMArgs)
 		else:
 			jvmArgs = list(jvmArgs) # copy it so we can mutate it below
 		if (not disableCoverage) and not self.owner.disableCoverage:

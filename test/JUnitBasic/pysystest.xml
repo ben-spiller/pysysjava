@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pysystest type="auto">
+	
+	<description>
+		<title>JUnit - basic test of JUnit functionality</title>
+		<purpose><![CDATA[
+		
+		]]></purpose>
+	</description>
+
+	<!-- uncomment this to skip the test:
+	<skipped reason=""/> 
+	-->
+	
+	<classification>
+		<groups inherit="true">
+			<group></group>
+		</groups>
+		<modes inherit="true">
+		</modes>
+	</classification>
+
+	<data>
+		<class name="JUnitTest" module="${appHome}/pysysjava/junittest"/>
+		
+		<input path="java"/>
+		<user-data name="java.classpath" value="${appHome}/target/log4j-jars/*.jar"/>
+		<user-data name="java.jvmArgs" value="-Xmx256M"/>
+
+		<user-data name="java.junitTimeoutSecs" value="600"/>
+		<user-data name="java.junitArgs" value="--config junit.jupiter.execution.parallel.enabled=true --config junit.jupiter.execution.parallel.mode.default=concurrent --config junit.jupiter.execution.parallel.config.strategy=fixed --config junit.jupiter.execution.parallel.config.fixed.parallelism=4"/>
+	</data>
+</pysystest>

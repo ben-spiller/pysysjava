@@ -18,6 +18,8 @@
 	<!-- Get the JDK location from an env var, and also set the same env var for processes started by PySys. -->
 	<property name="javaHome" value="${env.JAVA_HOME}" pathMustExist="true"/>
 	<property name="defaultEnvirons.JAVA_HOME" value="${javaHome}"/>
+
+	<property name="java.junitFrameworkClasspath" value="${testRootDir}/../target/junit-jars/*.jar"/>
 	
 	<!-- 
 	This sets Java(R)'s JAVA_TOOL_OPTIONS environment variable to set a default limit on max heap size to avoid each 
