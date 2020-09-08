@@ -1,0 +1,185 @@
+{
+  "TEST-junit-jupiter.xml": {
+    "info": {
+      "durationSecs": "<removed>",
+      "errors": 2,
+      "failures": 1,
+      "hostname": "<removed>",
+      "name": "JUnit Jupiter",
+      "skipped": 3,
+      "tests": 9,
+      "timestamp": "<removed>"
+    },
+    "results": [
+      {
+        "classname": "myorg.mytest.JUnit5Tests",
+        "displayName": "MyRepeatedTest My display name 1/3",
+        "durationSecs": "<removed>",
+        "name": "shouldPass()[1]",
+        "outcome": "passed",
+        "stderr": "Some stderr from shouldPass",
+        "stdout": "Some stdout from shouldPass XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nSome more stdout from shouldPass",
+        "uniqueId": "[engine:junit-jupiter]/[class:myorg.mytest.JUnit5Tests]/[test-template:shouldPass()]/[test-template-invocation:#1]"
+      },
+      {
+        "classname": "myorg.mytest.JUnit5Tests",
+        "displayName": "MyRepeatedTest My display name 2/3",
+        "durationSecs": "<removed>",
+        "name": "shouldPass()[2]",
+        "outcome": "passed",
+        "stderr": "Some stderr from shouldPass",
+        "stdout": "Some stdout from shouldPass XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nSome more stdout from shouldPass",
+        "uniqueId": "[engine:junit-jupiter]/[class:myorg.mytest.JUnit5Tests]/[test-template:shouldPass()]/[test-template-invocation:#2]"
+      },
+      {
+        "classname": "myorg.mytest.JUnit5Tests",
+        "displayName": "MyRepeatedTest My display name 3/3",
+        "durationSecs": "<removed>",
+        "name": "shouldPass()[3]",
+        "outcome": "passed",
+        "stderr": "Some stderr from shouldPass",
+        "stdout": "Some stdout from shouldPass XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nSome more stdout from shouldPass",
+        "uniqueId": "[engine:junit-jupiter]/[class:myorg.mytest.JUnit5Tests]/[test-template:shouldPass()]/[test-template-invocation:#3]"
+      },
+      {
+        "classname": "myorg.mytest.JUnit5Tests",
+        "displayName": "shouldTimeout()",
+        "durationSecs": "<removed>",
+        "name": "shouldTimeout()",
+        "outcome": "error",
+        "outcomeDetails": "java.util.concurrent.TimeoutException: shouldTimeout() timed out after 10 milliseconds\n\tSuppressed: java.lang.InterruptedException: sleep interrupted\n\t\tat myorg.mytest.JUnit5Tests.shouldTimeout(JUnit5Tests.java:29)",
+        "outcomeDetailsFull": "<removed>",
+        "outcomeReason": "java.util.concurrent.TimeoutException: shouldTimeout() timed out after 10 milliseconds",
+        "outcomeType": "java.util.concurrent.TimeoutException",
+        "stderr": "Some stderr from shouldTimeout",
+        "stdout": "Some stdout from shouldTimeout XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nSome more stdout from shouldTimeout",
+        "testFileLine": 29,
+        "uniqueId": "[engine:junit-jupiter]/[class:myorg.mytest.JUnit5Tests]/[method:shouldTimeout()]"
+      },
+      {
+        "classname": "myorg.mytest.JUnit5Tests$NestedParent",
+        "displayName": "shouldBeSkipped()",
+        "durationSecs": "<removed>",
+        "name": "shouldBeSkipped()",
+        "outcome": "skipped",
+        "outcomeReason": "Reason test is disabled goes here",
+        "uniqueId": "[engine:junit-jupiter]/[class:myorg.mytest.JUnit5Tests]/[nested-class:NestedParent]/[method:shouldBeSkipped()]"
+      },
+      {
+        "classname": "myorg.mytest.JUnit5Tests$NestedParent",
+        "displayName": "shouldError()",
+        "durationSecs": "<removed>",
+        "name": "shouldError()",
+        "outcome": "error",
+        "outcomeDetails": "java.lang.Exception: Bad test\n\tat myorg.mytest.JUnit5Tests$NestedParent.shouldError(JUnit5Tests.java:43)",
+        "outcomeDetailsFull": "<removed>",
+        "outcomeReason": "java.lang.Exception: Bad test",
+        "outcomeType": "java.lang.Exception",
+        "testFileLine": 43,
+        "uniqueId": "[engine:junit-jupiter]/[class:myorg.mytest.JUnit5Tests]/[nested-class:NestedParent]/[method:shouldError()]"
+      },
+      {
+        "classname": "myorg.mytest.JUnit5Tests$NestedParent",
+        "comparisonActual": "Hello funky world",
+        "comparisonExpected": "Hello world",
+        "displayName": "shouldFail()",
+        "durationSecs": "<removed>",
+        "name": "shouldFail()",
+        "outcome": "failure",
+        "outcomeDetails": "org.opentest4j.AssertionFailedError: expected: <Hello world> but was: <Hello funky world>\n\tat myorg.mytest.JUnit5Tests$NestedParent.shouldFail(JUnit5Tests.java:38)",
+        "outcomeDetailsFull": "<removed>",
+        "outcomeReason": "expected: <Hello world> but was: <Hello funky world>",
+        "outcomeType": "org.opentest4j.AssertionFailedError",
+        "testFileLine": 38,
+        "uniqueId": "[engine:junit-jupiter]/[class:myorg.mytest.JUnit5Tests]/[nested-class:NestedParent]/[method:shouldFail()]"
+      },
+      {
+        "classname": "myorg.mytest.SkippedJUnit5Tests",
+        "displayName": "shouldBeSkipped()",
+        "durationSecs": "<removed>",
+        "name": "shouldBeSkipped()",
+        "outcome": "skipped",
+        "outcomeReason": "parent was skipped: This whole suite is disabled",
+        "uniqueId": "[engine:junit-jupiter]/[class:myorg.mytest.SkippedJUnit5Tests]/[method:shouldBeSkipped()]"
+      },
+      {
+        "classname": "myorg.mytest.SkippedJUnit5Tests$NestedParent",
+        "displayName": "shouldBeSkippedNested()",
+        "durationSecs": "<removed>",
+        "name": "shouldBeSkippedNested()",
+        "outcome": "skipped",
+        "outcomeReason": "parent was skipped: This whole suite is disabled",
+        "uniqueId": "[engine:junit-jupiter]/[class:myorg.mytest.SkippedJUnit5Tests]/[nested-class:NestedParent]/[method:shouldBeSkippedNested()]"
+      }
+    ]
+  },
+  "TEST-junit-vintage.xml": {
+    "info": {
+      "durationSecs": "<removed>",
+      "errors": 1,
+      "failures": 1,
+      "hostname": "<removed>",
+      "name": "JUnit Vintage",
+      "skipped": 2,
+      "tests": 5,
+      "timestamp": "<removed>"
+    },
+    "results": [
+      {
+        "classname": "myorg.mytest.JUnit4Tests",
+        "displayName": "shouldBeSkipped",
+        "durationSecs": "<removed>",
+        "name": "shouldBeSkipped",
+        "outcome": "skipped",
+        "outcomeReason": "Reason test is ignored goes here",
+        "uniqueId": "[engine:junit-vintage]/[runner:myorg.mytest.JUnit4Tests]/[test:shouldBeSkipped(myorg.mytest.JUnit4Tests)]"
+      },
+      {
+        "classname": "myorg.mytest.JUnit4Tests",
+        "displayName": "shouldError",
+        "durationSecs": "<removed>",
+        "name": "shouldError",
+        "outcome": "error",
+        "outcomeDetails": "java.lang.Exception: This is a test error\n\tat myorg.mytest.JUnit4Tests.shouldError(JUnit4Tests.java:23)",
+        "outcomeDetailsFull": "<removed>",
+        "outcomeReason": "java.lang.Exception: This is a test error",
+        "outcomeType": "java.lang.Exception",
+        "testFileLine": 23,
+        "uniqueId": "[engine:junit-vintage]/[runner:myorg.mytest.JUnit4Tests]/[test:shouldError(myorg.mytest.JUnit4Tests)]"
+      },
+      {
+        "classname": "myorg.mytest.JUnit4Tests",
+        "comparisonActual": "Hello [funky ]world",
+        "comparisonExpected": "Hello []world",
+        "displayName": "shouldFail",
+        "durationSecs": "<removed>",
+        "name": "shouldFail",
+        "outcome": "failure",
+        "outcomeDetails": "org.junit.ComparisonFailure: expected:<Hello []world> but was:<Hello [funky ]world>\n\tat myorg.mytest.JUnit4Tests.shouldFail(JUnit4Tests.java:18)",
+        "outcomeDetailsFull": "<removed>",
+        "outcomeReason": "expected:<Hello []world> but was:<Hello [funky ]world>",
+        "outcomeType": "org.junit.ComparisonFailure",
+        "testFileLine": 18,
+        "uniqueId": "[engine:junit-vintage]/[runner:myorg.mytest.JUnit4Tests]/[test:shouldFail(myorg.mytest.JUnit4Tests)]"
+      },
+      {
+        "classname": "myorg.mytest.JUnit4Tests",
+        "displayName": "shouldpass",
+        "durationSecs": "<removed>",
+        "name": "shouldpass",
+        "outcome": "passed",
+        "stdout": "Some stdout from shouldPass",
+        "uniqueId": "[engine:junit-vintage]/[runner:myorg.mytest.JUnit4Tests]/[test:shouldpass(myorg.mytest.JUnit4Tests)]"
+      },
+      {
+        "classname": "myorg.mytest.SkippedJUnit4Tests",
+        "displayName": "initializationError",
+        "durationSecs": "<removed>",
+        "name": "initializationError",
+        "outcome": "skipped",
+        "outcomeReason": "parent was skipped: <unknown>",
+        "uniqueId": "[engine:junit-vintage]/[runner:myorg.mytest.SkippedJUnit4Tests]/[test:initializationError(myorg.mytest.SkippedJUnit4Tests)]"
+      }
+    ]
+  }
+}

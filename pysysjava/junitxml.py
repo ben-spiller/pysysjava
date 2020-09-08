@@ -8,6 +8,11 @@ import xml.etree.ElementTree as ET # Python 3.3+ will automatically use the fast
 class JUnitXMLParser:
 	""" A fast, minimal parser for Ant-style JUnit XML files."""
 	
+	outcomeDetailsExcludeLinesRegex = r'^\t+(at (java[.]|sun[.]|org[.]junit)|\.\.\. [0-9]+ more).*\n'
+	"""
+	A regular expression specifying lines that should be stripped out of the outcomeDetails stack traces. 
+	"""
+	
 	def __init__(self, path):
 		self.path = path
 		
@@ -44,7 +49,9 @@ class JUnitXMLParser:
 			* ``outcome: str`` - passed/failure/error/skipped. 
 			* ``outcomeType: str`` (optional) - Java class of the outcome type, if present. 
 			* ``outcomeReason: str`` (except if passed) - reason string or '' if not known. 
-			* ``outcomeDetails: str`` (optional) - multi-line details string for the outcome, typically a stack trace. 		
+			* ``outcomeDetails: str`` (optional) - multi-line details string for the outcome, typically a stack trace. 
+			  To avoid excessive verbosity lines involving org.junit.* or java.* packages are excluded. 		
+			* ``outcomeDetailsFull: str`` (optional) - multi-line details string for the outcome, without exclusions. 	
 			* ``comparisonExpected/comparisonActual: str`` (optional) - actual and expected comparison values from the outcomeReason, if known. 		"""
 		self.results = []
 		self.suite = {}
@@ -58,7 +65,10 @@ class JUnitXMLParser:
 		# This check is to make sure we've not missed anything while parsing
 		assert self.suite['tests'] == len(self.results), 'Suite contains %d tests but found %d testcase elements'%(
 			self.suite['tests'], len(self.results))
-			
+		
+		# The order seems to be random, so sort it
+		self.results.sort(key=lambda r: (r.get('classname'), r.get('name')))
+		
 		return self.suite, self.results
 
 	def _testsuite(self, elem):
@@ -126,9 +136,10 @@ class JUnitXMLParser:
 			if t['outcome'] == 'error' and t.get('outcomeType') and t['outcomeType'] not in t['outcomeReason']:
 				t['outcomeReason'] = '%s: %s'%(t['outcomeType'], t['outcomeReason'])
 			
-			details = elem.text.strip()
+			details = elem.text.lstrip()
 			if details:
-				t['outcomeDetails'] = details
+				t['outcomeDetailsFull'] = details
+				t['outcomeDetails'] = re.sub(self.outcomeDetailsExcludeLinesRegex, '', details, flags=re.MULTILINE).strip()
 		else:
 			t['outcomeReason'] = elem.text.strip()
 		

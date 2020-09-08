@@ -121,7 +121,7 @@ class JUnitTest(BaseTest):
 			'skipped': SKIPPED,
 		}.get(t['outcome'], BLOCKED)
 		if outcome ==  BLOCKED and 'Timeout' in t.get('outcomeType',''): outcome = TIMEDOUT
-	
+		
 		maintag = BaseLogFormatter.tag(str(outcome).lower())
 		self.log.info('-- %s %s: %s (%0.1fs)', t['classname'], t['name'], t['outcome'], t['durationSecs'], 
 			extra=maintag)
@@ -148,7 +148,7 @@ class JUnitTest(BaseTest):
 		elif 'comparisonActual' in t and outcome == FAILED:
 			# Using assertThat gives us more user-friendly messages when there's a diff failure
 			shouldfail = self.assertThat('expected == actual', expected=t['comparisonExpected'], actual=t['comparisonActual'], 
-				testcaseName=t['name']) # TODO: callRecord=callRecord)
+				testcaseName=t['classname']+'.'+t['name']) # TODO: callRecord=callRecord)
 			assert not shouldfail, 'assertThat did not fail as expected' # should not happen
 		elif outcome == SKIPPED: 
 			# don't want to append a skipped outcome since that would override all other outcomes
