@@ -10,9 +10,9 @@ class JUnitTest(BaseTest):
 	"""
 	A test class that compiles and runs one or more JUnit test suites. 
 	
-	Compilation happens in `setup()` (shared across all JUnit tests that use the same source directory), 
-	then execution in `execute()` and finally reads the resulting XML reports and adds outcomes for each testcase 
-	failure. = 
+	Compilation happens in `pysys.basetest.BaseTest.setup` (shared across all JUnit tests that use the same source 
+	directory), then execution in `pysys.basetest.BaseTest.execute` and finally reads the resulting XML reports and 
+	adds outcomes for each testcase in `pysys.basetest.BaseTest.validate`. 
 	"""
 
 	junitArgs = ''
@@ -78,8 +78,6 @@ class JUnitTest(BaseTest):
 		self.assertThatGrep('junit.out', '([0-9]+) tests found', 'int(value) > 0', abortOnError=True)
 
 	def validate(self):
-		# TODO: refactor this so it could be used for non-junit cases
-	
 		outcomeCounts = {
 			PASSED: 0,
 			SKIPPED: 0,
