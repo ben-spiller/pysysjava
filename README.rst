@@ -6,7 +6,7 @@ PySys System Test Framework.
 .. image:: ../../workflows/PySys/badge.svg
 	:target: ../../actions
 
-.. image:: ../../workflows/Documentation/badge.svg
+.. image:: ../../workflows/Docs/badge.svg
 	:target: ../../actions
 
 .. image:: https://codecov.io/gh/ben-spiller/pysysjava/branch/main/graph/badge.svg
