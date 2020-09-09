@@ -1,0 +1,251 @@
+{
+  "TEST-myorg.mytest.JUnit4Tests.xml": {
+    "info": {
+      "aborted": 0,
+      "durationSecs": "<removed>",
+      "failures": 2,
+      "name": "myorg.mytest.JUnit4Tests",
+      "skipped": 1,
+      "stdout": "Some stdout from shouldPass",
+      "tests": 3,
+      "timestamp": "<removed>"
+    },
+    "results": [
+      {
+        "classname": "myorg.mytest.JUnit4Tests",
+        "durationSecs": "<removed>",
+        "name": "shouldBeSkipped",
+        "outcome": "skipped",
+        "outcomeReason": "Reason test is ignored goes here"
+      },
+      {
+        "classname": "myorg.mytest.JUnit4Tests",
+        "durationSecs": "<removed>",
+        "name": "shouldError",
+        "outcome": "failure",
+        "outcomeDetails": "java.lang.Exception: This is a test error\n\tat myorg.mytest.JUnit4Tests.shouldError(JUnit4Tests.java:23)",
+        "outcomeDetailsFull": "<removed>",
+        "outcomeReason": "This is a test error",
+        "outcomeType": "java.lang.Exception",
+        "testFileLine": 23
+      },
+      {
+        "classname": "myorg.mytest.JUnit4Tests",
+        "comparisonActual": "Hello [funky ]world",
+        "comparisonExpected": "Hello []world",
+        "durationSecs": "<removed>",
+        "name": "shouldFail",
+        "outcome": "failure",
+        "outcomeDetails": "org.junit.ComparisonFailure: expected:<Hello []world> but was:<Hello [funky ]world>\n\tat myorg.mytest.JUnit4Tests.shouldFail(JUnit4Tests.java:18)",
+        "outcomeDetailsFull": "<removed>",
+        "outcomeReason": "expected:<Hello []world> but was:<Hello [funky ]world>",
+        "outcomeType": "org.junit.ComparisonFailure",
+        "testFileLine": 18
+      },
+      {
+        "classname": "myorg.mytest.JUnit4Tests",
+        "durationSecs": "<removed>",
+        "name": "shouldpass",
+        "outcome": "passed"
+      }
+    ]
+  },
+  "TEST-myorg.mytest.JUnit5Tests$NestedParent.xml": {
+    "info": {
+      "aborted": 0,
+      "durationSecs": "<removed>",
+      "failures": 2,
+      "name": "myorg.mytest.JUnit5Tests",
+      "skipped": 1,
+      "tests": 2,
+      "timestamp": "<removed>"
+    },
+    "results": [
+      {
+        "classname": "myorg.mytest.JUnit5Tests$NestedParent",
+        "durationSecs": "<removed>",
+        "name": "shouldBeSkipped()",
+        "outcome": "skipped",
+        "outcomeReason": "Reason test is disabled goes here"
+      },
+      {
+        "classname": "myorg.mytest.JUnit5Tests$NestedParent",
+        "durationSecs": "<removed>",
+        "name": "shouldError()",
+        "outcome": "failure",
+        "outcomeDetails": "java.lang.Exception: Bad test\n\tat myorg.mytest.JUnit5Tests$NestedParent.shouldError(JUnit5Tests.java:43)",
+        "outcomeDetailsFull": "<removed>",
+        "outcomeReason": "Bad test",
+        "outcomeType": "java.lang.Exception",
+        "testFileLine": 43
+      },
+      {
+        "classname": "myorg.mytest.JUnit5Tests$NestedParent",
+        "comparisonActual": "Hello funky world",
+        "comparisonExpected": "Hello world",
+        "durationSecs": "<removed>",
+        "name": "shouldFail()",
+        "outcome": "failure",
+        "outcomeDetails": "org.opentest4j.AssertionFailedError: expected: <Hello world> but was: <Hello funky world>\n\tat myorg.mytest.JUnit5Tests$NestedParent.shouldFail(JUnit5Tests.java:38)",
+        "outcomeDetailsFull": "<removed>",
+        "outcomeReason": "expected: <Hello world> but was: <Hello funky world>",
+        "outcomeType": "org.opentest4j.AssertionFailedError",
+        "testFileLine": 38
+      }
+    ]
+  },
+  "TEST-myorg.mytest.JUnit5Tests.xml": {
+    "info": {
+      "aborted": 0,
+      "durationSecs": "<removed>",
+      "failures": 3,
+      "name": "myorg.mytest.JUnit5Tests",
+      "skipped": 1,
+      "stderr": "Some stderr from shouldTimeout\nSome stderr from shouldPass\nSome stderr from shouldPass\nSome stderr from shouldPass",
+      "stdout": "Some stdout from shouldTimeout XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nSome more stdout from shouldTimeout\nSome stdout from shouldPass XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nSome more stdout from shouldPass\nSome stdout from shouldPass XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nSome more stdout from shouldPass\nSome stdout from shouldPass XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nSome more stdout from shouldPass",
+      "tests": 6,
+      "timestamp": "<removed>"
+    },
+    "results": [
+      {
+        "classname": "myorg.mytest.JUnit5Tests",
+        "durationSecs": "<removed>",
+        "name": "shouldPass()[1]",
+        "outcome": "passed"
+      },
+      {
+        "classname": "myorg.mytest.JUnit5Tests",
+        "durationSecs": "<removed>",
+        "name": "shouldPass()[2]",
+        "outcome": "passed"
+      },
+      {
+        "classname": "myorg.mytest.JUnit5Tests",
+        "durationSecs": "<removed>",
+        "name": "shouldPass()[3]",
+        "outcome": "passed"
+      },
+      {
+        "classname": "myorg.mytest.JUnit5Tests",
+        "durationSecs": "<removed>",
+        "name": "shouldTimeout()",
+        "outcome": "failure",
+        "outcomeDetails": "java.util.concurrent.TimeoutException: shouldTimeout() timed out after 10 milliseconds\n\tSuppressed: java.lang.InterruptedException: sleep interrupted\n\t\tat myorg.mytest.JUnit5Tests.shouldTimeout(JUnit5Tests.java:29)",
+        "outcomeDetailsFull": "<removed>",
+        "outcomeReason": "shouldTimeout() timed out after 10 milliseconds",
+        "outcomeType": "java.util.concurrent.TimeoutException",
+        "testFileLine": 29
+      },
+      {
+        "classname": "myorg.mytest.JUnit5Tests$NestedParent",
+        "durationSecs": "<removed>",
+        "name": "shouldBeSkipped()",
+        "outcome": "skipped",
+        "outcomeReason": "Reason test is disabled goes here"
+      },
+      {
+        "classname": "myorg.mytest.JUnit5Tests$NestedParent",
+        "durationSecs": "<removed>",
+        "name": "shouldError()",
+        "outcome": "failure",
+        "outcomeDetails": "java.lang.Exception: Bad test\n\tat myorg.mytest.JUnit5Tests$NestedParent.shouldError(JUnit5Tests.java:43)",
+        "outcomeDetailsFull": "<removed>",
+        "outcomeReason": "Bad test",
+        "outcomeType": "java.lang.Exception",
+        "testFileLine": 43
+      },
+      {
+        "classname": "myorg.mytest.JUnit5Tests$NestedParent",
+        "comparisonActual": "Hello funky world",
+        "comparisonExpected": "Hello world",
+        "durationSecs": "<removed>",
+        "name": "shouldFail()",
+        "outcome": "failure",
+        "outcomeDetails": "org.opentest4j.AssertionFailedError: expected: <Hello world> but was: <Hello funky world>\n\tat myorg.mytest.JUnit5Tests$NestedParent.shouldFail(JUnit5Tests.java:38)",
+        "outcomeDetailsFull": "<removed>",
+        "outcomeReason": "expected: <Hello world> but was: <Hello funky world>",
+        "outcomeType": "org.opentest4j.AssertionFailedError",
+        "testFileLine": 38
+      }
+    ]
+  },
+  "TEST-myorg.mytest.JUnit5_2nd_Test.xml": {
+    "info": {
+      "aborted": 0,
+      "durationSecs": "<removed>",
+      "failures": 0,
+      "name": "myorg.mytest.JUnit5_2nd_Test",
+      "skipped": 0,
+      "tests": 1,
+      "timestamp": "<removed>"
+    },
+    "results": [
+      {
+        "classname": "myorg.mytest.JUnit5_2nd_Test",
+        "durationSecs": "<removed>",
+        "name": "shouldpass2()",
+        "outcome": "passed"
+      }
+    ]
+  },
+  "TEST-myorg.mytest.SkippedJUnit4Tests.xml": {
+    "info": {
+      "aborted": 0,
+      "durationSecs": "<removed>",
+      "failures": 0,
+      "name": "myorg.mytest.SkippedJUnit4Tests",
+      "skipped": 1,
+      "tests": 0,
+      "timestamp": "<removed>"
+    },
+    "results": [
+      {
+        "classname": "myorg.mytest.SkippedJUnit4Tests",
+        "durationSecs": "<removed>",
+        "name": "class",
+        "outcome": "skipped",
+        "outcomeReason": "Test suite is skipped"
+      }
+    ]
+  },
+  "TEST-myorg.mytest.SkippedJUnit5Tests$NestedParent.xml": {
+    "info": {
+      "aborted": 0,
+      "durationSecs": "<removed>",
+      "failures": 0,
+      "name": "myorg.mytest.SkippedJUnit5Tests",
+      "skipped": 1,
+      "tests": 0,
+      "timestamp": "<removed>"
+    },
+    "results": [
+      {
+        "classname": "myorg.mytest.SkippedJUnit5Tests",
+        "durationSecs": "<removed>",
+        "name": "class",
+        "outcome": "skipped",
+        "outcomeReason": "Test suite is skipped"
+      }
+    ]
+  },
+  "TEST-myorg.mytest.SkippedJUnit5Tests.xml": {
+    "info": {
+      "aborted": 0,
+      "durationSecs": "<removed>",
+      "failures": 0,
+      "name": "myorg.mytest.SkippedJUnit5Tests",
+      "skipped": 1,
+      "tests": 0,
+      "timestamp": "<removed>"
+    },
+    "results": [
+      {
+        "classname": "myorg.mytest.SkippedJUnit5Tests",
+        "durationSecs": "<removed>",
+        "name": "class",
+        "outcome": "skipped",
+        "outcomeReason": "Test suite is skipped"
+      }
+    ]
+  }
+}

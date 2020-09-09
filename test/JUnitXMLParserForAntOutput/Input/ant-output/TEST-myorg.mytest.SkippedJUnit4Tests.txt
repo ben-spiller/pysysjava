@@ -1,0 +1,2 @@
+Testcase: myorg.mytest.SkippedJUnit4Tests
+Tests run: 0, Failures: 0, Skipped: 1, Aborted: 0, Time elapsed: 0 milli sec(s)

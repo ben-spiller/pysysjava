@@ -2,7 +2,7 @@
 <pysystest type="auto">
 	
 	<description>
-		<title>JUnit - JUnitXMLParser and JUnitTest work correctly using the JUnit 5 launcher</title>
+		<title>JUnit - JUnitXMLParser works correctly with output from Ant (v1.10)</title>
 		<purpose><![CDATA[
 		
 		]]></purpose>

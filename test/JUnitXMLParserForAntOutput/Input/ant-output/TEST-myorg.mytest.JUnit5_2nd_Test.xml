@@ -1,0 +1,2 @@
+<?xml version="1.0" ?><testsuite name="myorg.mytest.JUnit5_2nd_Test" time="0.003" timestamp="2020-09-09T20:10:18" tests="1" failures="0" skipped="0" aborted="0"><properties><property name="line.separator" value="
+"></property></properties><testcase classname="myorg.mytest.JUnit5_2nd_Test" name="shouldpass2()" time="0.0"></testcase></testsuite>

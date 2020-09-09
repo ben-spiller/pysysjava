@@ -56,7 +56,7 @@ class JUnitTest(BaseTest):
 			+self.java._splitShellArgs(self.project.expandProperties(self.descriptor.userData.get('java.junitArgs','')))\
 			+self.java._splitShellArgs(self.junitArgs)
 		
-		# TODO: support argument files in case of a long JUnit command line
+		# TODO: support argument files in case of a long JUnit command line. Maybe do this in the Java executable itself to keep life simple
 		
 		args = ['--reports-dir', self.output+'/junit-reports', 
 			'--disable-ansi-colors',
@@ -87,6 +87,7 @@ class JUnitTest(BaseTest):
 		}
 		
 		logSeparator = False
+		alreadyseen = set() # JUnit 5 doesn't do this, but Ant can sometimes generate duplicates for nested test classes
 		for f in sorted(os.listdir(toLongPathSafe(self.output+'/junit-reports'))):
 			if f.endswith('.xml'):
 				if logSeparator:
@@ -95,7 +96,7 @@ class JUnitTest(BaseTest):
 				logSeparator = True
 
 				suite, tests = JUnitXMLParser(toLongPathSafe(self.output+'/junit-reports/'+f)).parse()
-				if suite['tests'] == 0:
+				if suite['tests']+suite.get('skipped',0) == 0:
 					self.log.debug('Ignoring suite "%s" which contains no tests', suite['tests'])
 					continue
 					
@@ -103,9 +104,19 @@ class JUnitTest(BaseTest):
 				self.log.info('')
 				
 				for t in tests:
+					key = t['classname']+'.'+t['name']
+					if key in alreadyseen:
+						self.log.info('Ignoring duplicate results for %s', key)
+						continue
+					alreadyseen.add(key)
+					
 					outcome = self.validateTestcaseResult(t)
 					outcomeCounts[outcome] += 1
-		
+				
+				# some JUnit formats (but not JUnit5) provide stdout/err at the suite level rather than per test 
+				if suite.get('stdout') or suite.get('stderr'):
+					self.log.info('This testsuite produced some stdout/err, see it at: %s', f)
+
 		self.log.info('~'*63)
 		if outcomeCounts[SKIPPED] == sum(outcomeCounts.values()):
 			self.addOutcome(SKIPPED, 'All %d %s tests are skipped: %s'%(outcomeCounts[SKIPPED], self._testGenre, t['outomeReason'] or '<no reason>'))
@@ -122,7 +133,7 @@ class JUnitTest(BaseTest):
 			'error': BLOCKED,
 			'skipped': SKIPPED,
 		}.get(t['outcome'], BLOCKED)
-		if outcome ==  BLOCKED and 'Timeout' in t.get('outcomeType',''): outcome = TIMEDOUT
+		if outcome in [BLOCKED,FAILED] and 'Timeout' in t.get('outcomeType',''): outcome = TIMEDOUT
 		
 		maintag = BaseLogFormatter.tag(str(outcome).lower())
 		self.log.info('-- %s %s: %s (%0.1fs)', t['classname'], t['name'], t['outcome'], t['durationSecs'], 

@@ -12,9 +12,9 @@ class PySysTest(pysysjava.junittest.JUnitTest):
 		super(PySysTest, self).execute()
 
 	def validate(self):
-		# Before any other validations, we use this trick to 
 		self.log.info('--- validate output:')
 		
+		# Before running the real validations, run the JUnitTest's validate method, intercepting the outcomes
 		recordedOutcomes = []
 		addOutcomeSaved = self.addOutcome
 		def addOutcomeDEBUG(outcome, outcomeReason='', callRecord=None, override=False, **kwargs):
@@ -28,7 +28,7 @@ class PySysTest(pysysjava.junittest.JUnitTest):
 		finally:
 			self.addOutcome = addOutcomeSaved
 		self.log.info('--- end of validate output')
-		self.addOutcome(PASSED, override=True) # rest outcome
+		self.addOutcome(PASSED, override=True) # reset outcome before real validations
 		
 		self.log.info('Outcome reasons were: \n  %s\n', '\n  '.join(recordedOutcomes))
 		self.assertThat('outcomes == expected', outcomes = recordedOutcomes, expected=[
@@ -41,12 +41,15 @@ class PySysTest(pysysjava.junittest.JUnitTest):
 	
 		parsed = {}
 		reportdir = self.output+'/junit-reports'
+		allresults = []
 		for f in sorted(os.listdir(reportdir)):
 			if not f.endswith('.xml'): continue
 			suite, results = pysysjava.junitxml.JUnitXMLParser(reportdir+'/'+f).parse()
-			parsed[f] = {'info':suite, 'results':results}
+			parsed[f] = {'info':suite, 
+				'results':results}
+			allresults.extend(results)
 			self.assertThat('0 < durationSecs < 60', durationSecs=suite['durationSecs'], f=f)
-			self.assertThat('now-60 < timestamp <= now', timestamp=suite['timestamp'], now=time.time(), f=f)
+			self.assertThat('now-60*30 < timestamp <= now', timestamp=suite['timestamp'], now=time.time(), f=f)
 			
 			# strip out the bits that might change
 			for k in ['timestamp', 'durationSecs', 'hostname']:
@@ -56,4 +59,3 @@ class PySysTest(pysysjava.junittest.JUnitTest):
 					if r.get(k) or r.get(k)==0.0: r[k] = '<removed>'
 		self.assertDiff(
 			self.write_text('parsed_junit_xml.json', json.dumps(parsed, indent='  ', sort_keys=True)) )
-		
