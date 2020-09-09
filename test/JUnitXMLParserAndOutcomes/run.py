@@ -28,7 +28,7 @@ class PySysTest(pysysjava.junittest.JUnitTest):
 		finally:
 			self.addOutcome = addOutcomeSaved
 		self.log.info('--- end of validate output')
-		self.addOutcome(NOTVERIFIED, override=True) # rest outcome
+		self.addOutcome(PASSED, override=True) # rest outcome
 		
 		self.log.info('Outcome reasons were: \n  %s\n', '\n  '.join(recordedOutcomes))
 		self.assertThat('outcomes == expected', outcomes = recordedOutcomes, expected=[

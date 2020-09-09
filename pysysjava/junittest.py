@@ -97,6 +97,10 @@ class JUnitTest(BaseTest):
 				logSeparator = True
 
 				suite, tests = JUnitXMLParser(toLongPathSafe(self.output+'/junit-reports/'+f)).parse()
+				if suite['tests'] == 0:
+					self.log.debug('Ignoring suite "%s" which contains no 0 test', suite['tests'])
+					continue
+					
 				self.log.info('Results for %d testcases from suite "%s":', suite['tests'], suite['name'])
 				self.log.info('')
 				

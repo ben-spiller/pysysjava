@@ -7,7 +7,7 @@
       "hostname": "<removed>",
       "name": "JUnit Jupiter",
       "skipped": 3,
-      "tests": 9,
+      "tests": 10,
       "timestamp": "<removed>"
     },
     "results": [
@@ -92,6 +92,14 @@
         "outcomeType": "org.opentest4j.AssertionFailedError",
         "testFileLine": 38,
         "uniqueId": "[engine:junit-jupiter]/[class:myorg.mytest.JUnit5Tests]/[nested-class:NestedParent]/[method:shouldFail()]"
+      },
+      {
+        "classname": "myorg.mytest.JUnit5_2nd_Test",
+        "displayName": "shouldpass2()",
+        "durationSecs": "<removed>",
+        "name": "shouldpass2()",
+        "outcome": "passed",
+        "uniqueId": "[engine:junit-jupiter]/[class:myorg.mytest.JUnit5_2nd_Test]/[method:shouldpass2()]"
       },
       {
         "classname": "myorg.mytest.SkippedJUnit5Tests",
