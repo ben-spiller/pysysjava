@@ -1,4 +1,6 @@
-name: Build the HTML documentation
+# Build the HTML documentation using Sphinx
+
+name: Documentation
 
 on:
   push:
