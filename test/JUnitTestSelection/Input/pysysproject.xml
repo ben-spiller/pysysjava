@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pysysproject>
+	<!-- PySys project file for nested tests -->
+
+	<property name="appHome" value="${env.PYSYS_APP_HOME}" pathMustExist="true"/>
+
+	<property name="javaHome" value="${env.JAVA_HOME}" pathMustExist="true"/>
+	<property name="defaultEnvirons.JAVA_HOME" value="${javaHome}"/>
+
+	<property name="junitFrameworkClasspath" value="${env.JUNIT_CLASSPATH}"/>
+	
+	<!-- 
+	This sets Java(R)'s JAVA_TOOL_OPTIONS environment variable to set a default limit on max heap size to avoid each 
+	process using up a large proportion of the machine's virtual address space which can cause problem with rlimits
+	(the heap size can be overridden with command line args for individual processes as needed)
+	-->
+	<property name="defaultEnvirons.JAVA_TOOL_OPTIONS" value="-Xmx256M"/>
+
+	<!-- Make sure temporary files go to the test output dir not the OS's default temp directory. -->
+	<property name="defaultEnvironsTempDir" value="self.output"/>
+	
+	<!-- Custom test framework plugins -->
+	<pythonpath value="${appHome}" />
+	<test-plugin classname="pysysjava.javatestplugin.JavaTestPlugin" alias="java"/>
+	
+	<writers>
+	</writers>
+
+	<default-file-encodings>
+		<default-file-encoding pattern="run.log" encoding="utf-8"/>
+		
+		<default-file-encoding pattern="*.xml"  encoding="utf-8"/>
+		<default-file-encoding pattern="*.json" encoding="utf-8"/>
+		<default-file-encoding pattern="*.yaml" encoding="utf-8"/>
+	</default-file-encodings>	
+	
+</pysysproject>

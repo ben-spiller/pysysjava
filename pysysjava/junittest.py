@@ -13,13 +13,16 @@ class JUnitTest(BaseTest):
 	Compilation happens in `pysys.basetest.BaseTest.setup` (shared across all JUnit tests that use the same source 
 	directory), then execution in `pysys.basetest.BaseTest.execute` and finally reads the resulting XML reports and 
 	adds outcomes for each testcase in `pysys.basetest.BaseTest.validate`. 
+	
+	The project or test descriptor property ``junitFrameworkClasspath`` must be set to a classpath containing the 
+	``junit-platform-console-standalone`` launcher and the framework itself. 
 	"""
 
 	junitArgs = ''
 	"""
-	Extra command line arguments to pass to junit. This can be overridden on the command line, e.g. ``-XjunitArgs=a b "c d e"``.
+	Extra command line arguments to pass to junit. This can be set on the command line, e.g. ``-XjunitArgs=a b "c d e"``.
 	
-	This is in addition to any argument specified in the ``userData`` of the test/directory descriptor key 
+	The -XjunitArgs are in addition to any argument specified in the ``userData`` of the test/directory descriptor key 
 	named ``java.junitArgs``.
 	"""
 
@@ -31,9 +34,9 @@ class JUnitTest(BaseTest):
 		assert self.java, 'This test class requires the JavaTestPlugin test-plugin to be configured with alias=java'
 		
 		self.junitFrameworkClasspath = self.java.toClasspathList(
-			self.project.expandProperties(self.descriptor.userData.get('java.junitFrameworkClasspath','')) or self.project.properties.get('java.junitFrameworkClasspath'))
+			self.project.expandProperties(self.descriptor.userData.get('junitFrameworkClasspath','')) or self.project.properties.get('junitFrameworkClasspath'))
 		if not self.junitFrameworkClasspath or not os.path.exists(self.junitFrameworkClasspath[0]):
-			raise Exception('Please set the java.junitFrameworkClasspath project or descriptor property must contain the JUnit framework; cannot find it in: %s', self.junitFrameworkClasspath[0])
+			raise Exception('Please set the junitFrameworkClasspath project or descriptor property must contain the JUnit framework; cannot find it in: %s', self.junitFrameworkClasspath[0])
 		
 		# TODO: only compile if no test has already compiled them
 		self.compileTestClasses()
@@ -49,12 +52,17 @@ class JUnitTest(BaseTest):
 		classpath = self.java.toClasspathList(self.java.defaultClasspath)+[testClasses]
 		self.log.debug('Executing JUnit tests with classpath: \n%s', '\n'.join("     cp #%-2d    : %s%s"%(
 			i+1, pathelement, '' if os.path.exists(pathelement) else ' (does not exist!)') for i, pathelement in enumerate(classpath)))
+		
+		argOverrides = self.java._splitShellArgs(self.junitArgs)
 		args = [
 			'--config', 'junit.platform.output.capture.stdout=true',
 			'--config', 'junit.platform.output.capture.stderr=true',
 		]	\
 			+self.java._splitShellArgs(self.project.expandProperties(self.descriptor.userData.get('java.junitArgs','')))\
-			+self.java._splitShellArgs(self.junitArgs)
+			+argOverrides
+		if argOverrides:
+			self.log.info('JUnit args: \n%s', '\n'.join("    arg #%-2d    : %s"%(
+				i+1, a) for i, a in enumerate(args)))
 		
 		# TODO: support argument files in case of a long JUnit command line. Maybe do this in the Java executable itself to keep life simple
 		
@@ -74,7 +82,8 @@ class JUnitTest(BaseTest):
 			raise Exception('Cannot find junit-platform-console-standalone .jar file in the junitFrameworkClasspath: %s', self.junitFrameworkClasspath)
 		self.java.startJava(launcher[0], 
 			args, stdouterr='junit', expectedExitStatus=' in [0, 1]', 
-			timeout=int(self.project.expandProperties(self.descriptor.userData.get('java.junitTimeoutSecs')) or TIMEOUTS['WaitForProcess'])) # TODO: document timeout configuration parameter
+			onError=lambda process: [self.logFileContents(process.stderr), self.getExprFromFile(process.stderr, '.+')][-1],
+			timeout=float(self.project.expandProperties(self.descriptor.userData.get('java.junitTimeoutSecs')) or TIMEOUTS['WaitForProcess'])) # TODO: document timeout configuration parameter
 		self.assertThatGrep('junit.out', '([0-9]+) tests found', 'int(value) > 0', abortOnError=True)
 
 	def validate(self):
@@ -90,15 +99,15 @@ class JUnitTest(BaseTest):
 		alreadyseen = set() # JUnit 5 doesn't do this, but Ant can sometimes generate duplicates for nested test classes
 		for f in sorted(os.listdir(toLongPathSafe(self.output+'/junit-reports'))):
 			if f.endswith('.xml'):
-				if logSeparator:
-					self.log.info('')
-					self.log.info('~'*63)
-				logSeparator = True
-
 				suite, tests = JUnitXMLParser(toLongPathSafe(self.output+'/junit-reports/'+f)).parse()
 				if suite['tests']+suite.get('skipped',0) == 0:
 					self.log.debug('Ignoring suite "%s" which contains no tests', suite['tests'])
 					continue
+
+				if logSeparator:
+					self.log.info('')
+					self.log.info('~'*63)
+				logSeparator = True
 					
 				self.log.info('Results for %d testcases from suite "%s":', suite['tests'], suite['name'])
 				self.log.info('')
@@ -119,10 +128,10 @@ class JUnitTest(BaseTest):
 
 		self.log.info('~'*63)
 		if outcomeCounts[SKIPPED] == sum(outcomeCounts.values()):
-			self.addOutcome(SKIPPED, 'All %d %s tests are skipped: %s'%(outcomeCounts[SKIPPED], self._testGenre, t['outomeReason'] or '<no reason>'))
+			self.addOutcome(SKIPPED, 'All %d %s tests are skipped: %s'%(outcomeCounts[SKIPPED], self._testGenre, t.get('outcomeReason') or '<no reason>'))
 		else:
-			self.log.info('Summary of all individual testcase outcomes for %s:', self.descriptor.id)
-			self.log.info('  %s', ', '.join('%d %s'%(c,o)for o, c in outcomeCounts.items()))
+			self.log.info('Summary of all testcase outcomes for %s: %s', self.descriptor.id,
+				', '.join('%d %s'%(c,o)for o, c in outcomeCounts.items() if c>0))
 	
 	def validateTestcaseResult(self, t):
 		outcome = {

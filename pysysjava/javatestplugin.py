@@ -120,8 +120,6 @@ class JavaTestPlugin(object):
 	You may also want to add other options such as ``-source`` and ``-target`` release version. 
 	"""
 	
-	# TODO: maybe simplify by only have these as userData?
-	
 	defaultJVMArgs = '-Xmx512m -XX:+HeapDumpOnOutOfMemoryError'
 	"""
 	A space-delimited string of JVM arguments to use by default when running ``java`` processes, unless overridden 
@@ -279,7 +277,7 @@ class JavaTestPlugin(object):
 			else: 
 				assert False, 'Compilation input path does not exist: %s'%i
 		assert inputfiles, 'No .java files found to compile in %s'%input		
-		displayName = kwargs.pop('displayName', 'javac<%s -> %s>'%(os.path.basename(input[0]), os.path.basename(output)))
+		displayName = kwargs.pop('displayName', 'javac<%s => %s>'%(os.path.basename(input[0]), os.path.basename(output)))
 		
 		classpath = self.toClasspathList(classpath)
 

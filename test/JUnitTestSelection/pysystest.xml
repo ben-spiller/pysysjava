@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pysystest type="auto">
+	
+	<description>
+		<title>JUnit - selection of tests using tags etc</title>
+		<purpose><![CDATA[
+		
+		]]></purpose>
+	</description>
+
+	<!-- uncomment this to skip the test:
+	<skipped reason=""/> 
+	-->
+	
+	<classification>
+		<groups inherit="true">
+			<group></group>
+		</groups>
+		<modes inherit="true">
+		</modes>
+	</classification>
+
+</pysystest>

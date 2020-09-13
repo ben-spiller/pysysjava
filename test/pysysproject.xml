@@ -19,7 +19,7 @@
 	<property name="javaHome" value="${env.JAVA_HOME}" pathMustExist="true"/>
 	<property name="defaultEnvirons.JAVA_HOME" value="${javaHome}"/>
 
-	<property name="java.junitFrameworkClasspath" value="${testRootDir}/../target/junit-jars/*.jar"/>
+	<property name="junitFrameworkClasspath" value="${testRootDir}/../target/junit-jars/*.jar"/>
 	
 	<!-- 
 	This sets Java(R)'s JAVA_TOOL_OPTIONS environment variable to set a default limit on max heap size to avoid each 
