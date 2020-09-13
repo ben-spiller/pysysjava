@@ -20,10 +20,12 @@ class JUnitTest(BaseTest):
 
 	junitArgs = ''
 	"""
-	Extra command line arguments to pass to junit. This can be set on the command line, e.g. ``-XjunitArgs=a b "c d e"``.
+	Extra command line arguments to pass to the junit launcher (see JUnit documentation). 
+	This can be set on the command line, e.g. ``-XjunitArgs=a b "--config=foo=bar baz" c d e"``, 
+	or more realistically: ``-XjunitArgs=-tMY-TAG`` (to run just the testcases with the specified JUnit tag).
 	
 	The -XjunitArgs are in addition to any argument specified in the ``userData`` of the test/directory descriptor key 
-	named ``java.junitArgs``.
+	named ``junitArgs``.
 	"""
 
 	_testGenre = 'JUnit'
@@ -58,17 +60,14 @@ class JUnitTest(BaseTest):
 			'--config', 'junit.platform.output.capture.stdout=true',
 			'--config', 'junit.platform.output.capture.stderr=true',
 		]	\
-			+self.java._splitShellArgs(self.project.expandProperties(self.descriptor.userData.get('java.junitArgs','')))\
+			+self.java._splitShellArgs(self.project.expandProperties(self.descriptor.userData.get('junitArgs','')))\
 			+argOverrides
 		if argOverrides:
 			self.log.info('JUnit args: \n%s', '\n'.join("    arg #%-2d    : %s"%(
 				i+1, a) for i, a in enumerate(args)))
 		
-		# TODO: support argument files in case of a long JUnit command line. Maybe do this in the Java executable itself to keep life simple
-		
 		args = ['--reports-dir', self.output+'/junit-reports', 
 			'--disable-ansi-colors',
-			'--fail-if-no-tests',
 			'--classpath=%s'%os.pathsep.join(classpath),
 			]+args
 			
@@ -83,8 +82,8 @@ class JUnitTest(BaseTest):
 		self.java.startJava(launcher[0], 
 			args, stdouterr='junit', expectedExitStatus=' in [0, 1]', 
 			onError=lambda process: [self.logFileContents(process.stderr), self.getExprFromFile(process.stderr, '.+')][-1],
-			timeout=float(self.project.expandProperties(self.descriptor.userData.get('java.junitTimeoutSecs')) or TIMEOUTS['WaitForProcess'])) # TODO: document timeout configuration parameter
-		self.assertThatGrep('junit.out', '([0-9]+) tests found', 'int(value) > 0', abortOnError=True)
+			timeout=float(self.project.expandProperties(self.descriptor.userData.get('junitTimeoutSecs')) or TIMEOUTS['WaitForProcess'])) # TODO: document timeout configuration parameter
+		# NB: this does not give an error if no tests were selected; we rely on validation for that
 
 	def validate(self):
 		outcomeCounts = {
@@ -94,6 +93,8 @@ class JUnitTest(BaseTest):
 			BLOCKED: 0,
 			TIMEDOUT: 0,
 		}
+		
+		t = {} # just in case no tests were found at all
 		
 		logSeparator = False
 		alreadyseen = set() # JUnit 5 doesn't do this, but Ant can sometimes generate duplicates for nested test classes
@@ -126,8 +127,16 @@ class JUnitTest(BaseTest):
 				if suite.get('stdout') or suite.get('stderr'):
 					self.log.info('This testsuite produced some stdout/err, see it at: %s', f)
 
+		totalTestcases = sum(outcomeCounts.values())
 		self.log.info('~'*63)
-		if outcomeCounts[SKIPPED] == sum(outcomeCounts.values()):
+		if totalTestcases == 0:
+			if self.junitArgs:
+				# Allow it if args are customized, they're probably trying to deliberate run a subset
+				self.addOutcome(SKIPPED, 'No tests were found (likely the result of the specified junitArgs)')
+			else:
+				# But otherwise, make it an error, as it's probably a mistake
+				self.addOutcome(BLOCKED, 'No tests were found (using the specified junitArgs)')
+		elif outcomeCounts[SKIPPED] == totalTestcases:
 			self.addOutcome(SKIPPED, 'All %d %s tests are skipped: %s'%(outcomeCounts[SKIPPED], self._testGenre, t.get('outcomeReason') or '<no reason>'))
 		else:
 			self.log.info('Summary of all testcase outcomes for %s: %s', self.descriptor.id,
