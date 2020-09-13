@@ -9,7 +9,7 @@ import pysysjava.junitxml
 class PySysTest(pysys.basetest.BaseTest):
 	def execute(self):
 		def runPySys(args, stdouterr, **kwargs):
-			env = self.createEnvirons(command='java', overrides={
+			env = self.createEnvirons(command=PYTHON_EXE, overrides={
 				'PYSYS_APP_HOME': self.project.testRootDir+'/..',
 				'JAVA_HOME': self.project.javaHome,
 				'JUNIT_CLASSPATH': self.project.junitFrameworkClasspath,
