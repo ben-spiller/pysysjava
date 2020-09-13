@@ -176,9 +176,11 @@ adds outcomes for each testcase in <a class="reference external" href="https://p
 <dl class="py attribute">
 <dt id="pysysjava.junittest.JUnitTest.junitArgs">
 <code class="sig-name descname">junitArgs</code><em class="property"> = ''</em><a class="headerlink" href="#pysysjava.junittest.JUnitTest.junitArgs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Extra command line arguments to pass to junit. This can be set on the command line, e.g. <code class="docutils literal notranslate"><span class="pre">-XjunitArgs=a</span> <span class="pre">b</span> <span class="pre">&quot;c</span> <span class="pre">d</span> <span class="pre">e&quot;</span></code>.</p>
+<dd><p>Extra command line arguments to pass to the junit launcher (see JUnit documentation). 
+This can be set on the command line, e.g. <code class="docutils literal notranslate"><span class="pre">-XjunitArgs=a</span> <span class="pre">b</span> <span class="pre">&quot;--config=foo=bar</span> <span class="pre">baz&quot;</span> <span class="pre">c</span> <span class="pre">d</span> <span class="pre">e&quot;</span></code>, 
+or more realistically: <code class="docutils literal notranslate"><span class="pre">-XjunitArgs=-tMY-TAG</span></code> (to run just the testcases with the specified JUnit tag).</p>
 <p>The -XjunitArgs are in addition to any argument specified in the <code class="docutils literal notranslate"><span class="pre">userData</span></code> of the test/directory descriptor key 
-named <code class="docutils literal notranslate"><span class="pre">java.junitArgs</span></code>.</p>
+named <code class="docutils literal notranslate"><span class="pre">junitArgs</span></code>.</p>
 </dd></dl>
 
 </dd></dl>

@@ -168,10 +168,12 @@
 
 	<span class="n">junitArgs</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Extra command line arguments to pass to junit. This can be set on the command line, e.g. ``-XjunitArgs=a b &quot;c d e&quot;``.</span>
+<span class="sd">	Extra command line arguments to pass to the junit launcher (see JUnit documentation). </span>
+<span class="sd">	This can be set on the command line, e.g. ``-XjunitArgs=a b &quot;--config=foo=bar baz&quot; c d e&quot;``, </span>
+<span class="sd">	or more realistically: ``-XjunitArgs=-tMY-TAG`` (to run just the testcases with the specified JUnit tag).</span>
 <span class="sd">	</span>
 <span class="sd">	The -XjunitArgs are in addition to any argument specified in the ``userData`` of the test/directory descriptor key </span>
-<span class="sd">	named ``java.junitArgs``.</span>
+<span class="sd">	named ``junitArgs``.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="n">_testGenre</span> <span class="o">=</span> <span class="s1">&#39;JUnit&#39;</span>
@@ -206,17 +208,14 @@
 			<span class="s1">&#39;--config&#39;</span><span class="p">,</span> <span class="s1">&#39;junit.platform.output.capture.stdout=true&#39;</span><span class="p">,</span>
 			<span class="s1">&#39;--config&#39;</span><span class="p">,</span> <span class="s1">&#39;junit.platform.output.capture.stderr=true&#39;</span><span class="p">,</span>
 		<span class="p">]</span>	\
-			<span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">_splitShellArgs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">expandProperties</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">descriptor</span><span class="o">.</span><span class="n">userData</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;java.junitArgs&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)))</span>\
+			<span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">_splitShellArgs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">expandProperties</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">descriptor</span><span class="o">.</span><span class="n">userData</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;junitArgs&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)))</span>\
 			<span class="o">+</span><span class="n">argOverrides</span>
 		<span class="k">if</span> <span class="n">argOverrides</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;JUnit args: </span><span class="se">\n</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;    arg #</span><span class="si">%-2d</span><span class="s2">    : </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span>
 				<span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">args</span><span class="p">)))</span>
 		
-		<span class="c1"># TODO: support argument files in case of a long JUnit command line. Maybe do this in the Java executable itself to keep life simple</span>
-		
 		<span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;--reports-dir&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">+</span><span class="s1">&#39;/junit-reports&#39;</span><span class="p">,</span> 
 			<span class="s1">&#39;--disable-ansi-colors&#39;</span><span class="p">,</span>
-			<span class="s1">&#39;--fail-if-no-tests&#39;</span><span class="p">,</span>
 			<span class="s1">&#39;--classpath=</span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">os</span><span class="o">.</span><span class="n">pathsep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">classpath</span><span class="p">),</span>
 			<span class="p">]</span><span class="o">+</span><span class="n">args</span>
 			
@@ -231,8 +230,8 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">startJava</span><span class="p">(</span><span class="n">launcher</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> 
 			<span class="n">args</span><span class="p">,</span> <span class="n">stdouterr</span><span class="o">=</span><span class="s1">&#39;junit&#39;</span><span class="p">,</span> <span class="n">expectedExitStatus</span><span class="o">=</span><span class="s1">&#39; in [0, 1]&#39;</span><span class="p">,</span> 
 			<span class="n">onError</span><span class="o">=</span><span class="k">lambda</span> <span class="n">process</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">logFileContents</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">stderr</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">getExprFromFile</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="s1">&#39;.+&#39;</span><span class="p">)][</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
-			<span class="n">timeout</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">expandProperties</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">descriptor</span><span class="o">.</span><span class="n">userData</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;java.junitTimeoutSecs&#39;</span><span class="p">))</span> <span class="ow">or</span> <span class="n">TIMEOUTS</span><span class="p">[</span><span class="s1">&#39;WaitForProcess&#39;</span><span class="p">]))</span> <span class="c1"># TODO: document timeout configuration parameter</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">assertThatGrep</span><span class="p">(</span><span class="s1">&#39;junit.out&#39;</span><span class="p">,</span> <span class="s1">&#39;([0-9]+) tests found&#39;</span><span class="p">,</span> <span class="s1">&#39;int(value) &gt; 0&#39;</span><span class="p">,</span> <span class="n">abortOnError</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+			<span class="n">timeout</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">expandProperties</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">descriptor</span><span class="o">.</span><span class="n">userData</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;junitTimeoutSecs&#39;</span><span class="p">))</span> <span class="ow">or</span> <span class="n">TIMEOUTS</span><span class="p">[</span><span class="s1">&#39;WaitForProcess&#39;</span><span class="p">]))</span> <span class="c1"># TODO: document timeout configuration parameter</span>
+		<span class="c1"># NB: this does not give an error if no tests were selected; we rely on validation for that</span>
 
 	<span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="n">outcomeCounts</span> <span class="o">=</span> <span class="p">{</span>
@@ -242,6 +241,8 @@
 			<span class="n">BLOCKED</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
 			<span class="n">TIMEDOUT</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
 		<span class="p">}</span>
+		
+		<span class="n">t</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1"># just in case no tests were found at all</span>
 		
 		<span class="n">logSeparator</span> <span class="o">=</span> <span class="kc">False</span>
 		<span class="n">alreadyseen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span> <span class="c1"># JUnit 5 doesn&#39;t do this, but Ant can sometimes generate duplicates for nested test classes</span>
@@ -274,8 +275,16 @@
 				<span class="k">if</span> <span class="n">suite</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stdout&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">suite</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stderr&#39;</span><span class="p">):</span>
 					<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;This testsuite produced some stdout/err, see it at: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
 
+		<span class="n">totalTestcases</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">outcomeCounts</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;~&#39;</span><span class="o">*</span><span class="mi">63</span><span class="p">)</span>
-		<span class="k">if</span> <span class="n">outcomeCounts</span><span class="p">[</span><span class="n">SKIPPED</span><span class="p">]</span> <span class="o">==</span> <span class="nb">sum</span><span class="p">(</span><span class="n">outcomeCounts</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+		<span class="k">if</span> <span class="n">totalTestcases</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">junitArgs</span><span class="p">:</span>
+				<span class="c1"># Allow it if args are customized, they&#39;re probably trying to deliberate run a subset</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">addOutcome</span><span class="p">(</span><span class="n">SKIPPED</span><span class="p">,</span> <span class="s1">&#39;No tests were found (likely the result of the specified junitArgs)&#39;</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="c1"># But otherwise, make it an error, as it&#39;s probably a mistake</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">addOutcome</span><span class="p">(</span><span class="n">BLOCKED</span><span class="p">,</span> <span class="s1">&#39;No tests were found (using the specified junitArgs)&#39;</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="n">outcomeCounts</span><span class="p">[</span><span class="n">SKIPPED</span><span class="p">]</span> <span class="o">==</span> <span class="n">totalTestcases</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">addOutcome</span><span class="p">(</span><span class="n">SKIPPED</span><span class="p">,</span> <span class="s1">&#39;All </span><span class="si">%d</span><span class="s1"> </span><span class="si">%s</span><span class="s1"> tests are skipped: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">outcomeCounts</span><span class="p">[</span><span class="n">SKIPPED</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_testGenre</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;outcomeReason&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;&lt;no reason&gt;&#39;</span><span class="p">))</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Summary of all testcase outcomes for </span><span class="si">%s</span><span class="s1">: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">descriptor</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
