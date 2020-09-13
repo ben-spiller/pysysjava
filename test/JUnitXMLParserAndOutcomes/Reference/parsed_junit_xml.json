@@ -1,6 +1,7 @@
 {
   "TEST-junit-jupiter.xml": {
     "info": {
+      "displayName": "JUnit Jupiter",
       "durationSecs": "<removed>",
       "errors": 2,
       "failures": 1,
@@ -8,7 +9,8 @@
       "name": "JUnit Jupiter",
       "skipped": 3,
       "tests": 10,
-      "timestamp": "<removed>"
+      "timestamp": "<removed>",
+      "uniqueId": "[engine:junit-jupiter]"
     },
     "results": [
       {
@@ -123,6 +125,7 @@
   },
   "TEST-junit-vintage.xml": {
     "info": {
+      "displayName": "JUnit Vintage",
       "durationSecs": "<removed>",
       "errors": 1,
       "failures": 1,
@@ -130,7 +133,8 @@
       "name": "JUnit Vintage",
       "skipped": 2,
       "tests": 5,
-      "timestamp": "<removed>"
+      "timestamp": "<removed>",
+      "uniqueId": "[engine:junit-vintage]"
     },
     "results": [
       {
