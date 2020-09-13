@@ -121,10 +121,8 @@ class JUnitTest(BaseTest):
 		if outcomeCounts[SKIPPED] == sum(outcomeCounts.values()):
 			self.addOutcome(SKIPPED, 'All %d %s tests are skipped: %s'%(outcomeCounts[SKIPPED], self._testGenre, t['outomeReason'] or '<no reason>'))
 		else:
-			self.log.info('Summary of %s testcase outcomes for %s:', self._testGenre, self.descriptor.id)
-			for o,c in outcomeCounts.items():
-				if c > 0:
-					self.log.info('% 3d testcases %s', c, o, extra=BaseLogFormatter.tag(str(o).lower()))
+			self.log.info('Summary of all individual testcase outcomes for %s:', self.descriptor.id)
+			self.log.info('  %s', ', '.join('%d %s'%(c,o)for o, c in outcomeCounts.items()))
 	
 	def validateTestcaseResult(self, t):
 		outcome = {
