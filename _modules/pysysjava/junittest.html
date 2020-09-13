@@ -1,0 +1,382 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pysysjava.junittest &mdash; PySys Java plugins v0.1  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> PySys Java plugins v0.1
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../autodocgen/pysysjava.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../License.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ChangeLog.html">Change Log</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PySys Java plugins v0.1</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>pysysjava.junittest</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pysysjava.junittest</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pysys</span>
+<span class="kn">from</span> <span class="nn">pysys.constants</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">pysys.basetest</span> <span class="kn">import</span> <span class="n">BaseTest</span>
+<span class="kn">from</span> <span class="nn">pysys.utils.fileutils</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">pysys.utils.logutils</span> <span class="kn">import</span> <span class="n">BaseLogFormatter</span>
+
+<span class="kn">from</span> <span class="nn">pysysjava.junitxml</span> <span class="kn">import</span> <span class="n">JUnitXMLParser</span>
+
+<div class="viewcode-block" id="JUnitTest"><a class="viewcode-back" href="../../autodocgen/pysysjava.junittest.html#pysysjava.junittest.JUnitTest">[docs]</a><span class="k">class</span> <span class="nc">JUnitTest</span><span class="p">(</span><span class="n">BaseTest</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	A test class that compiles and runs one or more JUnit test suites. </span>
+<span class="sd">	</span>
+<span class="sd">	Compilation happens in `pysys.basetest.BaseTest.setup` (shared across all JUnit tests that use the same source </span>
+<span class="sd">	directory), then execution in `pysys.basetest.BaseTest.execute` and finally reads the resulting XML reports and </span>
+<span class="sd">	adds outcomes for each testcase in `pysys.basetest.BaseTest.validate`. </span>
+<span class="sd">	</span>
+<span class="sd">	The project or test descriptor property ``junitFrameworkClasspath`` must be set to a classpath containing the </span>
+<span class="sd">	``junit-platform-console-standalone`` launcher and the framework itself. </span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">junitArgs</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Extra command line arguments to pass to junit. This can be set on the command line, e.g. ``-XjunitArgs=a b &quot;c d e&quot;``.</span>
+<span class="sd">	</span>
+<span class="sd">	The -XjunitArgs are in addition to any argument specified in the ``userData`` of the test/directory descriptor key </span>
+<span class="sd">	named ``java.junitArgs``.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">_testGenre</span> <span class="o">=</span> <span class="s1">&#39;JUnit&#39;</span>
+	
+	<span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="nb">super</span><span class="p">(</span><span class="n">JUnitTest</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+		
+		<span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="p">,</span> <span class="s1">&#39;This test class requires the JavaTestPlugin test-plugin to be configured with alias=java&#39;</span>
+		
+		<span class="bp">self</span><span class="o">.</span><span class="n">junitFrameworkClasspath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">toClasspathList</span><span class="p">(</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">expandProperties</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">descriptor</span><span class="o">.</span><span class="n">userData</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;junitFrameworkClasspath&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">))</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;junitFrameworkClasspath&#39;</span><span class="p">))</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">junitFrameworkClasspath</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">junitFrameworkClasspath</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+			<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Please set the junitFrameworkClasspath project or descriptor property must contain the JUnit framework; cannot find it in: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">junitFrameworkClasspath</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+		
+		<span class="c1"># TODO: only compile if no test has already compiled them</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">compileTestClasses</span><span class="p">()</span>
+	
+	<span class="k">def</span> <span class="nf">compileTestClasses</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="n">classpath</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">defaultClasspath</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">junitFrameworkClasspath</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		
+		<span class="n">testClasses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">+</span><span class="s1">&#39;/javaclasses&#39;</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">testClasses</span><span class="p">):</span>
+			<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;No classes were found after compiling &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">)</span>
+		<span class="n">classpath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">toClasspathList</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">defaultClasspath</span><span class="p">)</span><span class="o">+</span><span class="p">[</span><span class="n">testClasses</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Executing JUnit tests with classpath: </span><span class="se">\n</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;     cp #</span><span class="si">%-2d</span><span class="s2">    : </span><span class="si">%s%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span>
+			<span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">pathelement</span><span class="p">,</span> <span class="s1">&#39;&#39;</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">pathelement</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39; (does not exist!)&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">pathelement</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">classpath</span><span class="p">)))</span>
+		
+		<span class="n">argOverrides</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">_splitShellArgs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">junitArgs</span><span class="p">)</span>
+		<span class="n">args</span> <span class="o">=</span> <span class="p">[</span>
+			<span class="s1">&#39;--config&#39;</span><span class="p">,</span> <span class="s1">&#39;junit.platform.output.capture.stdout=true&#39;</span><span class="p">,</span>
+			<span class="s1">&#39;--config&#39;</span><span class="p">,</span> <span class="s1">&#39;junit.platform.output.capture.stderr=true&#39;</span><span class="p">,</span>
+		<span class="p">]</span>	\
+			<span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">_splitShellArgs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">expandProperties</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">descriptor</span><span class="o">.</span><span class="n">userData</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;java.junitArgs&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)))</span>\
+			<span class="o">+</span><span class="n">argOverrides</span>
+		<span class="k">if</span> <span class="n">argOverrides</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;JUnit args: </span><span class="se">\n</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;    arg #</span><span class="si">%-2d</span><span class="s2">    : </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span>
+				<span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">args</span><span class="p">)))</span>
+		
+		<span class="c1"># TODO: support argument files in case of a long JUnit command line. Maybe do this in the Java executable itself to keep life simple</span>
+		
+		<span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;--reports-dir&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">+</span><span class="s1">&#39;/junit-reports&#39;</span><span class="p">,</span> 
+			<span class="s1">&#39;--disable-ansi-colors&#39;</span><span class="p">,</span>
+			<span class="s1">&#39;--fail-if-no-tests&#39;</span><span class="p">,</span>
+			<span class="s1">&#39;--classpath=</span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">os</span><span class="o">.</span><span class="n">pathsep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">classpath</span><span class="p">),</span>
+			<span class="p">]</span><span class="o">+</span><span class="n">args</span>
+			
+		<span class="c1"># We want to run all the test classes under this directory; the -d option doesn&#39;t seem to work so use the </span>
+		<span class="c1"># package option to achieve the same thing. </span>
+		<span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">testClasses</span><span class="p">):</span>
+			<span class="n">args</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s1">&#39;-p&#39;</span><span class="p">,</span> <span class="n">d</span><span class="p">])</span>
+		
+		<span class="n">launcher</span> <span class="o">=</span> <span class="p">[</span><span class="n">cp</span> <span class="k">for</span> <span class="n">cp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">junitFrameworkClasspath</span> <span class="k">if</span> <span class="s1">&#39;junit-platform-console-standalone&#39;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">cp</span><span class="p">)]</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">launcher</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Cannot find junit-platform-console-standalone .jar file in the junitFrameworkClasspath: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">junitFrameworkClasspath</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">startJava</span><span class="p">(</span><span class="n">launcher</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> 
+			<span class="n">args</span><span class="p">,</span> <span class="n">stdouterr</span><span class="o">=</span><span class="s1">&#39;junit&#39;</span><span class="p">,</span> <span class="n">expectedExitStatus</span><span class="o">=</span><span class="s1">&#39; in [0, 1]&#39;</span><span class="p">,</span> 
+			<span class="n">onError</span><span class="o">=</span><span class="k">lambda</span> <span class="n">process</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">logFileContents</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">stderr</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">getExprFromFile</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="s1">&#39;.+&#39;</span><span class="p">)][</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+			<span class="n">timeout</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">expandProperties</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">descriptor</span><span class="o">.</span><span class="n">userData</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;java.junitTimeoutSecs&#39;</span><span class="p">))</span> <span class="ow">or</span> <span class="n">TIMEOUTS</span><span class="p">[</span><span class="s1">&#39;WaitForProcess&#39;</span><span class="p">]))</span> <span class="c1"># TODO: document timeout configuration parameter</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">assertThatGrep</span><span class="p">(</span><span class="s1">&#39;junit.out&#39;</span><span class="p">,</span> <span class="s1">&#39;([0-9]+) tests found&#39;</span><span class="p">,</span> <span class="s1">&#39;int(value) &gt; 0&#39;</span><span class="p">,</span> <span class="n">abortOnError</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">outcomeCounts</span> <span class="o">=</span> <span class="p">{</span>
+			<span class="n">PASSED</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+			<span class="n">SKIPPED</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+			<span class="n">FAILED</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+			<span class="n">BLOCKED</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+			<span class="n">TIMEDOUT</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+		<span class="p">}</span>
+		
+		<span class="n">logSeparator</span> <span class="o">=</span> <span class="kc">False</span>
+		<span class="n">alreadyseen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span> <span class="c1"># JUnit 5 doesn&#39;t do this, but Ant can sometimes generate duplicates for nested test classes</span>
+		<span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">toLongPathSafe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">+</span><span class="s1">&#39;/junit-reports&#39;</span><span class="p">))):</span>
+			<span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.xml&#39;</span><span class="p">):</span>
+				<span class="n">suite</span><span class="p">,</span> <span class="n">tests</span> <span class="o">=</span> <span class="n">JUnitXMLParser</span><span class="p">(</span><span class="n">toLongPathSafe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">+</span><span class="s1">&#39;/junit-reports/&#39;</span><span class="o">+</span><span class="n">f</span><span class="p">))</span><span class="o">.</span><span class="n">parse</span><span class="p">()</span>
+				<span class="k">if</span> <span class="n">suite</span><span class="p">[</span><span class="s1">&#39;tests&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">suite</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;skipped&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Ignoring suite &quot;</span><span class="si">%s</span><span class="s1">&quot; which contains no tests&#39;</span><span class="p">,</span> <span class="n">suite</span><span class="p">[</span><span class="s1">&#39;tests&#39;</span><span class="p">])</span>
+					<span class="k">continue</span>
+
+				<span class="k">if</span> <span class="n">logSeparator</span><span class="p">:</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;~&#39;</span><span class="o">*</span><span class="mi">63</span><span class="p">)</span>
+				<span class="n">logSeparator</span> <span class="o">=</span> <span class="kc">True</span>
+					
+				<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Results for </span><span class="si">%d</span><span class="s1"> testcases from suite &quot;</span><span class="si">%s</span><span class="s1">&quot;:&#39;</span><span class="p">,</span> <span class="n">suite</span><span class="p">[</span><span class="s1">&#39;tests&#39;</span><span class="p">],</span> <span class="n">suite</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+				
+				<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tests</span><span class="p">:</span>
+					<span class="n">key</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;classname&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;.&#39;</span><span class="o">+</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+					<span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">alreadyseen</span><span class="p">:</span>
+						<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Ignoring duplicate results for </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+						<span class="k">continue</span>
+					<span class="n">alreadyseen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+					
+					<span class="n">outcome</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validateTestcaseResult</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+					<span class="n">outcomeCounts</span><span class="p">[</span><span class="n">outcome</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+				
+				<span class="c1"># some JUnit formats (but not JUnit5) provide stdout/err at the suite level rather than per test </span>
+				<span class="k">if</span> <span class="n">suite</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stdout&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">suite</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stderr&#39;</span><span class="p">):</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;This testsuite produced some stdout/err, see it at: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;~&#39;</span><span class="o">*</span><span class="mi">63</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">outcomeCounts</span><span class="p">[</span><span class="n">SKIPPED</span><span class="p">]</span> <span class="o">==</span> <span class="nb">sum</span><span class="p">(</span><span class="n">outcomeCounts</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">addOutcome</span><span class="p">(</span><span class="n">SKIPPED</span><span class="p">,</span> <span class="s1">&#39;All </span><span class="si">%d</span><span class="s1"> </span><span class="si">%s</span><span class="s1"> tests are skipped: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">outcomeCounts</span><span class="p">[</span><span class="n">SKIPPED</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_testGenre</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;outcomeReason&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;&lt;no reason&gt;&#39;</span><span class="p">))</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Summary of all testcase outcomes for </span><span class="si">%s</span><span class="s1">: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">descriptor</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+				<span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">o</span><span class="p">)</span><span class="k">for</span> <span class="n">o</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">outcomeCounts</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">c</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">))</span>
+	
+	<span class="k">def</span> <span class="nf">validateTestcaseResult</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+		<span class="n">outcome</span> <span class="o">=</span> <span class="p">{</span>
+			<span class="s1">&#39;passed&#39;</span><span class="p">:</span> <span class="n">PASSED</span><span class="p">,</span>
+			<span class="s1">&#39;failure&#39;</span><span class="p">:</span> <span class="n">FAILED</span><span class="p">,</span>
+			<span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="n">BLOCKED</span><span class="p">,</span>
+			<span class="s1">&#39;skipped&#39;</span><span class="p">:</span> <span class="n">SKIPPED</span><span class="p">,</span>
+		<span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;outcome&#39;</span><span class="p">],</span> <span class="n">BLOCKED</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">outcome</span> <span class="ow">in</span> <span class="p">[</span><span class="n">BLOCKED</span><span class="p">,</span><span class="n">FAILED</span><span class="p">]</span> <span class="ow">and</span> <span class="s1">&#39;Timeout&#39;</span> <span class="ow">in</span> <span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;outcomeType&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">):</span> <span class="n">outcome</span> <span class="o">=</span> <span class="n">TIMEDOUT</span>
+		
+		<span class="n">maintag</span> <span class="o">=</span> <span class="n">BaseLogFormatter</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">outcome</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;-- </span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">: </span><span class="si">%s</span><span class="s1"> (</span><span class="si">%0.1f</span><span class="s1">s)&#39;</span><span class="p">,</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;classname&#39;</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;outcome&#39;</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;durationSecs&#39;</span><span class="p">],</span> 
+			<span class="n">extra</span><span class="o">=</span><span class="n">maintag</span><span class="p">)</span>
+		
+		<span class="c1"># Don&#39;t log most details at run unless in debug mode</span>
+		<span class="n">detailLogger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span> <span class="k">if</span> <span class="n">outcome</span> <span class="o">==</span> <span class="n">PASSED</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span>
+				
+		<span class="k">if</span> <span class="s1">&#39;displayName&#39;</span> <span class="ow">in</span> <span class="n">t</span> <span class="ow">and</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;displayName&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]:</span>
+			<span class="n">detailLogger</span><span class="p">(</span><span class="s1">&#39;   Display name: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;displayName&#39;</span><span class="p">],</span> <span class="n">extra</span><span class="o">=</span><span class="n">maintag</span><span class="p">)</span>
+
+		<span class="n">testFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">descriptor</span><span class="o">.</span><span class="n">input</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;classname&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;$&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;.java&#39;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_cachedPathExists&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="o">!=</span> <span class="n">testFile</span><span class="p">:</span> <span class="c1"># cache the file system lookup</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_cachedPathExists</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cachedPathExistsResult</span> <span class="o">=</span> <span class="n">testFile</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">toLongPathSafe</span><span class="p">(</span><span class="n">testFile</span><span class="p">))</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cachedPathExistsResult</span><span class="p">:</span> 
+			<span class="n">testFile</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;classname&#39;</span><span class="p">]</span> <span class="c1"># this is a reasonable fallback for giving location information</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">detailLogger</span><span class="p">(</span><span class="s1">&#39;   Test file: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">testFile</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="n">maintag</span><span class="p">)</span>
+		
+		<span class="c1"># It&#39;s much more useful to set the callRecord to the Java source file rather than this generic .py file</span>
+		<span class="n">callRecord</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">:</span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">testFile</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;testFileLine&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;0&#39;</span><span class="p">)]</span>
+		
+		<span class="k">if</span> <span class="n">outcome</span> <span class="o">==</span> <span class="n">PASSED</span><span class="p">:</span>
+			<span class="k">pass</span>
+		<span class="k">elif</span> <span class="s1">&#39;comparisonActual&#39;</span> <span class="ow">in</span> <span class="n">t</span> <span class="ow">and</span> <span class="n">outcome</span> <span class="o">==</span> <span class="n">FAILED</span><span class="p">:</span>
+			<span class="c1"># Using assertThat gives us more user-friendly messages when there&#39;s a diff failure</span>
+			<span class="n">shouldfail</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertThat</span><span class="p">(</span><span class="s1">&#39;expected == actual&#39;</span><span class="p">,</span> <span class="n">expected</span><span class="o">=</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;comparisonExpected&#39;</span><span class="p">],</span> <span class="n">actual</span><span class="o">=</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;comparisonActual&#39;</span><span class="p">],</span> 
+				<span class="n">testcaseName</span><span class="o">=</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;classname&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;.&#39;</span><span class="o">+</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span> <span class="c1"># TODO: callRecord=callRecord)</span>
+			<span class="k">assert</span> <span class="ow">not</span> <span class="n">shouldfail</span><span class="p">,</span> <span class="s1">&#39;assertThat did not fail as expected&#39;</span> <span class="c1"># should not happen</span>
+		<span class="k">elif</span> <span class="n">outcome</span> <span class="o">==</span> <span class="n">SKIPPED</span><span class="p">:</span> 
+			<span class="c1"># don&#39;t want to append a skipped outcome since that would override all other outcomes</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;   Skipped because: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;outcomeReason&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="s1">&#39;&lt;unknown reason&gt;&#39;</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="n">BaseLogFormatter</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">SKIPPED</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()))</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">addOutcome</span><span class="p">(</span><span class="n">outcome</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">: </span><span class="si">%s</span><span class="s1"> [in </span><span class="si">%s</span><span class="s1">.</span><span class="si">%s</span><span class="s1">]&#39;</span><span class="o">%</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_testGenre</span><span class="p">,</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;outcome&#39;</span><span class="p">],</span> 
+				<span class="n">t</span><span class="p">[</span><span class="s1">&#39;outcomeReason&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="s1">&#39;&lt;unknown reason&gt;&#39;</span><span class="p">,</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;classname&#39;</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]),</span> <span class="n">callRecord</span><span class="o">=</span><span class="n">callRecord</span><span class="p">)</span>
+		
+		<span class="n">prefix</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">  &#39;</span>
+		<span class="k">if</span> <span class="s1">&#39;stdout&#39;</span> <span class="ow">in</span> <span class="n">t</span><span class="p">:</span> 
+			<span class="n">detailLogger</span><span class="p">(</span><span class="s1">&#39;Testcase stdout from </span><span class="si">%s</span><span class="s1">: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">prefix</span><span class="o">+</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;stdout&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">prefix</span><span class="p">),</span> 
+				<span class="n">extra</span><span class="o">=</span><span class="n">BaseLogFormatter</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">LOG_DEBUG</span><span class="p">))</span>
+		<span class="k">if</span> <span class="s1">&#39;stderr&#39;</span> <span class="ow">in</span> <span class="n">t</span><span class="p">:</span> 
+			<span class="n">detailLogger</span><span class="p">(</span><span class="s1">&#39;Testcase stderr from </span><span class="si">%s</span><span class="s1">: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">prefix</span><span class="o">+</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;stderr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">prefix</span><span class="p">),</span> 
+				<span class="n">extra</span><span class="o">=</span><span class="n">BaseLogFormatter</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">LOG_DEBUG</span><span class="p">))</span>
+		<span class="k">if</span> <span class="s1">&#39;outcomeDetails&#39;</span> <span class="ow">in</span> <span class="n">t</span><span class="p">:</span> 
+			<span class="n">detailLogger</span><span class="p">(</span><span class="s1">&#39;Failure details from </span><span class="si">%s</span><span class="s1">: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">prefix</span><span class="o">+</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;outcomeDetails&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">prefix</span><span class="p">),</span> 
+				<span class="n">extra</span><span class="o">=</span><span class="n">BaseLogFormatter</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">LOG_DEBUG</span><span class="p">))</span>
+			
+		<span class="n">detailLogger</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">outcome</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-13
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

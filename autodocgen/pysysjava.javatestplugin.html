@@ -36,7 +36,7 @@
   <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="License" href="../License.html" />
+    <link rel="next" title="pysysjava.junittest" href="pysysjava.junittest.html" />
     <link rel="prev" title="API Reference" href="pysysjava.html" /> 
 </head>
 
@@ -89,6 +89,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#walkdirtreecontents">walkDirTreeContents</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="pysysjava.junittest.html">pysysjava.junittest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pysysjava.junitxml.html">pysysjava.junitxml</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../License.html">License</a></li>
@@ -168,7 +170,7 @@
 <dt id="pysysjava.javatestplugin.JavaTestPlugin">
 <em class="property">class </em><code class="sig-prename descclassname">pysysjava.javatestplugin.</code><code class="sig-name descname">JavaTestPlugin</code><a class="reference internal" href="../_modules/pysysjava/javatestplugin.html#JavaTestPlugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pysysjava.javatestplugin.JavaTestPlugin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>This is a PySys test plugin for compiling, running and testing Java applications.</p>
+<p>This is a PySys test plugin that for compiling and running Java applications from a PySys testcase.</p>
 <p>You can access the methods of this class from any test using <code class="docutils literal notranslate"><span class="pre">self.java.XXX</span></code> if you add it to your project 
 configuration with an alias such as <code class="docutils literal notranslate"><span class="pre">java</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">test</span><span class="o">-</span><span class="n">plugin</span> <span class="n">classname</span><span class="o">=</span><span class="s2">&quot;pysysjava.javatestplugin.JavaTestPlugin&quot;</span> <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;java&quot;</span><span class="o">/&gt;</span>
@@ -185,22 +187,25 @@ configuration with an alias such as <code class="docutils literal notranslate"><
 <dl class="py attribute">
 <dt id="pysysjava.javatestplugin.JavaTestPlugin.defaultJVMArgs">
 <code class="sig-name descname">defaultJVMArgs</code><em class="property"> = '-Xmx512m -XX:+HeapDumpOnOutOfMemoryError'</em><a class="headerlink" href="#pysysjava.javatestplugin.JavaTestPlugin.defaultJVMArgs" title="Permalink to this definition">¶</a></dt>
-<dd><p>A space-delimited string of JVM arguments to use by default when running <code class="docutils literal notranslate"><span class="pre">java</span></code> processes.</p>
+<dd><p>A space-delimited string of JVM arguments to use by default when running <code class="docutils literal notranslate"><span class="pre">java</span></code> processes, unless overridden 
+by a per-test/dirconfig <code class="docutils literal notranslate"><span class="pre">java.jvmArgs</span></code> or a <code class="docutils literal notranslate"><span class="pre">jvmArgs=</span></code> argument.</p>
 <p>By default the maximum heap size is limited to 512MB, but you may wish to set a larger heap limit if you are 
 starting processes that require more memory - but be careful that the test machine has sufficient resources to 
 cope with multiple tests running concurrently without risking out of memory conditions.</p>
+<p>This is converted to a <code class="docutils literal notranslate"><span class="pre">list[str]</span></code> when the plugin is setup ready for use by the test. 
+If a key named <code class="docutils literal notranslate"><span class="pre">java.jvmArgs</span></code> exists in the test or directory descriptor’s <code class="docutils literal notranslate"><span class="pre">user-data</span></code> that value takes 
+precedence over the plugin property.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt id="pysysjava.javatestplugin.JavaTestPlugin.defaultClasspath">
 <code class="sig-name descname">defaultClasspath</code><em class="property"> = ''</em><a class="headerlink" href="#pysysjava.javatestplugin.JavaTestPlugin.defaultClasspath" title="Permalink to this definition">¶</a></dt>
-<dd><p>A default classpath that will be used for Java compilation and execution unless overridden.</p>
+<dd><p>A default classpath that will be used for Java compilation and execution, unless overridden by a per-test/dirconfig 
+classpath or a jvmArgs= argument.</p>
 <p>For details of how this plugin handles delimiters in the classpath string see <a class="reference internal" href="#pysysjava.javatestplugin.JavaTestPlugin.toClasspathList" title="pysysjava.javatestplugin.JavaTestPlugin.toClasspathList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toClasspathList()</span></code></a>.</p>
-<p>You can assign to self.defaultClasspath within a test to update the default that will be used for later 
-compilation or Java execution tasks, for example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">TODO</span> <span class="o">-</span> <span class="n">add</span> <span class="n">example</span>
-</pre></div>
-</div>
+<p>This is converted to a <code class="docutils literal notranslate"><span class="pre">list[str]</span></code> when the plugin is setup ready for use by the test. 
+If a key named <code class="docutils literal notranslate"><span class="pre">java.jvmArgs</span></code> exists in the test or directory descriptor’s <code class="docutils literal notranslate"><span class="pre">user-data</span></code> that value takes 
+precedence over the plugin property.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -209,7 +214,8 @@ compilation or Java execution tasks, for example:</p>
 <dd><p>Converts the specified classpath string to a list of classpath entries (or just returns the input if it’s 
 already a list). Glob expressions such as <code class="docutils literal notranslate"><span class="pre">*.jar</span></code> will be expanded if the parent directory exists and there 
 is at least one match.</p>
-<p>If None is specified, the <a class="reference internal" href="#pysysjava.javatestplugin.JavaTestPlugin.defaultClasspath" title="pysysjava.javatestplugin.JavaTestPlugin.defaultClasspath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">defaultClasspath</span></code></a> is used.</p>
+<p>If None is specified, the <a class="reference internal" href="#pysysjava.javatestplugin.JavaTestPlugin.defaultClasspath" title="pysysjava.javatestplugin.JavaTestPlugin.defaultClasspath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">defaultClasspath</span></code></a> is used (either from the test/dir descriptor’s <code class="docutils literal notranslate"><span class="pre">classpath</span></code> 
+user-data or the <code class="docutils literal notranslate"><span class="pre">defaultClasspath</span></code> plugin property).</p>
 <p>In this PySys plugin classpath strings can be delimited with the usual OS separator <code class="docutils literal notranslate"><span class="pre">os.pathsep</span></code> 
 (e.g. <code class="docutils literal notranslate"><span class="pre">:</span></code> or <code class="docutils literal notranslate"><span class="pre">;</span></code>), but to allow for platform-independence (given Windows uses <code class="docutils literal notranslate"><span class="pre">:</span></code> for drive letters), 
 if the string contains <code class="docutils literal notranslate"><span class="pre">;</span></code> or a newline separator those will be used for splitting instead. Any whitespace or empty 
@@ -383,7 +389,7 @@ prefix <code class="docutils literal notranslate"><span class="pre">\?\</span></
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../License.html" class="btn btn-neutral float-right" title="License" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="pysysjava.junittest.html" class="btn btn-neutral float-right" title="pysysjava.junittest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="pysysjava.html" class="btn btn-neutral float-left" title="API Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -395,7 +401,7 @@ prefix <code class="docutils literal notranslate"><span class="pre">\?\</span></
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-06
+        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-13
 
     </p>
   </div>

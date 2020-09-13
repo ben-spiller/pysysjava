@@ -1,0 +1,15 @@
+
+pysysjava.junitxml
+~~~~~~~~~~~~~~~~~~
+
+.. automodule:: pysysjava.junitxml
+
+.. currentmodule:: pysysjava.junitxml
+
+
+
+JUnitXMLParser
+==============
+
+.. autoclass:: JUnitXMLParser
+   :members:

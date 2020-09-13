@@ -1,0 +1,395 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pysysjava.junitxml &mdash; PySys Java plugins v0.1  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> PySys Java plugins v0.1
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../autodocgen/pysysjava.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../License.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ChangeLog.html">Change Log</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PySys Java plugins v0.1</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>pysysjava.junitxml</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pysysjava.junitxml</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pysys</span>
+<span class="kn">from</span> <span class="nn">pysys.constants</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">pysys.utils.fileutils</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">calendar</span>
+<span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ET</span> <span class="c1"># Python 3.3+ will automatically use the fast C version if available</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;pysys.java.junitxml&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="JUnitXMLParser"><a class="viewcode-back" href="../../autodocgen/pysysjava.junitxml.html#pysysjava.junitxml.JUnitXMLParser">[docs]</a><span class="k">class</span> <span class="nc">JUnitXMLParser</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot; A fast, minimal parser for Ant-style JUnit XML files.</span>
+<span class="sd">	</span>
+<span class="sd">	Note that there are a number of dialects of this file format with different handling of things like stdout </span>
+<span class="sd">	(per testsuite or per testcase) and timezone (UTC or local timezone) so check the details carefully if using </span>
+<span class="sd">	this for anything other than the JUnit 5 console engine. &quot;&quot;&quot;</span>
+	
+	<span class="n">outcomeDetailsExcludeLinesRegex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;^\t+(at (java[.]|sun[.]|org[.]junit|org.apache.tools.ant)|\.\.\. [0-9]+ more).*\n&#39;</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	A regular expression specifying lines that should be stripped out of the outcomeDetails stack traces. </span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	
+	<span class="n">isTimestampLocalTime</span> <span class="o">=</span> <span class="kc">None</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Set to True to force timestamp to be interpreted as local time (like JUnit5), </span>
+<span class="sd">	or False to force to interpret as UTC/GMT (like Ant). Default is to select based on test suite name. </span>
+<span class="sd">	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+		
+		<span class="c1"># This approach allows subclasses to extend if they want to, and is also very efficient</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">unmarshaller</span> <span class="o">=</span> <span class="p">{</span>
+			<span class="s1">&#39;testsuite&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_testsuite</span><span class="p">,</span>
+			<span class="s1">&#39;testcase&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_testcase</span><span class="p">,</span>
+			<span class="s1">&#39;system-out&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_systemOut</span><span class="p">,</span>
+			<span class="s1">&#39;system-err&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_systemErr</span><span class="p">,</span>
+			<span class="s1">&#39;failure&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outcome</span><span class="p">,</span>
+			<span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outcome</span><span class="p">,</span>
+			<span class="s1">&#39;skipped&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outcome</span><span class="p">,</span>
+		<span class="p">}</span>
+
+<div class="viewcode-block" id="JUnitXMLParser.parse"><a class="viewcode-back" href="../../autodocgen/pysysjava.junitxml.html#pysysjava.junitxml.JUnitXMLParser.parse">[docs]</a>	<span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Parses this file and returns a tuple of (testsuite: dict[str,obj], testcases: list[dict[str,obj]]) </span>
+<span class="sd">		representing the contents of this file. </span>
+<span class="sd">		</span>
+<span class="sd">		The testsuite dictionary contains keys:</span>
+<span class="sd">		</span>
+<span class="sd">			* ``tests: int`` - total number of tests executed (depending on the dialect of the file format this may or </span>
+<span class="sd">			  may not include skipped tests). </span>
+<span class="sd">			* ``durationSecs: float`` - The time elapsed while executing all tests.</span>
+<span class="sd">			* ``timestamp: float`` - The start time as a POSIX timestamp which can be passed to datetime.fromtimestamp(). </span>
+<span class="sd">			* ``stdout: str`` (optional) - Any text written to stdout by all testcases in the suite </span>
+<span class="sd">			  for dialects such as Ant which don&#39;t provide this per-testcase. (stripped of leading/trailing whitespace) </span>
+<span class="sd">			* ``stderr: str`` (optional) - Any text written to stderr by all testcases in the suite </span>
+<span class="sd">			  for dialects such as Ant which don&#39;t provide this per-testcase. (stripped of leading/trailing whitespace) </span>
+<span class="sd">			* other keys vary depending on the dialect</span>
+
+<span class="sd">		Each testcase dictionary contains keys:</span>
+<span class="sd">		</span>
+<span class="sd">			* ``classname: str`` - The qualified class name containing this testcase. May include $ if has a nested </span>
+<span class="sd">			  class. </span>
+<span class="sd">			* ``name: str`` - The name of the testcase, typically a method name possibly with a suffix e.g. ``foo()[2]``.</span>
+<span class="sd">			* ``durationSecs: float`` - The time taken to execute this testcase. 			</span>
+<span class="sd">			* ``stdout: str`` (optional)  - Any text written to stdout by the testcase (stripped of leading/trailing whitespace), </span>
+<span class="sd">			  for dialects such as JUnit5 console launcher that provide this per testcase.</span>
+<span class="sd">			* ``stderr: str`` (optional) - Any text written to stderr by the testcase (stripped of leading/trailing whitespace), </span>
+<span class="sd">			  for dialects such as JUnit5 console launcher that provide this per testcase</span>
+<span class="sd">			* ``outcome: str`` - passed/failure/error/skipped. </span>
+<span class="sd">			* ``outcomeType: str`` (optional) - Java class of the outcome type, if present. </span>
+<span class="sd">			* ``outcomeReason: str`` (except if test passed) - reason string or &#39;&#39; if not known. </span>
+<span class="sd">			* ``outcomeDetails: str`` (optional) - multi-line details string for the outcome, typically a stack trace. </span>
+<span class="sd">			  To avoid excessive verbosity lines involving org.junit.* or java.* packages are excluded. 		</span>
+<span class="sd">			* ``outcomeDetailsFull: str`` (optional) - multi-line details string for the outcome, without exclusions. 	</span>
+<span class="sd">			* ``comparisonExpected/comparisonActual: str`` (optional) - actual and expected comparison values from the outcomeReason, if known. 		&quot;&quot;&quot;</span>
+		
+		<span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Parsing JUnitXML: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+		
+		<span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">suite</span> <span class="o">=</span> <span class="p">{}</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">currenttest</span> <span class="o">=</span> <span class="p">{}</span>
+		<span class="n">unmarshaller</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unmarshaller</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">toLongPathSafe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">),</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fileptr</span><span class="p">:</span>
+				<span class="n">nodepath</span> <span class="o">=</span> <span class="p">[]</span>
+				<span class="k">for</span> <span class="n">action</span><span class="p">,</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">ET</span><span class="o">.</span><span class="n">iterparse</span><span class="p">(</span><span class="n">fileptr</span><span class="p">,</span> <span class="n">events</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">,</span><span class="s1">&#39;end&#39;</span><span class="p">]):</span>
+					<span class="k">if</span> <span class="n">action</span> <span class="o">==</span><span class="s1">&#39;start&#39;</span><span class="p">:</span>
+						<span class="n">nodepath</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elem</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
+					<span class="k">else</span><span class="p">:</span>
+						<span class="n">u</span> <span class="o">=</span> <span class="n">unmarshaller</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">elem</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
+						<span class="k">if</span> <span class="n">u</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="n">u</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="n">nodepath</span><span class="p">)</span>
+						<span class="n">nodepath</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+			
+			<span class="c1"># This check is to make sure we&#39;ve not missed anything while parsing; </span>
+			<span class="c1"># note that Ant seems to set tests to the total excluding skipped ones whereas JUnit5 launcher includes </span>
+			<span class="c1"># skipped ones; hence not doing an exact check here</span>
+			<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">suite</span><span class="p">[</span><span class="s1">&#39;tests&#39;</span><span class="p">],</span> <span class="s1">&#39;Suite contains </span><span class="si">%d</span><span class="s1"> tests but found </span><span class="si">%d</span><span class="s1"> testcase elements&#39;</span><span class="o">%</span><span class="p">(</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">suite</span><span class="p">[</span><span class="s1">&#39;tests&#39;</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">))</span>
+		<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Failed to parse JUnit XML </span><span class="si">%s</span><span class="s1">: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">ex</span><span class="p">))</span>
+		<span class="c1"># The order seems to be random, so sort it</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;classname&#39;</span><span class="p">),</span> <span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)))</span>
+		
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+			<span class="k">if</span> <span class="s1">&#39;uniqueId&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">suite</span><span class="p">:</span>
+				<span class="c1"># e.g. if you have JUnit 5 but not JUnit 4 (or vice-versa) you&#39;ll get an empty file; the above is a </span>
+				<span class="c1"># a way to detect that the suite is from the JUnit5 launcher rather than an actual test class</span>
+				<span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Ignoring suite &quot;</span><span class="si">%s</span><span class="s1">&quot; with no results generated by the JUnit5 launcher&#39;</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">suite</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;skipped&#39;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Test suite &quot;</span><span class="si">%s</span><span class="s1">&quot; contains no results, but skipped=0: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">suite</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+				<span class="c1"># Create a fake result so that it shows up. NB: JUnit 5 always generates a result so this is just for JUnit 4 and/or Ant</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+					<span class="s2">&quot;classname&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">suite</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+					<span class="s2">&quot;durationSecs&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+					<span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;class&quot;</span><span class="p">,</span>
+					<span class="s2">&quot;outcome&quot;</span><span class="p">:</span> <span class="s2">&quot;skipped&quot;</span><span class="p">,</span>
+					<span class="s2">&quot;outcomeReason&quot;</span><span class="p">:</span> <span class="s2">&quot;Test suite is skipped&quot;</span><span class="p">,</span>
+				<span class="p">})</span>
+					
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">suite</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span></div>
+
+	<span class="k">def</span> <span class="nf">_testsuite</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elem</span><span class="p">,</span> <span class="n">nodepath</span><span class="p">):</span>
+		<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">nodepath</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Only expecting testsuite elements as the root node, but got: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">nodepath</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">suite</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">elem</span><span class="o">.</span><span class="n">attrib</span><span class="p">)</span>
+
+		<span class="c1"># overwrite some with more specific values</span>
+		<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;tests&#39;</span><span class="p">,</span> <span class="s1">&#39;failures&#39;</span><span class="p">,</span> <span class="s1">&#39;errors&#39;</span><span class="p">,</span> <span class="s1">&#39;skipped&#39;</span><span class="p">,</span> <span class="s1">&#39;aborted&#39;</span><span class="p">]:</span> <span class="c1"># errors vs aborted are used in different dialects</span>
+			<span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">suite</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">suite</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">elem</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">suite</span><span class="p">[</span><span class="s1">&#39;durationSecs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">suite</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">))</span>
+		
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isTimestampLocalTime</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">isTimestampLocalTime</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">suite</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;JUnit Jupiter&#39;</span><span class="p">,</span> <span class="s1">&#39;JUnit Vintage&#39;</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">suite</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">mktime</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isTimestampLocalTime</span> <span class="k">else</span> <span class="n">calendar</span><span class="o">.</span><span class="n">timegm</span><span class="p">)(</span><span class="n">time</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">elem</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">],</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M:%S&#39;</span><span class="p">))</span>
+
+	<span class="k">def</span> <span class="nf">_testcase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elem</span><span class="p">,</span> <span class="n">nodepath</span><span class="p">):</span>
+		<span class="n">currenttest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">currenttest</span>
+		
+		<span class="n">currenttest</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">elem</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span>
+		<span class="n">currenttest</span><span class="p">[</span><span class="s1">&#39;classname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">elem</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;classname&#39;</span><span class="p">)</span>
+		<span class="n">currenttest</span><span class="p">[</span><span class="s1">&#39;durationSecs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elem</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;0&#39;</span><span class="p">)</span>
+		
+		<span class="c1"># Now we know the classname try to find the line in the stack trace from that class</span>
+		<span class="n">classnameUnqualified</span> <span class="o">=</span> <span class="p">(</span><span class="n">currenttest</span><span class="p">[</span><span class="s1">&#39;classname&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;$&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">currenttest</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;outcomeDetails&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
+			<span class="n">m</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[ \t]+at .*[(]</span><span class="si">%s</span><span class="s1">[^:]*:([0-9]+)&#39;</span><span class="o">%</span><span class="n">classnameUnqualified</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">m</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="n">currenttest</span><span class="p">[</span><span class="s1">&#39;testFileLine&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+				<span class="k">break</span>
+		
+		<span class="n">currenttest</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;outcome&#39;</span><span class="p">,</span> <span class="s1">&#39;passed&#39;</span><span class="p">)</span>
+		
+		<span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">currenttest</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">currenttest</span> <span class="o">=</span> <span class="p">{}</span>
+
+	<span class="k">def</span> <span class="nf">_systemErr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elem</span><span class="p">,</span> <span class="n">nodepath</span><span class="p">):</span>
+		<span class="n">text</span> <span class="o">=</span> <span class="n">elem</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span> <span class="k">return</span>
+		
+		<span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">suite</span> <span class="k">if</span> <span class="n">nodepath</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;testsuite&#39;</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">currenttest</span>
+		
+		<span class="k">if</span> <span class="s1">&#39;stderr&#39;</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span> <span class="n">text</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;stderr&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">+</span><span class="n">text</span>
+		<span class="n">item</span><span class="p">[</span><span class="s1">&#39;stderr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">text</span>
+
+	<span class="k">def</span> <span class="nf">_systemOut</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elem</span><span class="p">,</span> <span class="n">nodepath</span><span class="p">):</span>
+		<span class="n">text</span> <span class="o">=</span> <span class="n">elem</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span> <span class="k">return</span>
+
+		<span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">suite</span> <span class="k">if</span> <span class="n">nodepath</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;testsuite&#39;</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">currenttest</span>
+
+		<span class="c1"># instead of real system output it could contain special output from the JUnit 5 Jupiter engine</span>
+		<span class="n">m</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s1">&#39;unique-id: (.*)</span><span class="se">\n</span><span class="s1">display-name: (.+)&#39;</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">m</span><span class="p">:</span>
+			<span class="n">item</span><span class="p">[</span><span class="s1">&#39;uniqueId&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+			<span class="n">item</span><span class="p">[</span><span class="s1">&#39;displayName&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+			<span class="k">return</span>
+
+
+		<span class="k">if</span> <span class="s1">&#39;stdout&#39;</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span> <span class="n">text</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;stdout&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">+</span><span class="n">text</span>
+		<span class="n">item</span><span class="p">[</span><span class="s1">&#39;stdout&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">text</span>
+
+	<span class="k">def</span> <span class="nf">_outcome</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elem</span><span class="p">,</span> <span class="n">nodepath</span><span class="p">):</span>
+		<span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">currenttest</span>
+		<span class="n">t</span><span class="p">[</span><span class="s1">&#39;outcome&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">elem</span><span class="o">.</span><span class="n">tag</span>
+		<span class="k">if</span> <span class="n">elem</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">):</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;outcomeType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">elem</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span>
+
+		<span class="k">if</span> <span class="n">elem</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">):</span> 
+			<span class="n">t</span><span class="p">[</span><span class="s1">&#39;outcomeReason&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">elem</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;message&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+			
+			<span class="n">m</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s1">&#39;expected: ?&lt;(.*)&gt; but was: ?&lt;(.*)&gt;$&#39;</span><span class="p">,</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;outcomeReason&#39;</span><span class="p">])</span>
+			<span class="k">if</span> <span class="n">m</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">!=</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+				<span class="n">t</span><span class="p">[</span><span class="s1">&#39;comparisonExpected&#39;</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;comparisonActual&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+			
+			<span class="k">if</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;outcome&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;error&#39;</span> <span class="ow">and</span> <span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;outcomeType&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;outcomeType&#39;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;outcomeReason&#39;</span><span class="p">]:</span>
+				<span class="n">t</span><span class="p">[</span><span class="s1">&#39;outcomeReason&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;outcomeType&#39;</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;outcomeReason&#39;</span><span class="p">])</span>
+			
+			<span class="k">if</span> <span class="n">elem</span><span class="o">.</span><span class="n">text</span><span class="p">:</span>
+				<span class="n">details</span> <span class="o">=</span> <span class="n">elem</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span>
+				<span class="k">if</span> <span class="n">details</span><span class="p">:</span>
+					<span class="n">t</span><span class="p">[</span><span class="s1">&#39;outcomeDetailsFull&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">details</span>
+					<span class="n">t</span><span class="p">[</span><span class="s1">&#39;outcomeDetails&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outcomeDetailsExcludeLinesRegex</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">details</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">t</span><span class="p">[</span><span class="s1">&#39;outcomeReason&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">elem</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span></div>
+		
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-13
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

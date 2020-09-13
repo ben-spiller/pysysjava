@@ -250,7 +250,7 @@
 
 <div class="viewcode-block" id="JavaTestPlugin"><a class="viewcode-back" href="../../autodocgen/pysysjava.javatestplugin.html#pysysjava.javatestplugin.JavaTestPlugin">[docs]</a><span class="k">class</span> <span class="nc">JavaTestPlugin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	This is a PySys test plugin for compiling, running and testing Java applications. </span>
+<span class="sd">	This is a PySys test plugin that for compiling and running Java applications from a PySys testcase. </span>
 <span class="sd">	</span>
 <span class="sd">	You can access the methods of this class from any test using ``self.java.XXX`` if you add it to your project </span>
 <span class="sd">	configuration with an alias such as ``java``::</span>
@@ -270,23 +270,28 @@
 	
 	<span class="n">defaultJVMArgs</span> <span class="o">=</span> <span class="s1">&#39;-Xmx512m -XX:+HeapDumpOnOutOfMemoryError&#39;</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	A space-delimited string of JVM arguments to use by default when running ``java`` processes. </span>
-<span class="sd">		</span>
+<span class="sd">	A space-delimited string of JVM arguments to use by default when running ``java`` processes, unless overridden </span>
+<span class="sd">	by a per-test/dirconfig ``java.jvmArgs`` or a ``jvmArgs=`` argument.  </span>
+<span class="sd">	</span>
 <span class="sd">	By default the maximum heap size is limited to 512MB, but you may wish to set a larger heap limit if you are </span>
 <span class="sd">	starting processes that require more memory - but be careful that the test machine has sufficient resources to </span>
 <span class="sd">	cope with multiple tests running concurrently without risking out of memory conditions. </span>
+<span class="sd">	</span>
+<span class="sd">	This is converted to a ``list[str]`` when the plugin is setup ready for use by the test. </span>
+<span class="sd">	If a key named ``java.jvmArgs`` exists in the test or directory descriptor&#39;s ``user-data`` that value takes </span>
+<span class="sd">	precedence over the plugin property. </span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="n">defaultClasspath</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	A default classpath that will be used for Java compilation and execution unless overridden. </span>
+<span class="sd">	A default classpath that will be used for Java compilation and execution, unless overridden by a per-test/dirconfig </span>
+<span class="sd">	classpath or a jvmArgs= argument. </span>
 <span class="sd">	</span>
 <span class="sd">	For details of how this plugin handles delimiters in the classpath string see `toClasspathList()`.</span>
-<span class="sd">	</span>
-<span class="sd">	You can assign to self.defaultClasspath within a test to update the default that will be used for later </span>
-<span class="sd">	compilation or Java execution tasks, for example::</span>
-<span class="sd">	</span>
-<span class="sd">		TODO - add example</span>
+
+<span class="sd">	This is converted to a ``list[str]`` when the plugin is setup ready for use by the test. </span>
+<span class="sd">	If a key named ``java.jvmArgs`` exists in the test or directory descriptor&#39;s ``user-data`` that value takes </span>
+<span class="sd">	precedence over the plugin property. </span>
 <span class="sd">	</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
@@ -298,6 +303,7 @@
 
 	<span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">testObj</span><span class="p">):</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">owner</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">testObj</span> <span class="o">=</span> <span class="n">testObj</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">project</span>
 		
 		<span class="c1"># This message isn&#39;t useful for debugging errors so suppress it</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">logFileContentsDefaultExcludes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;Picked up JAVA_TOOL_OPTIONS:&#39;</span><span class="p">)</span>
@@ -308,11 +314,18 @@
 		
 		<span class="n">exeSuffix</span> <span class="o">=</span> <span class="s1">&#39;.exe&#39;</span> <span class="k">if</span> <span class="n">IS_WINDOWS</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
 		
-		<span class="bp">self</span><span class="o">.</span><span class="n">javacExecutable</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">javaHome</span><span class="o">+</span><span class="s1">&#39;/bin/javac&#39;</span><span class="o">+</span><span class="n">exeSuffix</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">compilerExecutable</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">javaHome</span><span class="o">+</span><span class="s1">&#39;/bin/javac&#39;</span><span class="o">+</span><span class="n">exeSuffix</span><span class="p">)</span> <span class="c1"># TODO: make configurable</span>
 		<span class="sd">&quot;&quot;&quot;The full path of the javac compiler executable. &quot;&quot;&quot;</span>
 
 		<span class="bp">self</span><span class="o">.</span><span class="n">javaExecutable</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">javaHome</span><span class="o">+</span><span class="s1">&#39;/bin/java&#39;</span><span class="o">+</span><span class="n">exeSuffix</span><span class="p">)</span>
 		<span class="sd">&quot;&quot;&quot;The full path of the java console executable. &quot;&quot;&quot;</span>
+		
+		<span class="c1"># Assume both of these methods make a copy of the static value (which makes it safe for tests to mutate the </span>
+		<span class="c1"># lists)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">defaultClasspath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">toClasspathList</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">expandProperties</span><span class="p">(</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">testObj</span><span class="o">.</span><span class="n">descriptor</span><span class="o">.</span><span class="n">userData</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;java.classpath&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaultClasspath</span><span class="p">)))</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">defaultJVMArgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_splitShellArgs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">expandProperties</span><span class="p">(</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">testObj</span><span class="o">.</span><span class="n">descriptor</span><span class="o">.</span><span class="n">userData</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;java.jvmArgs&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaultJVMArgs</span><span class="p">)))</span>
 	
 <div class="viewcode-block" id="JavaTestPlugin.toClasspathList"><a class="viewcode-back" href="../../autodocgen/pysysjava.javatestplugin.html#pysysjava.javatestplugin.JavaTestPlugin.toClasspathList">[docs]</a>	<span class="k">def</span> <span class="nf">toClasspathList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">classpath</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
@@ -320,7 +333,8 @@
 <span class="sd">		already a list). Glob expressions such as ``*.jar`` will be expanded if the parent directory exists and there </span>
 <span class="sd">		is at least one match. </span>
 <span class="sd">		</span>
-<span class="sd">		If None is specified, the `defaultClasspath` is used. </span>
+<span class="sd">		If None is specified, the `defaultClasspath` is used (either from the test/dir descriptor&#39;s ``classpath`` </span>
+<span class="sd">		user-data or the ``defaultClasspath`` plugin property). </span>
 <span class="sd">		</span>
 <span class="sd">		In this PySys plugin classpath strings can be delimited with the usual OS separator ``os.pathsep`` </span>
 <span class="sd">		(e.g. ``:`` or ``;``), but to allow for platform-independence (given Windows uses ``:`` for drive letters), </span>
@@ -344,15 +358,15 @@
 <span class="sd">		True</span>
 <span class="sd">		</span>
 <span class="sd">		&quot;&quot;&quot;</span>
-		<span class="k">if</span> <span class="n">classpath</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">toClasspathList</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">defaultClasspath</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">classpath</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
+			<span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaultClasspath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">toClasspathList</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">defaultClasspath</span><span class="p">)</span> <span class="c1"># call it again in case user has messed with it</span>
 		
 		<span class="k">if</span> <span class="n">isstring</span><span class="p">(</span><span class="n">classpath</span><span class="p">):</span> <span class="c1"># assume it&#39;s already split unless it&#39;s a string</span>
-			<span class="k">if</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="ow">in</span> <span class="n">classpath</span><span class="p">:</span>
-				<span class="n">classpath</span> <span class="o">=</span> <span class="n">classpath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-			<span class="k">elif</span> <span class="s1">&#39;;&#39;</span> <span class="ow">in</span> <span class="n">classpath</span><span class="p">:</span>
-				<span class="n">classpath</span> <span class="o">=</span> <span class="n">classpath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span>
+			<span class="k">if</span> <span class="s1">&#39;;&#39;</span> <span class="ow">in</span> <span class="n">classpath</span><span class="p">:</span>
+				<span class="n">classpath</span> <span class="o">=</span> <span class="n">classpath</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="s1">&#39;;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span>
 			<span class="k">else</span><span class="p">:</span>
-				<span class="n">classpath</span> <span class="o">=</span> <span class="n">classpath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">pathsep</span><span class="p">)</span>
+				<span class="n">classpath</span> <span class="o">=</span> <span class="n">classpath</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">os</span><span class="o">.</span><span class="n">pathsep</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">pathsep</span><span class="p">)</span>
 			<span class="n">classpath</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">classpath</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">]</span>
 			
 		<span class="c1"># glob expansion</span>
@@ -365,13 +379,17 @@
 				<span class="k">continue</span>
 				
 			<span class="n">globbed</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">c</span><span class="p">))</span>
-			<span class="k">if</span> <span class="ow">not</span> <span class="n">globbed</span><span class="p">:</span> 
-				<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Classpath glob entry had no matches: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
-				<span class="n">expanded</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">globbed</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span> <span class="c1"># Fail in an obvious way in this case</span>
+				<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Classpath glob entry has no matches: &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
 			<span class="k">else</span><span class="p">:</span>
 				<span class="n">expanded</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">globbed</span><span class="p">)</span>
 		<span class="k">return</span> <span class="n">expanded</span></div>
 
+	<span class="nd">@staticmethod</span>
+	<span class="k">def</span> <span class="nf">_splitShellArgs</span><span class="p">(</span><span class="n">commandstring</span><span class="p">):</span>
+		<span class="c1"># need to escape windows \ else it gets removed; do this the same on all platforms for consistency)</span>
+		<span class="k">return</span> <span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">commandstring</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">u</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">,</span><span class="sa">u</span><span class="s1">&#39;</span><span class="se">\\\\</span><span class="s1">&#39;</span><span class="p">))</span>
+		
 <div class="viewcode-block" id="JavaTestPlugin.compile"><a class="viewcode-back" href="../../autodocgen/pysysjava.javatestplugin.html#pysysjava.javatestplugin.JavaTestPlugin.compile">[docs]</a>	<span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;javaclasses&#39;</span><span class="p">,</span> <span class="n">classpath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;Compile Java source files into classes. By default we compile Java files from the test&#39;s input directory to </span>
 <span class="sd">		``self.output/javaclasses``. </span>
@@ -389,7 +407,7 @@
 <span class="sd">			`pysys.basetest.BaseTest.startProcess`. </span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="c1"># need to escape windows \ else it gets removed; do this the same on all platforms for consistency)</span>
-		<span class="k">if</span> <span class="n">args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">args</span> <span class="o">=</span> <span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">defaultCompilerArgs</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">u</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">,</span><span class="sa">u</span><span class="s1">&#39;</span><span class="se">\\\\</span><span class="s1">&#39;</span><span class="p">))</span>
+		<span class="k">if</span> <span class="n">args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_splitShellArgs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">defaultCompilerArgs</span><span class="p">)</span>
 		<span class="k">if</span> <span class="nb">input</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="nb">input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">input</span>
 		
 		<span class="k">if</span> <span class="n">isstring</span><span class="p">(</span><span class="nb">input</span><span class="p">):</span> <span class="nb">input</span> <span class="o">=</span> <span class="p">[</span><span class="nb">input</span><span class="p">]</span>
@@ -405,9 +423,9 @@
 					<span class="k">if</span> <span class="n">entry</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span> <span class="ow">and</span> <span class="n">entry</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.java&#39;</span><span class="p">):</span>
 						<span class="n">inputfiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fromLongPathSafe</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">path</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">path</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">256</span> <span class="k">else</span> <span class="n">entry</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
 			<span class="k">else</span><span class="p">:</span> 
-				<span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;Input path does not exist: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">i</span>
+				<span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;Compilation input path does not exist: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">i</span>
 		<span class="k">assert</span> <span class="n">inputfiles</span><span class="p">,</span> <span class="s1">&#39;No .java files found to compile in </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="nb">input</span>		
-		<span class="n">displayName</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;displayName&#39;</span><span class="p">,</span> <span class="s1">&#39;javac&lt;</span><span class="si">%s</span><span class="s1"> -&gt; </span><span class="si">%s</span><span class="s1">&gt;&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="nb">input</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">output</span><span class="p">)))</span>
+		<span class="n">displayName</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;displayName&#39;</span><span class="p">,</span> <span class="s1">&#39;javac&lt;</span><span class="si">%s</span><span class="s1"> =&gt; </span><span class="si">%s</span><span class="s1">&gt;&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="nb">input</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">output</span><span class="p">)))</span>
 		
 		<span class="n">classpath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">toClasspathList</span><span class="p">(</span><span class="n">classpath</span><span class="p">)</span>
 
@@ -439,10 +457,10 @@
 			<span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
 				<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;&quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span><span class="o">%</span><span class="n">a</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">,</span><span class="s1">&#39;</span><span class="se">\\\\</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 		
-		<span class="n">process</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">startProcess</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">javacExecutable</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;@&#39;</span><span class="o">+</span><span class="n">argsFilename</span><span class="p">],</span> <span class="n">stdouterr</span><span class="o">=</span><span class="n">stdouterr</span><span class="p">,</span> <span class="n">displayName</span><span class="o">=</span><span class="n">displayName</span><span class="p">,</span> 
+		<span class="n">process</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">startProcess</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">compilerExecutable</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;@&#39;</span><span class="o">+</span><span class="n">argsFilename</span><span class="p">],</span> <span class="n">stdouterr</span><span class="o">=</span><span class="n">stdouterr</span><span class="p">,</span> <span class="n">displayName</span><span class="o">=</span><span class="n">displayName</span><span class="p">,</span> 
 			<span class="n">onError</span><span class="o">=</span><span class="k">lambda</span> <span class="n">process</span><span class="p">:</span> <span class="p">[</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">logFileContents</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="n">maxLines</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> 
-					<span class="n">logFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="n">line</span><span class="p">:</span>
+					<span class="n">logFunction</span><span class="o">=</span><span class="k">lambda</span> <span class="n">line</span><span class="p">:</span> <span class="c1"># colouring the main lines in red makes this a lot easier to read</span>
 						<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">u</span><span class="s1">&#39;  </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="n">pysys</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">logutils</span><span class="o">.</span><span class="n">BaseLogFormatter</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span>
 							<span class="n">LOG_ERROR</span> <span class="k">if</span> <span class="s1">&#39;: error:&#39;</span> <span class="ow">in</span> <span class="n">line</span> <span class="k">else</span> 
 							<span class="n">LOG_WARN</span> <span class="k">if</span> <span class="s1">&#39;: warning:&#39;</span> <span class="ow">in</span> <span class="n">line</span> <span class="k">else</span> 
@@ -496,7 +514,7 @@
 <span class="sd">		&quot;&quot;&quot;</span>
 		
 		<span class="k">if</span> <span class="n">jvmArgs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
-			<span class="n">jvmArgs</span> <span class="o">=</span> <span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">defaultJVMArgs</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">u</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">,</span><span class="sa">u</span><span class="s1">&#39;</span><span class="se">\\\\</span><span class="s1">&#39;</span><span class="p">))</span>
+			<span class="n">jvmArgs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">defaultJVMArgs</span><span class="p">)</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="n">jvmArgs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">jvmArgs</span><span class="p">)</span> <span class="c1"># copy it so we can mutate it below</span>
 		<span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">disableCoverage</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">disableCoverage</span><span class="p">:</span>
@@ -545,7 +563,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-06
+        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-13
 
     </p>
   </div>
