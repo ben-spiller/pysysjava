@@ -208,7 +208,7 @@ class JUnitTest(BaseTest):
 				self.addOutcome(SKIPPED, 'No tests were found (likely the result of the specified junitArgs)')
 			else:
 				# But otherwise, make it an error, as it's probably a mistake
-				self.addOutcome(BLOCKED, 'No tests were found (using the specified junitArgs)')
+				self.addOutcome(BLOCKED, 'No tests were found')
 		elif outcomeCounts[SKIPPED] == totalTestcases:
 			self.addOutcome(SKIPPED, 'All %d %s tests are skipped: %s'%(outcomeCounts[SKIPPED], self._testGenre, t.get('outcomeReason') or '<no reason>'))
 		else:

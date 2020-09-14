@@ -54,7 +54,7 @@ class PySysTest(pysys.basetest.BaseTest):
 
 		self.assertThatGrep('pysys-no-tests.out', 'Test final outcome: +(.+)', expected='BLOCKED')
 		self.assertThatGrep('pysys-no-tests.out', 'Test outcome reason: +(.+)', 
-			expected='No tests were found (using the specified junitArgs)')
+			expected='No tests were found')
 
 		self.assertThat('testcases == expected', testcases__eval="getTestcases('pysys-all-skipped')", 
 			expected=['myorg.mytest1.TestSuite1 shouldBeSkipped()', 'myorg.mytest2.TestSuite2 shouldBeSkipped2()'])
