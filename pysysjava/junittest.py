@@ -18,12 +18,14 @@ class JUnitTest(BaseTest):
 	
 		- ``junitConfigArgs`` should be used for configuration options (e.g. ``--config=``) that should always be 
 		  used for these tests, typically configured in the ``user-data`` of the test or directory descriptor. 
+		
 		- ``junitSelectionArgs`` should be used for ``--select-*`` arguments that identify which tests are covered by 
 		  this PySys tess, typically a descriptor's ``user-data``. 
 		  If not specified, selection arguments are automatically added for every package in the compiled classes 
 		  directory. 
-		-  ``junitArgs`` exists to provide a way to add one-off arguments runs on the PySys 
-		  command line (_in addition_ to the above arguments), e.g. ``pysys run "-XjunitArgs=-t MYTAG"``. 
+		
+		- ``junitArgs`` exists to provide a way to add one-off arguments runs on the PySys 
+		  command line (*in addition* to the above arguments), e.g. ``pysys run "-XjunitArgs=-t MYTAG"``. 
 	
 	Any classpath requirements or runtime JVM arguments should be customized using the properties described 
 	in `pysysjava.testplugin` such as ``javaClasspath`` and ``jvmArgs``. 
@@ -70,7 +72,7 @@ class JUnitTest(BaseTest):
 	Must be set as either a project property or in the as test/directory descriptor ``user-data``. 
 	
 	The value is a list of jars (delimited by semicolon, os.pathsep, or newline), making up the JUnit framework and the 
-	`junit-platform-console-standalone`` launcher jar. 
+	``junit-platform-console-standalone`` launcher jar. 
 	"""
 	
 	junitTimeoutSecs = float(TIMEOUTS['WaitForProcess'])
