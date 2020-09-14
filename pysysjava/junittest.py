@@ -14,21 +14,74 @@ class JUnitTest(BaseTest):
 	directory), then execution in `pysys.basetest.BaseTest.execute` and finally reads the resulting XML reports and 
 	adds outcomes for each testcase in `pysys.basetest.BaseTest.validate`. 
 	
-	The project or test descriptor property ``junitFrameworkClasspath`` must be set to a classpath containing the 
-	``junit-platform-console-standalone`` launcher and the framework itself. 
+	There are 3 options for customizing the arguments that will be passed to the JUnit console launcher:
+	
+		- ``junitConfigArgs`` should be used for configuration options (e.g. ``--config=``) that should always be 
+		  used for these tests, typically configured in the ``user-data`` of the test or directory descriptor. 
+		- ``junitSelectionArgs`` should be used for ``--select-*`` arguments that identify which tests are covered by 
+		  this PySys tess, typically a descriptor's ``user-data``. 
+		  If not specified, selection arguments are automatically added for every package in the compiled classes 
+		  directory. 
+		-  ``junitArgs`` exists to provide a way to add one-off arguments runs on the PySys 
+		  command line (_in addition_ to the above arguments), e.g. ``pysys run "-XjunitArgs=-t MYTAG"``. 
+	
+	Any classpath requirements or runtime JVM arguments should be customized using the properties described 
+	in `pysysjava.javatestplugin` such as ``javaClasspath`` and ``jvmArgs``. 
 	"""
 
+	# NB: although these variables will end up as list[str] we define the defaults as a simple string not [] because we 
+	# want to use shell or classpath string-splitting rather than the usual comma-separated splitting algorithm. 
+
+	junitConfigArgs = ''
+	"""
+	JUnit console launcher command line arguments needed to configure the JUnit tests, e.g. ``--config key=value``. 
+	
+	If needed, this should be set in the test descriptor ``user-data``. 
+	
+	See JUnit documentation for more information about the console launcher command line arguments. 
+	"""
+
+	junitSelectionArgs = ''
+	"""
+	JUnit console launcher command line arguments needed to select which JUnit tests are part of this PySys test, 
+	e.g. ``--select-package=myorg.myserver``. 
+	
+	If needed, this should be set in the test descriptor ``user-data``. If not specified, selection arguments are 
+	automatically added for every package in the compiled classes directory. 
+	
+	See JUnit documentation for more information about the console launcher command line arguments. 
+	"""
+	
 	junitArgs = ''
 	"""
-	Extra command line arguments to pass to the junit launcher (see JUnit documentation). 
-	This can be set on the command line, e.g. ``-XjunitArgs=a b "--config=foo=bar baz" c d e"``, 
-	or more realistically: ``-XjunitArgs=-tMY-TAG`` (to run just the testcases with the specified JUnit tag).
+	Extra JUnit console launcher command line arguments, which will be used in addition to any `junitConfigArgs` 
+	and `junitSelectionArgs`.
 	
-	The -XjunitArgs are in addition to any argument specified in the ``userData`` of the test/directory descriptor key 
-	named ``junitArgs``.
+	This is usually not set in a test descriptor ``user-data`` but instead on the PySys command line with ``-X``.
+	
+	For example: ``pysys run -XjunitArgs=a b "--config=foo=bar baz" c d e"``, or more realistically: 
+	``-XjunitArgs=-tMY-TAG`` (to run just the testcases with the specified JUnit tag).
+
+	See JUnit documentation for more information about the console launcher command line arguments. 
 	"""
 
+	junitFrameworkClasspath = ''
+	"""
+	Must be set as either a project property or in the as test/directory descriptor ``user-data``. 
+	
+	The value is a list of jars (delimited by semicolon, os.pathsep, or newline), making up the JUnit framework and the 
+	`junit-platform-console-standalone`` launcher jar. 
+	"""
+	
+	junitTimeoutSecs = TIMEOUTS['WaitForProcess']
+	"""
+	The time allowed in total for execution of all JUnit tests. 
+	"""
+
+	# Properties that could be overridden by a subclass if needed
 	_testGenre = 'JUnit'
+	
+	javaclassesDir = 'javaclasses'
 	
 	def setup(self):
 		super(JUnitTest, self).setup()
@@ -36,45 +89,64 @@ class JUnitTest(BaseTest):
 		assert self.java, 'This test class requires the JavaTestPlugin test-plugin to be configured with alias=java'
 		
 		self.junitFrameworkClasspath = self.java.toClasspathList(
-			self.project.expandProperties(self.descriptor.userData.get('junitFrameworkClasspath','')) or self.project.properties.get('junitFrameworkClasspath'))
+			self.junitFrameworkClasspath or self.project.getProperty('junitFrameworkClasspath', ''))
 		if not self.junitFrameworkClasspath or not os.path.exists(self.junitFrameworkClasspath[0]):
-			raise Exception('Please set the junitFrameworkClasspath project or descriptor property must contain the JUnit framework; cannot find it in: %s', self.junitFrameworkClasspath[0])
+			raise Exception('The junitFrameworkClasspath project (or descriptor) property must be set to a valid list of jars containing the JUnit framework and launcher: %s'%self.junitFrameworkClasspath)
 		
 		# TODO: only compile if no test has already compiled them
 		self.compileTestClasses()
 	
 	def compileTestClasses(self):
-		self.java.compile(input=self.input, classpath=self.java.defaultClasspath+self.junitFrameworkClasspath)
+		self.java.compile(input=self.input, classpath=self.java.defaultClasspath+self.junitFrameworkClasspath, output=self.javaclassesDir)
 	
 	def execute(self):
 		
-		testClasses = self.output+'/javaclasses'
+		testClasses = os.path.join(self.output, self.javaclassesDir)
 		if not os.listdir(testClasses):
 			raise Exception('No classes were found after compiling "%s"'%self.input)
 		classpath = self.java.toClasspathList(self.java.defaultClasspath)+[testClasses]
 		self.log.debug('Executing JUnit tests with classpath: \n%s', '\n'.join("     cp #%-2d    : %s%s"%(
 			i+1, pathelement, '' if os.path.exists(pathelement) else ' (does not exist!)') for i, pathelement in enumerate(classpath)))
 		
+		# NB: any items in the descriptor's user-data get automatically assigned as instance variables (unless 
+		# overridden with a -X option).
+		
 		argOverrides = self.java._splitShellArgs(self.junitArgs)
 		args = [
 			'--config', 'junit.platform.output.capture.stdout=true',
 			'--config', 'junit.platform.output.capture.stderr=true',
-		]	\
-			+self.java._splitShellArgs(self.project.expandProperties(self.descriptor.userData.get('junitArgs','')))\
-			+argOverrides
-		if argOverrides:
-			self.log.info('JUnit args: \n%s', '\n'.join("    arg #%-2d    : %s"%(
-				i+1, a) for i, a in enumerate(args)))
+		]
+		args.extend(self.java._splitShellArgs(self.junitConfigArgs))
+		
+		selectionArgs = self.java._splitShellArgs(self.junitSelectionArgs)
+		if selectionArgs: # allow overriding in the descriptor
+			args.extend(selectionArgs)
+		else:
+			# We want to run all the test classes under this directory; the -d option doesn't seem to work so use the 
+			# package option to achieve the same thing. This should be more efficient than scanning the entire 
+			# classpath especially if there are a lot of dependencies.
+			packages = []
+			with os.scandir(testClasses) as it:
+				for entry in it:
+					if entry.is_dir():
+						packages.append(entry.name)
+			if packages: 
+				for p in packages: args.extend(['-p', p])
+			else:
+				# Fall back to classpath scan (e.g. maybe all the classes are in the default package)
+				args.append('--scan-classpath')
+		
+		customArgs = self.java._splitShellArgs(self.junitArgs)
+		if customArgs:
+			args.extend(customArgs)
+			self.log.info('Running with additional JUnit args: \n%s', '\n'.join("    arg #%-2d    : %s"%(
+				i+1, a) for i, a in enumerate(customArgs)))
 		
 		args = ['--reports-dir', self.output+'/junit-reports', 
 			'--disable-ansi-colors',
 			'--classpath=%s'%os.pathsep.join(classpath),
 			]+args
 			
-		# We want to run all the test classes under this directory; the -d option doesn't seem to work so use the 
-		# package option to achieve the same thing. 
-		for d in os.listdir(testClasses):
-			args.extend(['-p', d])
 		
 		launcher = [cp for cp in self.junitFrameworkClasspath if 'junit-platform-console-standalone' in os.path.basename(cp)]
 		if len(launcher) != 1:
@@ -82,8 +154,9 @@ class JUnitTest(BaseTest):
 		self.java.startJava(launcher[0], 
 			args, stdouterr='junit', expectedExitStatus=' in [0, 1]', 
 			onError=lambda process: [self.logFileContents(process.stderr), self.getExprFromFile(process.stderr, '.+')][-1],
-			timeout=float(self.project.expandProperties(self.descriptor.userData.get('junitTimeoutSecs')) or TIMEOUTS['WaitForProcess'])) # TODO: document timeout configuration parameter
-		# NB: this does not give an error if no tests were selected; we rely on validation for that
+			timeout=self.junitTimeoutSecs) 
+			
+		# NB: the above does not give an error if no tests were selected; we rely on validation for that
 
 	def validate(self):
 		outcomeCounts = {

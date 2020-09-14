@@ -109,7 +109,9 @@ class JavaTestPlugin(object):
 	
 		<test-plugin classname="pysysjava.javatestplugin.JavaTestPlugin" alias="java"/>
 	
-	This plugin assumes the existence of a project property named javaHome that contains the path to the JDK. 
+	This plugin assumes the existence of a project property named ``javaHome`` that contains the path to the JDK, 
+	with a ``bin/`` subdirectory containing executables such as ``java`` and ``javac``. 
+	
 	"""
 
 	# Class (static) variables for default plugin property values:
@@ -123,26 +125,26 @@ class JavaTestPlugin(object):
 	defaultJVMArgs = '-Xmx512m -XX:+HeapDumpOnOutOfMemoryError'
 	"""
 	A space-delimited string of JVM arguments to use by default when running ``java`` processes, unless overridden 
-	by a per-test/dirconfig ``java.jvmArgs`` or a ``jvmArgs=`` argument.  
+	by a per-test/dirconfig ``jvmArgs`` or a ``jvmArgs=`` keyword argument.  
 	
 	By default the maximum heap size is limited to 512MB, but you may wish to set a larger heap limit if you are 
 	starting processes that require more memory - but be careful that the test machine has sufficient resources to 
 	cope with multiple tests running concurrently without risking out of memory conditions. 
 	
 	This is converted to a ``list[str]`` when the plugin is setup ready for use by the test. 
-	If a key named ``java.jvmArgs`` exists in the test or directory descriptor's ``user-data`` that value takes 
+	If a key named ``jvmArgs`` exists in the test or directory descriptor's ``user-data`` that value takes 
 	precedence over the plugin property. 
 	"""
 
 	defaultClasspath = ''
 	"""
 	A default classpath that will be used for Java compilation and execution, unless overridden by a per-test/dirconfig 
-	classpath or a jvmArgs= argument. 
+	``javaClasspath`` user-data or a ``classpath=`` keyword argument. 
 	
 	For details of how this plugin handles delimiters in the classpath string see `toClasspathList()`.
 
 	This is converted to a ``list[str]`` when the plugin is setup ready for use by the test. 
-	If a key named ``java.jvmArgs`` exists in the test or directory descriptor's ``user-data`` that value takes 
+	If a key named ``javaClasspath`` exists in the test or directory descriptor's ``user-data`` that value takes 
 	precedence over the plugin property. 
 	
 	"""
@@ -162,7 +164,7 @@ class JavaTestPlugin(object):
 		
 		self.log = log
 		self.javaHome = self.owner.project.javaHome
-		assert os.path.isdir(self.javaHome), 'Missing javaHome location "%s"'%self.javaHome
+		assert os.path.isdir(self.javaHome+'/bin'), 'Cannot find javaHome bin directory: "%s"'%self.javaHome+os.sep+'bin'
 		
 		exeSuffix = '.exe' if IS_WINDOWS else ''
 		
@@ -175,9 +177,9 @@ class JavaTestPlugin(object):
 		# Assume both of these methods make a copy of the static value (which makes it safe for tests to mutate the 
 		# lists)
 		self.defaultClasspath = self.toClasspathList(self.project.expandProperties(
-			self.testObj.descriptor.userData.get('java.classpath', self.defaultClasspath)))
+			self.testObj.descriptor.userData.get('javaClasspath', self.defaultClasspath)))
 		self.defaultJVMArgs = self._splitShellArgs(self.project.expandProperties(
-			self.testObj.descriptor.userData.get('java.jvmArgs', self.defaultJVMArgs)))
+			self.testObj.descriptor.userData.get('jvmArgs', self.defaultJVMArgs)))
 	
 	def toClasspathList(self, classpath):
 		"""
@@ -361,7 +363,8 @@ class JavaTestPlugin(object):
 			adding the ``disableCoverage`` group to the ``pysystest.xml``.
 		
 		:param kwargs: Additional keyword arguments such as ``stdouterr=``, ``timeout=``, ``onError=`` and 
-			``background=`` will be passed to `pysys.basetest.BaseTest.startProcess`. 
+			``background=`` will be passed to `pysys.basetest.BaseTest.startProcess`. It is strongly recommended to 
+			always include at ``stdouterr=`` since otherwise any error messages from the process will not be captured. 
 		
 		"""
 		

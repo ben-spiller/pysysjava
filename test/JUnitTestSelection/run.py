@@ -29,8 +29,9 @@ class PySysTest(pysys.basetest.BaseTest):
 			runPySys(['run', '-XjunitArgs=-exclude-tag="my-tag1"'], stdouterr='pysys-excludetag1'),
 			runPySys(['run', '-XjunitArgs=-t my-tag-disabled'], stdouterr='pysys-all-skipped'),
 			runPySys(['run', '-XjunitArgs=-t nonexistent-tag'], stdouterr='pysys-include-nonexistent-tag'),
-			runPySys(['run', '-XjunitArgs=--select-method=myorg.mytest1.TestSuite1#shouldPass()'], stdouterr='pysys-select-method1'),
 			runPySys(['run', '-XjunitArgs=-invalidargument'], stdouterr='pysys-invalid-arg', expectedExitStatus='!= 0'),
+			runPySys(['run', '-XjunitSelectionArgs=--select-class=myorg.mytest1.TestSuite1'], stdouterr='pysys-select-class'),
+			runPySys(['run', '-XjunitSelectionArgs=--select-method=myorg.mytest1.TestSuite1#shouldPass()'], stdouterr='pysys-select-method'),
 			runPySys(['run'], stdouterr='pysys-no-tests', workingDir=self.output+'/no-junit-tests', expectedExitStatus='!= 0'),
 		])
 
@@ -61,7 +62,11 @@ class PySysTest(pysys.basetest.BaseTest):
 		self.assertThatGrep('pysys-all-skipped.out', 'Test outcome reason: +(.+)', 
 			expected='All 2 JUnit tests are skipped: Reason test is disabled goes here')
 
-		# since select is additive, this will just include everything
-		self.assertThat('testcases == expected', testcases__eval="getTestcases('pysys-select-method1')", 
-			expected=['myorg.mytest1.TestSuite1 shouldBeSkipped()', 'myorg.mytest1.TestSuite1 shouldPass()', 
-				'myorg.mytest2.TestSuite2 shouldBeSkipped2()', 'myorg.mytest2.TestSuite2 shouldPass2()'])
+		self.assertThat('testcases == expected', testcases__eval="getTestcases('pysys-excludetag1')", 
+			expected=['myorg.mytest2.TestSuite2 shouldBeSkipped2()', 'myorg.mytest2.TestSuite2 shouldPass2()'])
+
+		# select is NOT additive (unlike junitArgs) so this replaces the default selection behaviour
+		self.assertThat('testcases == expected', testcases__eval="getTestcases('pysys-select-class')", 
+			expected=['myorg.mytest1.TestSuite1 shouldBeSkipped()', 'myorg.mytest1.TestSuite1 shouldPass()'])
+		self.assertThat('testcases == expected', testcases__eval="getTestcases('pysys-select-method')", 
+			expected=['myorg.mytest1.TestSuite1 shouldPass()'])
