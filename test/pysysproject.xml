@@ -34,7 +34,7 @@
 	<!-- Custom test framework plugins -->
 	<pythonpath value=".." />
 	<pythonpath value="./pysys-extensions" />
-	<test-plugin classname="pysysjava.javatestplugin.JavaTestPlugin" alias="java"/>
+	<test-plugin classname="pysysjava.testplugin.JavaTestPlugin" alias="java"/>
 	<!--
 	<runner-plugin classname="myorg.myrunnerplugin.MyServerRunnerPlugin"/>-->
 	

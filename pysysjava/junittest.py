@@ -26,7 +26,7 @@ class JUnitTest(BaseTest):
 		  command line (_in addition_ to the above arguments), e.g. ``pysys run "-XjunitArgs=-t MYTAG"``. 
 	
 	Any classpath requirements or runtime JVM arguments should be customized using the properties described 
-	in `pysysjava.javatestplugin` such as ``javaClasspath`` and ``jvmArgs``. 
+	in `pysysjava.testplugin` such as ``javaClasspath`` and ``jvmArgs``. 
 	"""
 
 	# NB: although these variables will end up as list[str] we define the defaults as a simple string not [] because we 
