@@ -73,7 +73,7 @@ class JUnitTest(BaseTest):
 	`junit-platform-console-standalone`` launcher jar. 
 	"""
 	
-	junitTimeoutSecs = TIMEOUTS['WaitForProcess']
+	junitTimeoutSecs = float(TIMEOUTS['WaitForProcess'])
 	"""
 	The time allowed in total for execution of all JUnit tests. 
 	"""
@@ -119,22 +119,21 @@ class JUnitTest(BaseTest):
 		args.extend(self.java._splitShellArgs(self.junitConfigArgs))
 		
 		selectionArgs = self.java._splitShellArgs(self.junitSelectionArgs)
-		if selectionArgs: # allow overriding in the descriptor
-			args.extend(selectionArgs)
-		else:
+		if len(selectionArgs)==0: # If not overridden in the descriptor, use default of "everything"
 			# We want to run all the test classes under this directory; the -d option doesn't seem to work so use the 
 			# package option to achieve the same thing. This should be more efficient than scanning the entire 
 			# classpath especially if there are a lot of dependencies.
-			packages = []
 			with os.scandir(testClasses) as it:
 				for entry in it:
 					if entry.is_dir():
-						packages.append(entry.name)
-			if packages: 
-				for p in packages: args.extend(['-p', p])
-			else:
+						selectionArgs.append('-p')
+						selectionArgs.append(entry.name)
+			
+			if len(selectionArgs)==0: 
 				# Fall back to classpath scan (e.g. maybe all the classes are in the default package)
-				args.append('--scan-classpath')
+				selectionArgs.append('--scan-classpath')
+				
+		args.extend(selectionArgs)
 		
 		customArgs = self.java._splitShellArgs(self.junitArgs)
 		if customArgs:
@@ -154,6 +153,7 @@ class JUnitTest(BaseTest):
 		self.java.startJava(launcher[0], 
 			args, stdouterr='junit', expectedExitStatus=' in [0, 1]', 
 			onError=lambda process: [self.logFileContents(process.stderr), self.getExprFromFile(process.stderr, '.+')][-1],
+			displayName='JUnit %s'%' '.join(a for a in selectionArgs if a not in ['-p', '-c']),
 			timeout=self.junitTimeoutSecs) 
 			
 		# NB: the above does not give an error if no tests were selected; we rely on validation for that
