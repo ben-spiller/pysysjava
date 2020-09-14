@@ -162,21 +162,76 @@
 <span class="sd">	directory), then execution in `pysys.basetest.BaseTest.execute` and finally reads the resulting XML reports and </span>
 <span class="sd">	adds outcomes for each testcase in `pysys.basetest.BaseTest.validate`. </span>
 <span class="sd">	</span>
-<span class="sd">	The project or test descriptor property ``junitFrameworkClasspath`` must be set to a classpath containing the </span>
-<span class="sd">	``junit-platform-console-standalone`` launcher and the framework itself. </span>
+<span class="sd">	There are 3 options for customizing the arguments that will be passed to the JUnit console launcher:</span>
+<span class="sd">	</span>
+<span class="sd">		- ``junitConfigArgs`` should be used for configuration options (e.g. ``--config=``) that should always be </span>
+<span class="sd">		  used for these tests, typically configured in the ``user-data`` of the test or directory descriptor. </span>
+<span class="sd">		</span>
+<span class="sd">		- ``junitSelectionArgs`` should be used for ``--select-*`` arguments that identify which tests are covered by </span>
+<span class="sd">		  this PySys tess, typically a descriptor&#39;s ``user-data``. </span>
+<span class="sd">		  If not specified, selection arguments are automatically added for every package in the compiled classes </span>
+<span class="sd">		  directory. </span>
+<span class="sd">		</span>
+<span class="sd">		- ``junitArgs`` exists to provide a way to add one-off arguments runs on the PySys </span>
+<span class="sd">		  command line (*in addition* to the above arguments), e.g. ``pysys run &quot;-XjunitArgs=-t MYTAG&quot;``. </span>
+<span class="sd">	</span>
+<span class="sd">	Any classpath requirements or runtime JVM arguments should be customized using the properties described </span>
+<span class="sd">	in `pysysjava.testplugin` such as ``javaClasspath`` and ``jvmArgs``. </span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
+	<span class="c1"># NB: although these variables will end up as list[str] we define the defaults as a simple string not [] because we </span>
+	<span class="c1"># want to use shell or classpath string-splitting rather than the usual comma-separated splitting algorithm. </span>
+
+	<span class="n">junitConfigArgs</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	JUnit console launcher command line arguments needed to configure the JUnit tests, e.g. ``--config key=value``. </span>
+<span class="sd">	</span>
+<span class="sd">	If needed, this should be set in the test descriptor ``user-data``. </span>
+<span class="sd">	</span>
+<span class="sd">	See JUnit documentation for more information about the console launcher command line arguments. </span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">junitSelectionArgs</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	JUnit console launcher command line arguments needed to select which JUnit tests are part of this PySys test, </span>
+<span class="sd">	e.g. ``--select-package=myorg.myserver``. </span>
+<span class="sd">	</span>
+<span class="sd">	If needed, this should be set in the test descriptor ``user-data``. If not specified, selection arguments are </span>
+<span class="sd">	automatically added for every package in the compiled classes directory. </span>
+<span class="sd">	</span>
+<span class="sd">	See JUnit documentation for more information about the console launcher command line arguments. </span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	
 	<span class="n">junitArgs</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Extra command line arguments to pass to the junit launcher (see JUnit documentation). </span>
-<span class="sd">	This can be set on the command line, e.g. ``-XjunitArgs=a b &quot;--config=foo=bar baz&quot; c d e&quot;``, </span>
-<span class="sd">	or more realistically: ``-XjunitArgs=-tMY-TAG`` (to run just the testcases with the specified JUnit tag).</span>
+<span class="sd">	Extra JUnit console launcher command line arguments, which will be used in addition to any `junitConfigArgs` </span>
+<span class="sd">	and `junitSelectionArgs`.</span>
 <span class="sd">	</span>
-<span class="sd">	The -XjunitArgs are in addition to any argument specified in the ``userData`` of the test/directory descriptor key </span>
-<span class="sd">	named ``junitArgs``.</span>
+<span class="sd">	This is usually not set in a test descriptor ``user-data`` but instead on the PySys command line with ``-X``.</span>
+<span class="sd">	</span>
+<span class="sd">	For example: ``pysys run -XjunitArgs=a b &quot;--config=foo=bar baz&quot; c d e&quot;``, or more realistically: </span>
+<span class="sd">	``-XjunitArgs=-tMY-TAG`` (to run just the testcases with the specified JUnit tag).</span>
+
+<span class="sd">	See JUnit documentation for more information about the console launcher command line arguments. </span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
+	<span class="n">junitFrameworkClasspath</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Must be set as either a project property or in the as test/directory descriptor ``user-data``. </span>
+<span class="sd">	</span>
+<span class="sd">	The value is a list of jars (delimited by semicolon, os.pathsep, or newline), making up the JUnit framework and the </span>
+<span class="sd">	``junit-platform-console-standalone`` launcher jar. </span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	
+	<span class="n">junitTimeoutSecs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">TIMEOUTS</span><span class="p">[</span><span class="s1">&#39;WaitForProcess&#39;</span><span class="p">])</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	The time allowed in total for execution of all JUnit tests. </span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="c1"># Properties that could be overridden by a subclass if needed</span>
 	<span class="n">_testGenre</span> <span class="o">=</span> <span class="s1">&#39;JUnit&#39;</span>
+	
+	<span class="n">javaclassesDir</span> <span class="o">=</span> <span class="s1">&#39;javaclasses&#39;</span>
 	
 	<span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="nb">super</span><span class="p">(</span><span class="n">JUnitTest</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
@@ -184,45 +239,63 @@
 		<span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="p">,</span> <span class="s1">&#39;This test class requires the JavaTestPlugin test-plugin to be configured with alias=java&#39;</span>
 		
 		<span class="bp">self</span><span class="o">.</span><span class="n">junitFrameworkClasspath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">toClasspathList</span><span class="p">(</span>
-			<span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">expandProperties</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">descriptor</span><span class="o">.</span><span class="n">userData</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;junitFrameworkClasspath&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">))</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;junitFrameworkClasspath&#39;</span><span class="p">))</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">junitFrameworkClasspath</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">getProperty</span><span class="p">(</span><span class="s1">&#39;junitFrameworkClasspath&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
 		<span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">junitFrameworkClasspath</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">junitFrameworkClasspath</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-			<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Please set the junitFrameworkClasspath project or descriptor property must contain the JUnit framework; cannot find it in: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">junitFrameworkClasspath</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+			<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;The junitFrameworkClasspath project (or descriptor) property must be set to a valid list of jars containing the JUnit framework and launcher: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">junitFrameworkClasspath</span><span class="p">)</span>
 		
 		<span class="c1"># TODO: only compile if no test has already compiled them</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">compileTestClasses</span><span class="p">()</span>
 	
 	<span class="k">def</span> <span class="nf">compileTestClasses</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="n">classpath</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">defaultClasspath</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">junitFrameworkClasspath</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="n">classpath</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">defaultClasspath</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">junitFrameworkClasspath</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">javaclassesDir</span><span class="p">)</span>
 	
 	<span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		
-		<span class="n">testClasses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">+</span><span class="s1">&#39;/javaclasses&#39;</span>
+		<span class="n">testClasses</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">javaclassesDir</span><span class="p">)</span>
 		<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">testClasses</span><span class="p">):</span>
 			<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;No classes were found after compiling &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">)</span>
 		<span class="n">classpath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">toClasspathList</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">defaultClasspath</span><span class="p">)</span><span class="o">+</span><span class="p">[</span><span class="n">testClasses</span><span class="p">]</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Executing JUnit tests with classpath: </span><span class="se">\n</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;     cp #</span><span class="si">%-2d</span><span class="s2">    : </span><span class="si">%s%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span>
 			<span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">pathelement</span><span class="p">,</span> <span class="s1">&#39;&#39;</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">pathelement</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39; (does not exist!)&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">pathelement</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">classpath</span><span class="p">)))</span>
 		
+		<span class="c1"># NB: any items in the descriptor&#39;s user-data get automatically assigned as instance variables (unless </span>
+		<span class="c1"># overridden with a -X option).</span>
+		
 		<span class="n">argOverrides</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">_splitShellArgs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">junitArgs</span><span class="p">)</span>
 		<span class="n">args</span> <span class="o">=</span> <span class="p">[</span>
 			<span class="s1">&#39;--config&#39;</span><span class="p">,</span> <span class="s1">&#39;junit.platform.output.capture.stdout=true&#39;</span><span class="p">,</span>
 			<span class="s1">&#39;--config&#39;</span><span class="p">,</span> <span class="s1">&#39;junit.platform.output.capture.stderr=true&#39;</span><span class="p">,</span>
-		<span class="p">]</span>	\
-			<span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">_splitShellArgs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">expandProperties</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">descriptor</span><span class="o">.</span><span class="n">userData</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;junitArgs&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)))</span>\
-			<span class="o">+</span><span class="n">argOverrides</span>
-		<span class="k">if</span> <span class="n">argOverrides</span><span class="p">:</span>
-			<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;JUnit args: </span><span class="se">\n</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;    arg #</span><span class="si">%-2d</span><span class="s2">    : </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span>
-				<span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">args</span><span class="p">)))</span>
+		<span class="p">]</span>
+		<span class="n">args</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">_splitShellArgs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">junitConfigArgs</span><span class="p">))</span>
+		
+		<span class="n">selectionArgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">_splitShellArgs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">junitSelectionArgs</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">selectionArgs</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span> <span class="c1"># If not overridden in the descriptor, use default of &quot;everything&quot;</span>
+			<span class="c1"># We want to run all the test classes under this directory; the -d option doesn&#39;t seem to work so use the </span>
+			<span class="c1"># package option to achieve the same thing. This should be more efficient than scanning the entire </span>
+			<span class="c1"># classpath especially if there are a lot of dependencies.</span>
+			<span class="k">with</span> <span class="n">os</span><span class="o">.</span><span class="n">scandir</span><span class="p">(</span><span class="n">testClasses</span><span class="p">)</span> <span class="k">as</span> <span class="n">it</span><span class="p">:</span>
+				<span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">it</span><span class="p">:</span>
+					<span class="k">if</span> <span class="n">entry</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+						<span class="n">selectionArgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;-p&#39;</span><span class="p">)</span>
+						<span class="n">selectionArgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+			
+			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">selectionArgs</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span> 
+				<span class="c1"># Fall back to classpath scan (e.g. maybe all the classes are in the default package)</span>
+				<span class="n">selectionArgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;--scan-classpath&#39;</span><span class="p">)</span>
+				
+		<span class="n">args</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">selectionArgs</span><span class="p">)</span>
+		
+		<span class="n">customArgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">_splitShellArgs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">junitArgs</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">customArgs</span><span class="p">:</span>
+			<span class="n">args</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">customArgs</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Running with additional JUnit args: </span><span class="se">\n</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;    arg #</span><span class="si">%-2d</span><span class="s2">    : </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span>
+				<span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">customArgs</span><span class="p">)))</span>
 		
 		<span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;--reports-dir&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">+</span><span class="s1">&#39;/junit-reports&#39;</span><span class="p">,</span> 
 			<span class="s1">&#39;--disable-ansi-colors&#39;</span><span class="p">,</span>
 			<span class="s1">&#39;--classpath=</span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">os</span><span class="o">.</span><span class="n">pathsep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">classpath</span><span class="p">),</span>
 			<span class="p">]</span><span class="o">+</span><span class="n">args</span>
 			
-		<span class="c1"># We want to run all the test classes under this directory; the -d option doesn&#39;t seem to work so use the </span>
-		<span class="c1"># package option to achieve the same thing. </span>
-		<span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">testClasses</span><span class="p">):</span>
-			<span class="n">args</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s1">&#39;-p&#39;</span><span class="p">,</span> <span class="n">d</span><span class="p">])</span>
 		
 		<span class="n">launcher</span> <span class="o">=</span> <span class="p">[</span><span class="n">cp</span> <span class="k">for</span> <span class="n">cp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">junitFrameworkClasspath</span> <span class="k">if</span> <span class="s1">&#39;junit-platform-console-standalone&#39;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">cp</span><span class="p">)]</span>
 		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">launcher</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
@@ -230,8 +303,10 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">startJava</span><span class="p">(</span><span class="n">launcher</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> 
 			<span class="n">args</span><span class="p">,</span> <span class="n">stdouterr</span><span class="o">=</span><span class="s1">&#39;junit&#39;</span><span class="p">,</span> <span class="n">expectedExitStatus</span><span class="o">=</span><span class="s1">&#39; in [0, 1]&#39;</span><span class="p">,</span> 
 			<span class="n">onError</span><span class="o">=</span><span class="k">lambda</span> <span class="n">process</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">logFileContents</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">stderr</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">getExprFromFile</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="s1">&#39;.+&#39;</span><span class="p">)][</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
-			<span class="n">timeout</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">expandProperties</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">descriptor</span><span class="o">.</span><span class="n">userData</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;junitTimeoutSecs&#39;</span><span class="p">))</span> <span class="ow">or</span> <span class="n">TIMEOUTS</span><span class="p">[</span><span class="s1">&#39;WaitForProcess&#39;</span><span class="p">]))</span> <span class="c1"># TODO: document timeout configuration parameter</span>
-		<span class="c1"># NB: this does not give an error if no tests were selected; we rely on validation for that</span>
+			<span class="n">displayName</span><span class="o">=</span><span class="s1">&#39;JUnit </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">selectionArgs</span> <span class="k">if</span> <span class="n">a</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;-p&#39;</span><span class="p">,</span> <span class="s1">&#39;-c&#39;</span><span class="p">]),</span>
+			<span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">junitTimeoutSecs</span><span class="p">)</span> 
+			
+		<span class="c1"># NB: the above does not give an error if no tests were selected; we rely on validation for that</span>
 
 	<span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="n">outcomeCounts</span> <span class="o">=</span> <span class="p">{</span>
@@ -283,7 +358,7 @@
 				<span class="bp">self</span><span class="o">.</span><span class="n">addOutcome</span><span class="p">(</span><span class="n">SKIPPED</span><span class="p">,</span> <span class="s1">&#39;No tests were found (likely the result of the specified junitArgs)&#39;</span><span class="p">)</span>
 			<span class="k">else</span><span class="p">:</span>
 				<span class="c1"># But otherwise, make it an error, as it&#39;s probably a mistake</span>
-				<span class="bp">self</span><span class="o">.</span><span class="n">addOutcome</span><span class="p">(</span><span class="n">BLOCKED</span><span class="p">,</span> <span class="s1">&#39;No tests were found (using the specified junitArgs)&#39;</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">addOutcome</span><span class="p">(</span><span class="n">BLOCKED</span><span class="p">,</span> <span class="s1">&#39;No tests were found&#39;</span><span class="p">)</span>
 		<span class="k">elif</span> <span class="n">outcomeCounts</span><span class="p">[</span><span class="n">SKIPPED</span><span class="p">]</span> <span class="o">==</span> <span class="n">totalTestcases</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">addOutcome</span><span class="p">(</span><span class="n">SKIPPED</span><span class="p">,</span> <span class="s1">&#39;All </span><span class="si">%d</span><span class="s1"> </span><span class="si">%s</span><span class="s1"> tests are skipped: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">outcomeCounts</span><span class="p">[</span><span class="n">SKIPPED</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_testGenre</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;outcomeReason&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;&lt;no reason&gt;&#39;</span><span class="p">))</span>
 		<span class="k">else</span><span class="p">:</span>
@@ -359,7 +434,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-13
+        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-14
 
     </p>
   </div>

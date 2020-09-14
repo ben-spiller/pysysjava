@@ -37,7 +37,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="pysysjava.junitxml" href="pysysjava.junitxml.html" />
-    <link rel="prev" title="pysysjava.javatestplugin" href="pysysjava.javatestplugin.html" /> 
+    <link rel="prev" title="API Reference" href="pysysjava.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -83,12 +83,12 @@
             
               <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="pysysjava.html">API Reference</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="pysysjava.javatestplugin.html">pysysjava.javatestplugin</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">pysysjava.junittest</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#junittest">JUnitTest</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="pysysjava.junitxml.html">pysysjava.junitxml</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pysysjava.testplugin.html">pysysjava.testplugin</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../License.html">License</a></li>
@@ -171,16 +171,62 @@
 <p>Compilation happens in <a class="reference external" href="https://pysys-test.github.io/pysys-test/BaseTest.html#pysys.basetest.BaseTest.setup" title="(in PySys v1.6.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysys.basetest.BaseTest.setup</span></code></a> (shared across all JUnit tests that use the same source 
 directory), then execution in <a class="reference external" href="https://pysys-test.github.io/pysys-test/BaseTest.html#pysys.basetest.BaseTest.execute" title="(in PySys v1.6.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysys.basetest.BaseTest.execute</span></code></a> and finally reads the resulting XML reports and 
 adds outcomes for each testcase in <a class="reference external" href="https://pysys-test.github.io/pysys-test/BaseTest.html#pysys.basetest.BaseTest.validate" title="(in PySys v1.6.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysys.basetest.BaseTest.validate</span></code></a>.</p>
-<p>The project or test descriptor property <code class="docutils literal notranslate"><span class="pre">junitFrameworkClasspath</span></code> must be set to a classpath containing the 
-<code class="docutils literal notranslate"><span class="pre">junit-platform-console-standalone</span></code> launcher and the framework itself.</p>
+<p>There are 3 options for customizing the arguments that will be passed to the JUnit console launcher:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">junitConfigArgs</span></code> should be used for configuration options (e.g. <code class="docutils literal notranslate"><span class="pre">--config=</span></code>) that should always be 
+used for these tests, typically configured in the <code class="docutils literal notranslate"><span class="pre">user-data</span></code> of the test or directory descriptor.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">junitSelectionArgs</span></code> should be used for <code class="docutils literal notranslate"><span class="pre">--select-*</span></code> arguments that identify which tests are covered by 
+this PySys tess, typically a descriptor’s <code class="docutils literal notranslate"><span class="pre">user-data</span></code>. 
+If not specified, selection arguments are automatically added for every package in the compiled classes 
+directory.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">junitArgs</span></code> exists to provide a way to add one-off arguments runs on the PySys 
+command line (<em>in addition</em> to the above arguments), e.g. <code class="docutils literal notranslate"><span class="pre">pysys</span> <span class="pre">run</span> <span class="pre">&quot;-XjunitArgs=-t</span> <span class="pre">MYTAG&quot;</span></code>.</p></li>
+</ul>
+</div></blockquote>
+<p>Any classpath requirements or runtime JVM arguments should be customized using the properties described 
+in <a class="reference internal" href="pysysjava.testplugin.html#module-pysysjava.testplugin" title="pysysjava.testplugin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysysjava.testplugin</span></code></a> such as <code class="docutils literal notranslate"><span class="pre">javaClasspath</span></code> and <code class="docutils literal notranslate"><span class="pre">jvmArgs</span></code>.</p>
+<dl class="py attribute">
+<dt id="pysysjava.junittest.JUnitTest.junitConfigArgs">
+<code class="sig-name descname">junitConfigArgs</code><em class="property"> = ''</em><a class="headerlink" href="#pysysjava.junittest.JUnitTest.junitConfigArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>JUnit console launcher command line arguments needed to configure the JUnit tests, e.g. <code class="docutils literal notranslate"><span class="pre">--config</span> <span class="pre">key=value</span></code>.</p>
+<p>If needed, this should be set in the test descriptor <code class="docutils literal notranslate"><span class="pre">user-data</span></code>.</p>
+<p>See JUnit documentation for more information about the console launcher command line arguments.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pysysjava.junittest.JUnitTest.junitSelectionArgs">
+<code class="sig-name descname">junitSelectionArgs</code><em class="property"> = ''</em><a class="headerlink" href="#pysysjava.junittest.JUnitTest.junitSelectionArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>JUnit console launcher command line arguments needed to select which JUnit tests are part of this PySys test, 
+e.g. <code class="docutils literal notranslate"><span class="pre">--select-package=myorg.myserver</span></code>.</p>
+<p>If needed, this should be set in the test descriptor <code class="docutils literal notranslate"><span class="pre">user-data</span></code>. If not specified, selection arguments are 
+automatically added for every package in the compiled classes directory.</p>
+<p>See JUnit documentation for more information about the console launcher command line arguments.</p>
+</dd></dl>
+
 <dl class="py attribute">
 <dt id="pysysjava.junittest.JUnitTest.junitArgs">
 <code class="sig-name descname">junitArgs</code><em class="property"> = ''</em><a class="headerlink" href="#pysysjava.junittest.JUnitTest.junitArgs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Extra command line arguments to pass to the junit launcher (see JUnit documentation). 
-This can be set on the command line, e.g. <code class="docutils literal notranslate"><span class="pre">-XjunitArgs=a</span> <span class="pre">b</span> <span class="pre">&quot;--config=foo=bar</span> <span class="pre">baz&quot;</span> <span class="pre">c</span> <span class="pre">d</span> <span class="pre">e&quot;</span></code>, 
-or more realistically: <code class="docutils literal notranslate"><span class="pre">-XjunitArgs=-tMY-TAG</span></code> (to run just the testcases with the specified JUnit tag).</p>
-<p>The -XjunitArgs are in addition to any argument specified in the <code class="docutils literal notranslate"><span class="pre">userData</span></code> of the test/directory descriptor key 
-named <code class="docutils literal notranslate"><span class="pre">junitArgs</span></code>.</p>
+<dd><p>Extra JUnit console launcher command line arguments, which will be used in addition to any <a class="reference internal" href="#pysysjava.junittest.JUnitTest.junitConfigArgs" title="pysysjava.junittest.JUnitTest.junitConfigArgs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">junitConfigArgs</span></code></a> 
+and <a class="reference internal" href="#pysysjava.junittest.JUnitTest.junitSelectionArgs" title="pysysjava.junittest.JUnitTest.junitSelectionArgs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">junitSelectionArgs</span></code></a>.</p>
+<p>This is usually not set in a test descriptor <code class="docutils literal notranslate"><span class="pre">user-data</span></code> but instead on the PySys command line with <code class="docutils literal notranslate"><span class="pre">-X</span></code>.</p>
+<p>For example: <code class="docutils literal notranslate"><span class="pre">pysys</span> <span class="pre">run</span> <span class="pre">-XjunitArgs=a</span> <span class="pre">b</span> <span class="pre">&quot;--config=foo=bar</span> <span class="pre">baz&quot;</span> <span class="pre">c</span> <span class="pre">d</span> <span class="pre">e&quot;</span></code>, or more realistically: 
+<code class="docutils literal notranslate"><span class="pre">-XjunitArgs=-tMY-TAG</span></code> (to run just the testcases with the specified JUnit tag).</p>
+<p>See JUnit documentation for more information about the console launcher command line arguments.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pysysjava.junittest.JUnitTest.junitFrameworkClasspath">
+<code class="sig-name descname">junitFrameworkClasspath</code><em class="property"> = ''</em><a class="headerlink" href="#pysysjava.junittest.JUnitTest.junitFrameworkClasspath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Must be set as either a project property or in the as test/directory descriptor <code class="docutils literal notranslate"><span class="pre">user-data</span></code>.</p>
+<p>The value is a list of jars (delimited by semicolon, os.pathsep, or newline), making up the JUnit framework and the 
+<code class="docutils literal notranslate"><span class="pre">junit-platform-console-standalone</span></code> launcher jar.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pysysjava.junittest.JUnitTest.junitTimeoutSecs">
+<code class="sig-name descname">junitTimeoutSecs</code><em class="property"> = 600.0</em><a class="headerlink" href="#pysysjava.junittest.JUnitTest.junitTimeoutSecs" title="Permalink to this definition">¶</a></dt>
+<dd><p>The time allowed in total for execution of all JUnit tests.</p>
 </dd></dl>
 
 </dd></dl>
@@ -199,7 +245,7 @@ named <code class="docutils literal notranslate"><span class="pre">junitArgs</sp
         <a href="pysysjava.junitxml.html" class="btn btn-neutral float-right" title="pysysjava.junitxml" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="pysysjava.javatestplugin.html" class="btn btn-neutral float-left" title="pysysjava.javatestplugin" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="pysysjava.html" class="btn btn-neutral float-left" title="API Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -208,7 +254,7 @@ named <code class="docutils literal notranslate"><span class="pre">junitArgs</sp
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-13
+        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-14
 
     </p>
   </div>
