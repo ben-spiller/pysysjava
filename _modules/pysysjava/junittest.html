@@ -177,6 +177,10 @@
 <span class="sd">	</span>
 <span class="sd">	Any classpath requirements or runtime JVM arguments should be customized using the properties described </span>
 <span class="sd">	in `pysysjava.testplugin` such as ``javaClasspath`` and ``jvmArgs``. </span>
+<span class="sd">	</span>
+<span class="sd">	The JUnit process is given Java system properties for the PySys testcase Input/ directory (``pysys.input``), </span>
+<span class="sd">	the test project root directory (``pysys.project.testRootDir``), and if this PySys test has any modes defined, the current </span>
+<span class="sd">	mode (``pysys.mode``). </span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="c1"># NB: although these variables will end up as list[str] we define the defaults as a simple string not [] because we </span>
@@ -236,7 +240,7 @@
 	<span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="nb">super</span><span class="p">(</span><span class="n">JUnitTest</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
 		
-		<span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="p">,</span> <span class="s1">&#39;This test class requires the JavaTestPlugin test-plugin to be configured with alias=java&#39;</span>
+		<span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="p">,</span> <span class="s1">&#39;This test class requires the JavaTestPlugin test-plugin to be configured, with alias=java&#39;</span>
 		
 		<span class="bp">self</span><span class="o">.</span><span class="n">junitFrameworkClasspath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">toClasspathList</span><span class="p">(</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">junitFrameworkClasspath</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">getProperty</span><span class="p">(</span><span class="s1">&#39;junitFrameworkClasspath&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
@@ -245,12 +249,21 @@
 		
 		<span class="c1"># TODO: only compile if no test has already compiled them</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">compileTestClasses</span><span class="p">()</span>
-	
+
+	<span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">startJava</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">getJUnitKwArgs</span><span class="p">())</span> 
+
+	<span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">validateJUnitReports</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">+</span><span class="s1">&#39;/junit-reports&#39;</span><span class="p">)</span>
+
+	<span class="c1"># The methods above override the standard test class; following are where they are implemented</span>
+
 	<span class="k">def</span> <span class="nf">compileTestClasses</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="n">classpath</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">defaultClasspath</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">junitFrameworkClasspath</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">javaclassesDir</span><span class="p">)</span>
 	
-	<span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-		
+	<span class="k">def</span> <span class="nf">getJUnitKwArgs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="c1"># This is a flexible way to defining the arguments that allows a subclass to make changes if needed</span>
+	
 		<span class="n">testClasses</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">javaclassesDir</span><span class="p">)</span>
 		<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">testClasses</span><span class="p">):</span>
 			<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;No classes were found after compiling &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">)</span>
@@ -295,20 +308,29 @@
 			<span class="s1">&#39;--disable-ansi-colors&#39;</span><span class="p">,</span>
 			<span class="s1">&#39;--classpath=</span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">os</span><span class="o">.</span><span class="n">pathsep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">classpath</span><span class="p">),</span>
 			<span class="p">]</span><span class="o">+</span><span class="n">args</span>
-			
-		
+
 		<span class="n">launcher</span> <span class="o">=</span> <span class="p">[</span><span class="n">cp</span> <span class="k">for</span> <span class="n">cp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">junitFrameworkClasspath</span> <span class="k">if</span> <span class="s1">&#39;junit-platform-console-standalone&#39;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">cp</span><span class="p">)]</span>
 		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">launcher</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
 			<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Cannot find junit-platform-console-standalone .jar file in the junitFrameworkClasspath: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">junitFrameworkClasspath</span><span class="p">)</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">startJava</span><span class="p">(</span><span class="n">launcher</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> 
-			<span class="n">args</span><span class="p">,</span> <span class="n">stdouterr</span><span class="o">=</span><span class="s1">&#39;junit&#39;</span><span class="p">,</span> <span class="n">expectedExitStatus</span><span class="o">=</span><span class="s1">&#39; in [0, 1]&#39;</span><span class="p">,</span> 
-			<span class="n">onError</span><span class="o">=</span><span class="k">lambda</span> <span class="n">process</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">logFileContents</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">stderr</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">getExprFromFile</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="s1">&#39;.+&#39;</span><span class="p">)][</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
-			<span class="n">displayName</span><span class="o">=</span><span class="s1">&#39;JUnit </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">selectionArgs</span> <span class="k">if</span> <span class="n">a</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;-p&#39;</span><span class="p">,</span> <span class="s1">&#39;-c&#39;</span><span class="p">]),</span>
-			<span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">junitTimeoutSecs</span><span class="p">)</span> 
-			
-		<span class="c1"># NB: the above does not give an error if no tests were selected; we rely on validation for that</span>
-
-	<span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		
+		<span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+			<span class="s1">&#39;classOrJar&#39;</span><span class="p">:</span> <span class="n">launcher</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+			<span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="n">args</span><span class="p">,</span>
+			<span class="s1">&#39;expectedExitStatus&#39;</span><span class="p">:</span> <span class="s1">&#39;in [0, 1]&#39;</span><span class="p">,</span> <span class="c1"># allow failing tests to be dealt with later, but not complete failure to execure the launcher</span>
+			<span class="s1">&#39;onError&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">process</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">logFileContents</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">stderr</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">getExprFromFile</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="s1">&#39;.+&#39;</span><span class="p">)][</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+			<span class="s1">&#39;displayName&#39;</span><span class="p">:</span> <span class="s1">&#39;JUnit </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">selectionArgs</span> <span class="k">if</span> <span class="n">a</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;-p&#39;</span><span class="p">,</span> <span class="s1">&#39;-c&#39;</span><span class="p">]),</span>
+			<span class="s1">&#39;timeout&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">junitTimeoutSecs</span><span class="p">,</span>
+			<span class="s1">&#39;stdouterr&#39;</span><span class="p">:</span> <span class="s1">&#39;junit&#39;</span><span class="p">,</span>
+		<span class="p">}</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">:</span> 
+			<span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;jvmProps&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+				<span class="s1">&#39;pysys.mode&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
+				<span class="s1">&#39;pysys.input&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span>
+				<span class="s1">&#39;pysys.project.testRootDir&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">testRootDir</span><span class="p">,</span>
+				<span class="p">}</span>
+		<span class="k">return</span> <span class="n">kwargs</span>
+		
+	<span class="k">def</span> <span class="nf">validateJUnitReports</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reportsDir</span><span class="p">):</span>
 		<span class="n">outcomeCounts</span> <span class="o">=</span> <span class="p">{</span>
 			<span class="n">PASSED</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
 			<span class="n">SKIPPED</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
@@ -319,13 +341,15 @@
 		
 		<span class="n">t</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1"># just in case no tests were found at all</span>
 		
+		<span class="bp">self</span><span class="o">.</span><span class="n">addOutcome</span><span class="p">(</span><span class="n">PASSED</span><span class="p">)</span> <span class="c1"># if no failures, pass	</span>
+	
 		<span class="n">logSeparator</span> <span class="o">=</span> <span class="kc">False</span>
 		<span class="n">alreadyseen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span> <span class="c1"># JUnit 5 doesn&#39;t do this, but Ant can sometimes generate duplicates for nested test classes</span>
-		<span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">toLongPathSafe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">+</span><span class="s1">&#39;/junit-reports&#39;</span><span class="p">))):</span>
+		<span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">toLongPathSafe</span><span class="p">(</span><span class="n">reportsDir</span><span class="p">))):</span>
 			<span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.xml&#39;</span><span class="p">):</span>
-				<span class="n">suite</span><span class="p">,</span> <span class="n">tests</span> <span class="o">=</span> <span class="n">JUnitXMLParser</span><span class="p">(</span><span class="n">toLongPathSafe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">+</span><span class="s1">&#39;/junit-reports/&#39;</span><span class="o">+</span><span class="n">f</span><span class="p">))</span><span class="o">.</span><span class="n">parse</span><span class="p">()</span>
+				<span class="n">suite</span><span class="p">,</span> <span class="n">tests</span> <span class="o">=</span> <span class="n">JUnitXMLParser</span><span class="p">(</span><span class="n">toLongPathSafe</span><span class="p">(</span><span class="n">reportsDir</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">f</span><span class="p">))</span><span class="o">.</span><span class="n">parse</span><span class="p">()</span>
 				<span class="k">if</span> <span class="n">suite</span><span class="p">[</span><span class="s1">&#39;tests&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">suite</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;skipped&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-					<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Ignoring suite &quot;</span><span class="si">%s</span><span class="s1">&quot; which contains no tests&#39;</span><span class="p">,</span> <span class="n">suite</span><span class="p">[</span><span class="s1">&#39;tests&#39;</span><span class="p">])</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Ignoring suite &quot;</span><span class="si">%s</span><span class="s1">&quot; which contains no tests&#39;</span><span class="p">,</span> <span class="n">suite</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
 					<span class="k">continue</span>
 
 				<span class="k">if</span> <span class="n">logSeparator</span><span class="p">:</span>
@@ -343,7 +367,7 @@
 						<span class="k">continue</span>
 					<span class="n">alreadyseen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 					
-					<span class="n">outcome</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validateTestcaseResult</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+					<span class="n">outcome</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validateJUnitTestcaseResult</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
 					<span class="n">outcomeCounts</span><span class="p">[</span><span class="n">outcome</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
 				
 				<span class="c1"># some JUnit formats (but not JUnit5) provide stdout/err at the suite level rather than per test </span>
@@ -365,7 +389,7 @@
 			<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Summary of all testcase outcomes for </span><span class="si">%s</span><span class="s1">: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">descriptor</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
 				<span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">o</span><span class="p">)</span><span class="k">for</span> <span class="n">o</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">outcomeCounts</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">c</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">))</span>
 	
-	<span class="k">def</span> <span class="nf">validateTestcaseResult</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+	<span class="k">def</span> <span class="nf">validateJUnitTestcaseResult</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
 		<span class="n">outcome</span> <span class="o">=</span> <span class="p">{</span>
 			<span class="s1">&#39;passed&#39;</span><span class="p">:</span> <span class="n">PASSED</span><span class="p">,</span>
 			<span class="s1">&#39;failure&#39;</span><span class="p">:</span> <span class="n">FAILED</span><span class="p">,</span>
@@ -434,7 +458,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-14
+        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-15
 
     </p>
   </div>

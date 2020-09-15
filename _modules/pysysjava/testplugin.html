@@ -304,7 +304,7 @@
 <span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">testObj</span><span class="p">):</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">owner</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">testObj</span> <span class="o">=</span> <span class="n">testObj</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">owner</span> <span class="o">=</span> <span class="n">testObj</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">project</span>
 		
 		<span class="c1"># This message isn&#39;t useful for debugging errors so suppress it</span>
@@ -325,88 +325,37 @@
 		<span class="c1"># Assume both of these methods make a copy of the static value (which makes it safe for tests to mutate the </span>
 		<span class="c1"># lists)</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">defaultClasspath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">toClasspathList</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">expandProperties</span><span class="p">(</span>
-			<span class="bp">self</span><span class="o">.</span><span class="n">testObj</span><span class="o">.</span><span class="n">descriptor</span><span class="o">.</span><span class="n">userData</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;javaClasspath&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaultClasspath</span><span class="p">)))</span>
+			<span class="n">testObj</span><span class="o">.</span><span class="n">descriptor</span><span class="o">.</span><span class="n">userData</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;javaClasspath&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaultClasspath</span><span class="p">)))</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">defaultJVMArgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_splitShellArgs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">expandProperties</span><span class="p">(</span>
-			<span class="bp">self</span><span class="o">.</span><span class="n">testObj</span><span class="o">.</span><span class="n">descriptor</span><span class="o">.</span><span class="n">userData</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;jvmArgs&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaultJVMArgs</span><span class="p">)))</span>
+			<span class="n">testObj</span><span class="o">.</span><span class="n">descriptor</span><span class="o">.</span><span class="n">userData</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;jvmArgs&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaultJVMArgs</span><span class="p">)))</span>
+		
+		<span class="bp">self</span><span class="o">.</span><span class="n">__hsperfdataCleanupRegistered</span> <span class="o">=</span> <span class="kc">False</span>
 	
-<div class="viewcode-block" id="JavaTestPlugin.toClasspathList"><a class="viewcode-back" href="../../autodocgen/pysysjava.testplugin.html#pysysjava.testplugin.JavaTestPlugin.toClasspathList">[docs]</a>	<span class="k">def</span> <span class="nf">toClasspathList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">classpath</span><span class="p">):</span>
-		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		Converts the specified classpath string to a list of classpath entries (or just returns the input if it&#39;s </span>
-<span class="sd">		already a list). Glob expressions such as ``*.jar`` will be expanded if the parent directory exists and there </span>
-<span class="sd">		is at least one match. </span>
-<span class="sd">		</span>
-<span class="sd">		If None is specified, the `defaultClasspath` is used (either from the test/dir descriptor&#39;s ``classpath`` </span>
-<span class="sd">		user-data or the ``defaultClasspath`` plugin property). </span>
-<span class="sd">		</span>
-<span class="sd">		In this PySys plugin classpath strings can be delimited with the usual OS separator ``os.pathsep`` </span>
-<span class="sd">		(e.g. ``:`` or ``;``), but to allow for platform-independence (given Windows uses ``:`` for drive letters), </span>
-<span class="sd">		if the string contains ``;`` or a newline separator those will be used for splitting instead. Any whitespace or empty </span>
-<span class="sd">		elements will be deleted. </span>
-<span class="sd">		</span>
-<span class="sd">		It is recommended to use absolute not relative paths for classpath entries. </span>
-<span class="sd">		</span>
-<span class="sd">		&gt;&gt;&gt; plugin = JavaTestPlugin()</span>
-
-<span class="sd">		&gt;&gt;&gt; plugin.toClasspathList([&#39;a.jar&#39;, &#39;b.jar&#39;])</span>
-<span class="sd">		[&#39;a.jar&#39;, &#39;b.jar&#39;]</span>
-
-<span class="sd">		&gt;&gt;&gt; plugin.toClasspathList(&#39;  a.jar  ; b.jar ; c:/foo  &#39;])</span>
-<span class="sd">		[&#39;a.jar&#39;, &#39;b.jar&#39;, &#39;c:/foo&#39;]</span>
-
-<span class="sd">		&gt;&gt;&gt; plugin.toClasspathList(os.pathsep.join([&#39;a.jar&#39;, &#39;b.jar&#39;])</span>
-<span class="sd">		[&#39;a.jar&#39;, &#39;b.jar&#39;]</span>
-
-<span class="sd">		&gt;&gt;&gt; plugin.toClasspathList(None) is None</span>
-<span class="sd">		True</span>
-<span class="sd">		</span>
-<span class="sd">		&quot;&quot;&quot;</span>
-		<span class="k">if</span> <span class="n">classpath</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
-			<span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaultClasspath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">toClasspathList</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">defaultClasspath</span><span class="p">)</span> <span class="c1"># call it again in case user has messed with it</span>
-		
-		<span class="k">if</span> <span class="n">isstring</span><span class="p">(</span><span class="n">classpath</span><span class="p">):</span> <span class="c1"># assume it&#39;s already split unless it&#39;s a string</span>
-			<span class="k">if</span> <span class="s1">&#39;;&#39;</span> <span class="ow">in</span> <span class="n">classpath</span><span class="p">:</span>
-				<span class="n">classpath</span> <span class="o">=</span> <span class="n">classpath</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="s1">&#39;;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span>
-			<span class="k">else</span><span class="p">:</span>
-				<span class="n">classpath</span> <span class="o">=</span> <span class="n">classpath</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">os</span><span class="o">.</span><span class="n">pathsep</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">pathsep</span><span class="p">)</span>
-			<span class="n">classpath</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">classpath</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">]</span>
-			
-		<span class="c1"># glob expansion</span>
-		<span class="k">if</span> <span class="s1">&#39;*&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">classpath</span><span class="p">):</span> <span class="k">return</span> <span class="n">classpath</span>
-		
-		<span class="n">expanded</span> <span class="o">=</span> <span class="p">[]</span>
-		<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">classpath</span><span class="p">:</span>
-			<span class="k">if</span> <span class="s1">&#39;*&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">c</span><span class="p">:</span>
-				<span class="n">expanded</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-				<span class="k">continue</span>
-				
-			<span class="n">globbed</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">c</span><span class="p">))</span>
-			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">globbed</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span> <span class="c1"># Fail in an obvious way in this case</span>
-				<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Classpath glob entry has no matches: &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
-			<span class="k">else</span><span class="p">:</span>
-				<span class="n">expanded</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">globbed</span><span class="p">)</span>
-		<span class="k">return</span> <span class="n">expanded</span></div>
-
-	<span class="nd">@staticmethod</span>
-	<span class="k">def</span> <span class="nf">_splitShellArgs</span><span class="p">(</span><span class="n">commandstring</span><span class="p">):</span>
-		<span class="c1"># need to escape windows \ else it gets removed; do this the same on all platforms for consistency)</span>
-		<span class="k">return</span> <span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">commandstring</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">u</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">,</span><span class="sa">u</span><span class="s1">&#39;</span><span class="se">\\\\</span><span class="s1">&#39;</span><span class="p">))</span>
 		
 <div class="viewcode-block" id="JavaTestPlugin.compile"><a class="viewcode-back" href="../../autodocgen/pysysjava.testplugin.html#pysysjava.testplugin.JavaTestPlugin.compile">[docs]</a>	<span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;javaclasses&#39;</span><span class="p">,</span> <span class="n">classpath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;Compile Java source files into classes. By default we compile Java files from the test&#39;s input directory to </span>
 <span class="sd">		``self.output/javaclasses``. </span>
 <span class="sd">		</span>
-<span class="sd">		:param str or list[str] input: Typically a directory (relative to the test Input dir) in which to search for </span>
+<span class="sd">		For example::</span>
+<span class="sd">		</span>
+<span class="sd">			self.java.compile(self.input, args=[&#39;--Werror&#39;])</span>
+<span class="sd">		</span>
+<span class="sd">		:param input: Typically a directory (relative to the test Input dir) in which to search for </span>
 <span class="sd">			classpaths; alternatively a list of Java source files. By default we compile source files under the </span>
 <span class="sd">			test Input directory. </span>
+<span class="sd">		:type input: str or list[str]</span>
 <span class="sd">		:param str output: The path (relative to the test Output directory) where the output will be written. </span>
-<span class="sd">		:param list[str] or str classpath: The classpath to use, or None if the ``self.defaultClasspath`` should </span>
+<span class="sd">		:param classpath: The classpath to use, or None if the ``self.defaultClasspath`` should </span>
 <span class="sd">			be used (which by default is empty). The classpath can be specified as a list or a single string delimited </span>
 <span class="sd">			by ``;``, newline or ``os.pathsep``; see `toClasspathList()` for details. </span>
+<span class="sd">		:type classpath: str or list[str]</span>
 <span class="sd">		:param list[str] args: List of compiler arguments such as ``--Werror`` or ``-nowarn`` (to control warn </span>
 <span class="sd">			behaviour). If not specified, the ``defaultCompilerArgs`` plugin property is used. </span>
 <span class="sd">		:param kwargs: Additional keyword arguments such as ``timeout=`` will be passed to </span>
 <span class="sd">			`pysys.basetest.BaseTest.startProcess`. </span>
+<span class="sd">			</span>
+<span class="sd">		:return: The process object, with the full path to the output dir in the ``info`` dictionary.</span>
+<span class="sd">		:rtype: pysys.process.Process</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="c1"># need to escape windows \ else it gets removed; do this the same on all platforms for consistency)</span>
 		<span class="k">if</span> <span class="n">args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_splitShellArgs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">defaultCompilerArgs</span><span class="p">)</span>
@@ -469,13 +418,13 @@
 							<span class="n">LOG_FILE_CONTENTS</span><span class="p">))</span>
 				<span class="p">),</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">getExprFromFile</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="s1">&#39;(.*(error|invalid).*)&#39;</span><span class="p">)</span>
-			<span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+			<span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">info</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;output&#39;</span><span class="p">:</span><span class="n">output</span><span class="p">},</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 		
 		<span class="c1"># log stderr even when it works so we see warnings</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">logFileContents</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="n">maxLines</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 		<span class="k">return</span> <span class="n">process</span></div>
 
-<div class="viewcode-block" id="JavaTestPlugin.startJava"><a class="viewcode-back" href="../../autodocgen/pysysjava.testplugin.html#pysysjava.testplugin.JavaTestPlugin.startJava">[docs]</a>	<span class="k">def</span> <span class="nf">startJava</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">classOrJar</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[],</span> <span class="n">classpath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">jvmArgs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">props</span><span class="o">=</span><span class="p">{},</span> <span class="n">disableCoverage</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="JavaTestPlugin.startJava"><a class="viewcode-back" href="../../autodocgen/pysysjava.testplugin.html#pysysjava.testplugin.JavaTestPlugin.startJava">[docs]</a>	<span class="k">def</span> <span class="nf">startJava</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">classOrJar</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[],</span> <span class="n">classpath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">jvmArgs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">jvmProps</span><span class="o">=</span><span class="p">{},</span> <span class="n">disableCoverage</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Start a Java process to execute the specified class or .jar file. </span>
 <span class="sd">		</span>
@@ -485,7 +434,7 @@
 <span class="sd">				stdouterr=&#39;my_server&#39;, background=True)</span>
 <span class="sd">		</span>
 <span class="sd">			self.java.defaultClasspath = [self.project.appHome+&#39;/mydeps.jar&#39;]</span>
-<span class="sd">			self.java.compile(self.input, args=[&#39;--Werror&#39;])</span>
+<span class="sd">			self.java.compile(self.input, output=self.output+&#39;/javaclasses&#39;, args=[&#39;--Werror&#39;])</span>
 <span class="sd">			self.java.startJava(&#39;myorg.MyHttpTestClient&#39;, [&#39;127.0.0.1&#39;, port], stdouterr=&#39;httpclient&#39;, </span>
 <span class="sd">				classpath=self.java.defaultClasspath+[self.output+&#39;/javaclasses&#39;], timeout=60)</span>
 <span class="sd">			</span>
@@ -496,14 +445,15 @@
 <span class="sd">			</span>
 <span class="sd">		:param list[str] args: Command line arguments for the specified class. </span>
 <span class="sd">		</span>
-<span class="sd">		:param list[str] or str classpath: The classpath to use, or None if the ``self.defaultClasspath`` should </span>
+<span class="sd">		:param classpath: The classpath to use, or None if the ``self.defaultClasspath`` should </span>
 <span class="sd">			be used (which by default is empty). The classpath can be specified as a list or a single string delimited </span>
 <span class="sd">			by ``;``, newline or ``os.pathsep``; see `toClasspathList()` for details. </span>
+<span class="sd">		:type classpath: str or list[str]</span>
 <span class="sd">			</span>
 <span class="sd">		:param list[str] jvmArgs: List of JVM arguments to pass before the class/jar name, such as ``-Xmx512m``. </span>
 <span class="sd">			If None is specified, the ``defaultJVMArgs`` plugin property is used. </span>
 <span class="sd">		</span>
-<span class="sd">		:param dict[str,str] props: System properties to be added to the jvmArgs (each entry results in a </span>
+<span class="sd">		:param dict[str,str] jvmProps: System properties to be added to the jvmArgs (each entry results in a </span>
 <span class="sd">			``-Dkey=value`` jvmArg).</span>
 <span class="sd">		</span>
 <span class="sd">		:param bool disableCoverage: Set to True to ensure Java code coverage is not captured for this process. </span>
@@ -513,16 +463,23 @@
 <span class="sd">		:param kwargs: Additional keyword arguments such as ``stdouterr=``, ``timeout=``, ``onError=`` and </span>
 <span class="sd">			``background=`` will be passed to `pysys.basetest.BaseTest.startProcess`. It is strongly recommended to </span>
 <span class="sd">			always include at ``stdouterr=`` since otherwise any error messages from the process will not be captured. </span>
-<span class="sd">		</span>
+
+<span class="sd">		:return: The process object.</span>
+<span class="sd">		:rtype: pysys.process.Process</span>
 <span class="sd">		&quot;&quot;&quot;</span>
-		
-		<span class="k">if</span> <span class="n">jvmArgs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
-			<span class="n">jvmArgs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">defaultJVMArgs</span><span class="p">)</span>
-		<span class="k">else</span><span class="p">:</span>
-			<span class="n">jvmArgs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">jvmArgs</span><span class="p">)</span> <span class="c1"># copy it so we can mutate it below</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__hsperfdataCleanupRegistered</span><span class="p">:</span>
+			<span class="c1"># delete these non-useful (usually empty) directories Java creates to avoid distractions</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">__hsperfdataCleanupRegistered</span> <span class="o">=</span> <span class="kc">True</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">addCleanupFunction</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="n">deletedir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">output</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;hsperfdata_&#39;</span><span class="p">)])</span>
+
+
+		<span class="k">if</span> <span class="n">jvmArgs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">jvmArgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaultJVMArgs</span>
+
+		<span class="n">jvmArgs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">jvmArgs</span><span class="p">)</span> <span class="c1"># copy it so we can mutate it below</span>
 		<span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">disableCoverage</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">disableCoverage</span><span class="p">:</span>
 			<span class="n">jvmArgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_codeCoverageArgs</span><span class="o">+</span><span class="n">jvmArgs</span>
-		<span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">props</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+		<span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">jvmProps</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 			<span class="n">jvmArgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;-D</span><span class="si">%s</span><span class="s1">=</span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
 		<span class="n">originalClasspath</span> <span class="o">=</span> <span class="n">classpath</span>
 
@@ -546,14 +503,70 @@
 			<span class="n">jvmArgs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;-classpath&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">pathsep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">classpath</span><span class="p">)]</span> <span class="o">+</span> <span class="n">jvmArgs</span>
 			<span class="n">jvmArgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">classOrJar</span><span class="p">)</span>
 
-		<span class="c1"># TODO: maybe delete empty-ish .err files?</span>
-		
 		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">startProcess</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">javaExecutable</span><span class="p">,</span> <span class="n">jvmArgs</span><span class="o">+</span><span class="n">args</span><span class="p">,</span> <span class="n">displayName</span><span class="o">=</span><span class="n">displayName</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
-	
-	<span class="k">def</span> <span class="nf">jar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-		<span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;Not implemented yet&#39;</span></div>
+
+<div class="viewcode-block" id="JavaTestPlugin.toClasspathList"><a class="viewcode-back" href="../../autodocgen/pysysjava.testplugin.html#pysysjava.testplugin.JavaTestPlugin.toClasspathList">[docs]</a>	<span class="k">def</span> <span class="nf">toClasspathList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">classpath</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Converts the specified classpath string to a list of classpath entries (or just returns the input if it&#39;s </span>
+<span class="sd">		already a list). Glob expressions such as ``*.jar`` will be expanded if the parent directory exists and there </span>
+<span class="sd">		is at least one match. </span>
+<span class="sd">		</span>
+<span class="sd">		If None is specified, the `defaultClasspath` is used (either from the test/dir descriptor&#39;s ``classpath`` </span>
+<span class="sd">		user-data or the ``defaultClasspath`` plugin property). </span>
+<span class="sd">		</span>
+<span class="sd">		In this PySys plugin classpath strings can be delimited with the usual OS separator ``os.pathsep`` </span>
+<span class="sd">		(e.g. ``:`` or ``;``), but to allow for platform-independence (given Windows uses ``:`` for drive letters), </span>
+<span class="sd">		if the string contains ``;`` or a newline separator those will be used for splitting instead. Any whitespace or empty </span>
+<span class="sd">		elements will be deleted. </span>
+<span class="sd">		</span>
+<span class="sd">		It is recommended to use absolute not relative paths for classpath entries. </span>
+<span class="sd">		</span>
+<span class="sd">		&gt;&gt;&gt; plugin = JavaTestPlugin()</span>
+
+<span class="sd">		&gt;&gt;&gt; plugin.toClasspathList([&#39;a.jar&#39;, &#39;b.jar&#39;])</span>
+<span class="sd">		[&#39;a.jar&#39;, &#39;b.jar&#39;]</span>
+
+<span class="sd">		&gt;&gt;&gt; plugin.toClasspathList(&#39;  a.jar  ; b.jar ; c:/foo  &#39;])</span>
+<span class="sd">		[&#39;a.jar&#39;, &#39;b.jar&#39;, &#39;c:/foo&#39;]</span>
+
+<span class="sd">		&gt;&gt;&gt; plugin.toClasspathList(os.pathsep.join([&#39;a.jar&#39;, &#39;b.jar&#39;])</span>
+<span class="sd">		[&#39;a.jar&#39;, &#39;b.jar&#39;]</span>
+
+<span class="sd">		&gt;&gt;&gt; plugin.toClasspathList(None) is None</span>
+<span class="sd">		True</span>
+<span class="sd">		</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="n">classpath</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
+			<span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaultClasspath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">toClasspathList</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">defaultClasspath</span><span class="p">)</span> <span class="c1"># call it again in case user has messed with it</span>
 		
-	<span class="c1">#TODO:  could colour code logFileCOntents output from JVM</span>
+		<span class="k">if</span> <span class="n">isstring</span><span class="p">(</span><span class="n">classpath</span><span class="p">):</span> <span class="c1"># assume it&#39;s already split unless it&#39;s a string</span>
+			<span class="k">if</span> <span class="s1">&#39;;&#39;</span> <span class="ow">in</span> <span class="n">classpath</span><span class="p">:</span>
+				<span class="n">classpath</span> <span class="o">=</span> <span class="n">classpath</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="s1">&#39;;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">classpath</span> <span class="o">=</span> <span class="n">classpath</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">os</span><span class="o">.</span><span class="n">pathsep</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">pathsep</span><span class="p">)</span>
+			<span class="n">classpath</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">classpath</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">]</span>
+			
+		<span class="c1"># glob expansion</span>
+		<span class="k">if</span> <span class="s1">&#39;*&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">classpath</span><span class="p">):</span> <span class="k">return</span> <span class="n">classpath</span>
+		
+		<span class="n">expanded</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">classpath</span><span class="p">:</span>
+			<span class="k">if</span> <span class="s1">&#39;*&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">c</span><span class="p">:</span>
+				<span class="n">expanded</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+				<span class="k">continue</span>
+				
+			<span class="n">globbed</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">c</span><span class="p">))</span>
+			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">globbed</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span> <span class="c1"># Fail in an obvious way in this case</span>
+				<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Classpath glob entry has no matches: &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">expanded</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">globbed</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">expanded</span></div>
+
+	<span class="nd">@staticmethod</span>
+	<span class="k">def</span> <span class="nf">_splitShellArgs</span><span class="p">(</span><span class="n">commandstring</span><span class="p">):</span>
+		<span class="c1"># need to escape windows \ else it gets removed; do this the same on all platforms for consistency)</span>
+		<span class="k">return</span> <span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">commandstring</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">u</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">,</span><span class="sa">u</span><span class="s1">&#39;</span><span class="se">\\\\</span><span class="s1">&#39;</span><span class="p">))</span></div>
 </pre></div>
 
            </div>
@@ -566,7 +579,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-14
+        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-15
 
     </p>
   </div>

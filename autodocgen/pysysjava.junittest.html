@@ -186,6 +186,9 @@ command line (<em>in addition</em> to the above arguments), e.g. <code class="do
 </div></blockquote>
 <p>Any classpath requirements or runtime JVM arguments should be customized using the properties described 
 in <a class="reference internal" href="pysysjava.testplugin.html#module-pysysjava.testplugin" title="pysysjava.testplugin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysysjava.testplugin</span></code></a> such as <code class="docutils literal notranslate"><span class="pre">javaClasspath</span></code> and <code class="docutils literal notranslate"><span class="pre">jvmArgs</span></code>.</p>
+<p>The JUnit process is given Java system properties for the PySys testcase Input/ directory (<code class="docutils literal notranslate"><span class="pre">pysys.input</span></code>), 
+the test project root directory (<code class="docutils literal notranslate"><span class="pre">pysys.project.testRootDir</span></code>), and if this PySys test has any modes defined, the current 
+mode (<code class="docutils literal notranslate"><span class="pre">pysys.mode</span></code>).</p>
 <dl class="py attribute">
 <dt id="pysysjava.junittest.JUnitTest.junitConfigArgs">
 <code class="sig-name descname">junitConfigArgs</code><em class="property"> = ''</em><a class="headerlink" href="#pysysjava.junittest.JUnitTest.junitConfigArgs" title="Permalink to this definition">¶</a></dt>
@@ -254,7 +257,7 @@ and <a class="reference internal" href="#pysysjava.junittest.JUnitTest.junitSele
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-14
+        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-15
 
     </p>
   </div>

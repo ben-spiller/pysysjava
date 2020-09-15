@@ -210,6 +210,86 @@ precedence over the plugin property.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="pysysjava.testplugin.JavaTestPlugin.compile">
+<code class="sig-name descname">compile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">output</span><span class="o">=</span><span class="default_value">'javaclasses'</span></em>, <em class="sig-param"><span class="n">classpath</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">args</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pysysjava/testplugin.html#JavaTestPlugin.compile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pysysjava.testplugin.JavaTestPlugin.compile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compile Java source files into classes. By default we compile Java files from the test’s input directory to 
+<code class="docutils literal notranslate"><span class="pre">self.output/javaclasses</span></code>.</p>
+<p>For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;--Werror&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<em>str</em><em> or </em><em>list</em><em>[</em><em>str</em><em>]</em>) – Typically a directory (relative to the test Input dir) in which to search for 
+classpaths; alternatively a list of Java source files. By default we compile source files under the 
+test Input directory.</p></li>
+<li><p><strong>output</strong> (<em>str</em>) – The path (relative to the test Output directory) where the output will be written.</p></li>
+<li><p><strong>classpath</strong> (<em>str</em><em> or </em><em>list</em><em>[</em><em>str</em><em>]</em>) – The classpath to use, or None if the <code class="docutils literal notranslate"><span class="pre">self.defaultClasspath</span></code> should 
+be used (which by default is empty). The classpath can be specified as a list or a single string delimited 
+by <code class="docutils literal notranslate"><span class="pre">;</span></code>, newline or <code class="docutils literal notranslate"><span class="pre">os.pathsep</span></code>; see <a class="reference internal" href="#pysysjava.testplugin.JavaTestPlugin.toClasspathList" title="pysysjava.testplugin.JavaTestPlugin.toClasspathList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toClasspathList()</span></code></a> for details.</p></li>
+<li><p><strong>args</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – List of compiler arguments such as <code class="docutils literal notranslate"><span class="pre">--Werror</span></code> or <code class="docutils literal notranslate"><span class="pre">-nowarn</span></code> (to control warn 
+behaviour). If not specified, the <code class="docutils literal notranslate"><span class="pre">defaultCompilerArgs</span></code> plugin property is used.</p></li>
+<li><p><strong>kwargs</strong> – Additional keyword arguments such as <code class="docutils literal notranslate"><span class="pre">timeout=</span></code> will be passed to 
+<a class="reference external" href="https://pysys-test.github.io/pysys-test/BaseTest.html#pysys.basetest.BaseTest.startProcess" title="(in PySys v1.6.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysys.basetest.BaseTest.startProcess</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The process object, with the full path to the output dir in the <code class="docutils literal notranslate"><span class="pre">info</span></code> dictionary.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pysys-test.github.io/pysys-test/autodocgen/pysys.process.html#pysys.process.Process" title="(in PySys v1.6.1)">pysys.process.Process</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pysysjava.testplugin.JavaTestPlugin.startJava">
+<code class="sig-name descname">startJava</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">classOrJar</span></em>, <em class="sig-param"><span class="n">args</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">classpath</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">jvmArgs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">jvmProps</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">disableCoverage</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pysysjava/testplugin.html#JavaTestPlugin.startJava"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pysysjava.testplugin.JavaTestPlugin.startJava" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start a Java process to execute the specified class or .jar file.</p>
+<p>For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">myserver</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">startJava</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">appHome</span><span class="o">+</span><span class="s1">&#39;/my_server*.jar&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">getNextAvailableTCPPort</span><span class="p">()],</span> 
+        <span class="n">stdouterr</span><span class="o">=</span><span class="s1">&#39;my_server&#39;</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">defaultClasspath</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">appHome</span><span class="o">+</span><span class="s1">&#39;/mydeps.jar&#39;</span><span class="p">]</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">+</span><span class="s1">&#39;/javaclasses&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;--Werror&#39;</span><span class="p">])</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">startJava</span><span class="p">(</span><span class="s1">&#39;myorg.MyHttpTestClient&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="n">port</span><span class="p">],</span> <span class="n">stdouterr</span><span class="o">=</span><span class="s1">&#39;httpclient&#39;</span><span class="p">,</span> 
+        <span class="n">classpath</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">defaultClasspath</span><span class="o">+</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">+</span><span class="s1">&#39;/javaclasses&#39;</span><span class="p">],</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>classOrJar</strong> (<em>str</em>) – Either a class (from the classpath) to execute, or the path to a <code class="docutils literal notranslate"><span class="pre">.jar</span></code> file 
+(an absolute path or relative to the output directory) whose manifest indicates the main class.
+Since some jar names contain a version number, a <code class="docutils literal notranslate"><span class="pre">*</span></code> glob expression can be used in the .jar file 
+provided it matches exactly one jar and still ends with the <code class="docutils literal notranslate"><span class="pre">.jar</span></code> suffix.</p></li>
+<li><p><strong>args</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – Command line arguments for the specified class.</p></li>
+<li><p><strong>classpath</strong> (<em>str</em><em> or </em><em>list</em><em>[</em><em>str</em><em>]</em>) – The classpath to use, or None if the <code class="docutils literal notranslate"><span class="pre">self.defaultClasspath</span></code> should 
+be used (which by default is empty). The classpath can be specified as a list or a single string delimited 
+by <code class="docutils literal notranslate"><span class="pre">;</span></code>, newline or <code class="docutils literal notranslate"><span class="pre">os.pathsep</span></code>; see <a class="reference internal" href="#pysysjava.testplugin.JavaTestPlugin.toClasspathList" title="pysysjava.testplugin.JavaTestPlugin.toClasspathList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toClasspathList()</span></code></a> for details.</p></li>
+<li><p><strong>jvmArgs</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – List of JVM arguments to pass before the class/jar name, such as <code class="docutils literal notranslate"><span class="pre">-Xmx512m</span></code>. 
+If None is specified, the <code class="docutils literal notranslate"><span class="pre">defaultJVMArgs</span></code> plugin property is used.</p></li>
+<li><p><strong>jvmProps</strong> (<em>dict</em><em>[</em><em>str</em><em>,</em><em>str</em><em>]</em>) – System properties to be added to the jvmArgs (each entry results in a 
+<code class="docutils literal notranslate"><span class="pre">-Dkey=value</span></code> jvmArg).</p></li>
+<li><p><strong>disableCoverage</strong> (<em>bool</em>) – Set to True to ensure Java code coverage is not captured for this process. 
+Code coverage can also be disabled on a per-test/directory basis by setting <code class="docutils literal notranslate"><span class="pre">self.disableCoverage</span></code> or 
+adding the <code class="docutils literal notranslate"><span class="pre">disableCoverage</span></code> group to the <code class="docutils literal notranslate"><span class="pre">pysystest.xml</span></code>.</p></li>
+<li><p><strong>kwargs</strong> – Additional keyword arguments such as <code class="docutils literal notranslate"><span class="pre">stdouterr=</span></code>, <code class="docutils literal notranslate"><span class="pre">timeout=</span></code>, <code class="docutils literal notranslate"><span class="pre">onError=</span></code> and 
+<code class="docutils literal notranslate"><span class="pre">background=</span></code> will be passed to <a class="reference external" href="https://pysys-test.github.io/pysys-test/BaseTest.html#pysys.basetest.BaseTest.startProcess" title="(in PySys v1.6.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysys.basetest.BaseTest.startProcess</span></code></a>. It is strongly recommended to 
+always include at <code class="docutils literal notranslate"><span class="pre">stdouterr=</span></code> since otherwise any error messages from the process will not be captured.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The process object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pysys-test.github.io/pysys-test/autodocgen/pysys.process.html#pysys.process.Process" title="(in PySys v1.6.1)">pysys.process.Process</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="pysysjava.testplugin.JavaTestPlugin.toClasspathList">
 <code class="sig-name descname">toClasspathList</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">classpath</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pysysjava/testplugin.html#JavaTestPlugin.toClasspathList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pysysjava.testplugin.JavaTestPlugin.toClasspathList" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts the specified classpath string to a list of classpath entries (or just returns the input if it’s 
@@ -241,70 +321,6 @@ elements will be deleted.</p>
 <span class="go">True</span>
 </pre></div>
 </div>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pysysjava.testplugin.JavaTestPlugin.compile">
-<code class="sig-name descname">compile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">output</span><span class="o">=</span><span class="default_value">'javaclasses'</span></em>, <em class="sig-param"><span class="n">classpath</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">args</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pysysjava/testplugin.html#JavaTestPlugin.compile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pysysjava.testplugin.JavaTestPlugin.compile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compile Java source files into classes. By default we compile Java files from the test’s input directory to 
-<code class="docutils literal notranslate"><span class="pre">self.output/javaclasses</span></code>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>or list</strong><strong>[</strong><strong>str</strong><strong>] </strong><strong>input</strong> (<em>str</em>) – Typically a directory (relative to the test Input dir) in which to search for 
-classpaths; alternatively a list of Java source files. By default we compile source files under the 
-test Input directory.</p></li>
-<li><p><strong>output</strong> (<em>str</em>) – The path (relative to the test Output directory) where the output will be written.</p></li>
-<li><p><strong>or str classpath</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – The classpath to use, or None if the <code class="docutils literal notranslate"><span class="pre">self.defaultClasspath</span></code> should 
-be used (which by default is empty). The classpath can be specified as a list or a single string delimited 
-by <code class="docutils literal notranslate"><span class="pre">;</span></code>, newline or <code class="docutils literal notranslate"><span class="pre">os.pathsep</span></code>; see <a class="reference internal" href="#pysysjava.testplugin.JavaTestPlugin.toClasspathList" title="pysysjava.testplugin.JavaTestPlugin.toClasspathList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toClasspathList()</span></code></a> for details.</p></li>
-<li><p><strong>args</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – List of compiler arguments such as <code class="docutils literal notranslate"><span class="pre">--Werror</span></code> or <code class="docutils literal notranslate"><span class="pre">-nowarn</span></code> (to control warn 
-behaviour). If not specified, the <code class="docutils literal notranslate"><span class="pre">defaultCompilerArgs</span></code> plugin property is used.</p></li>
-<li><p><strong>kwargs</strong> – Additional keyword arguments such as <code class="docutils literal notranslate"><span class="pre">timeout=</span></code> will be passed to 
-<a class="reference external" href="https://pysys-test.github.io/pysys-test/BaseTest.html#pysys.basetest.BaseTest.startProcess" title="(in PySys v1.6.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysys.basetest.BaseTest.startProcess</span></code></a>.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pysysjava.testplugin.JavaTestPlugin.startJava">
-<code class="sig-name descname">startJava</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">classOrJar</span></em>, <em class="sig-param"><span class="n">args</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">classpath</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">jvmArgs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">props</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">disableCoverage</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pysysjava/testplugin.html#JavaTestPlugin.startJava"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pysysjava.testplugin.JavaTestPlugin.startJava" title="Permalink to this definition">¶</a></dt>
-<dd><p>Start a Java process to execute the specified class or .jar file.</p>
-<p>For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">myserver</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">startJava</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">appHome</span><span class="o">+</span><span class="s1">&#39;/my_server*.jar&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">getNextAvailableTCPPort</span><span class="p">()],</span> 
-        <span class="n">stdouterr</span><span class="o">=</span><span class="s1">&#39;my_server&#39;</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">defaultClasspath</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">appHome</span><span class="o">+</span><span class="s1">&#39;/mydeps.jar&#39;</span><span class="p">]</span>
-<span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;--Werror&#39;</span><span class="p">])</span>
-<span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">startJava</span><span class="p">(</span><span class="s1">&#39;myorg.MyHttpTestClient&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="n">port</span><span class="p">],</span> <span class="n">stdouterr</span><span class="o">=</span><span class="s1">&#39;httpclient&#39;</span><span class="p">,</span> 
-        <span class="n">classpath</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">defaultClasspath</span><span class="o">+</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">+</span><span class="s1">&#39;/javaclasses&#39;</span><span class="p">],</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
-</pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>classOrJar</strong> (<em>str</em>) – Either a class (from the classpath) to execute, or the path to a <code class="docutils literal notranslate"><span class="pre">.jar</span></code> file 
-(an absolute path or relative to the output directory) whose manifest indicates the main class.
-Since some jar names contain a version number, a <code class="docutils literal notranslate"><span class="pre">*</span></code> glob expression can be used in the .jar file 
-provided it matches exactly one jar and still ends with the <code class="docutils literal notranslate"><span class="pre">.jar</span></code> suffix.</p></li>
-<li><p><strong>args</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – Command line arguments for the specified class.</p></li>
-<li><p><strong>or str classpath</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – The classpath to use, or None if the <code class="docutils literal notranslate"><span class="pre">self.defaultClasspath</span></code> should 
-be used (which by default is empty). The classpath can be specified as a list or a single string delimited 
-by <code class="docutils literal notranslate"><span class="pre">;</span></code>, newline or <code class="docutils literal notranslate"><span class="pre">os.pathsep</span></code>; see <a class="reference internal" href="#pysysjava.testplugin.JavaTestPlugin.toClasspathList" title="pysysjava.testplugin.JavaTestPlugin.toClasspathList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toClasspathList()</span></code></a> for details.</p></li>
-<li><p><strong>jvmArgs</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – List of JVM arguments to pass before the class/jar name, such as <code class="docutils literal notranslate"><span class="pre">-Xmx512m</span></code>. 
-If None is specified, the <code class="docutils literal notranslate"><span class="pre">defaultJVMArgs</span></code> plugin property is used.</p></li>
-<li><p><strong>props</strong> (<em>dict</em><em>[</em><em>str</em><em>,</em><em>str</em><em>]</em>) – System properties to be added to the jvmArgs (each entry results in a 
-<code class="docutils literal notranslate"><span class="pre">-Dkey=value</span></code> jvmArg).</p></li>
-<li><p><strong>disableCoverage</strong> (<em>bool</em>) – Set to True to ensure Java code coverage is not captured for this process. 
-Code coverage can also be disabled on a per-test/directory basis by setting <code class="docutils literal notranslate"><span class="pre">self.disableCoverage</span></code> or 
-adding the <code class="docutils literal notranslate"><span class="pre">disableCoverage</span></code> group to the <code class="docutils literal notranslate"><span class="pre">pysystest.xml</span></code>.</p></li>
-<li><p><strong>kwargs</strong> – Additional keyword arguments such as <code class="docutils literal notranslate"><span class="pre">stdouterr=</span></code>, <code class="docutils literal notranslate"><span class="pre">timeout=</span></code>, <code class="docutils literal notranslate"><span class="pre">onError=</span></code> and 
-<code class="docutils literal notranslate"><span class="pre">background=</span></code> will be passed to <a class="reference external" href="https://pysys-test.github.io/pysys-test/BaseTest.html#pysys.basetest.BaseTest.startProcess" title="(in PySys v1.6.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysys.basetest.BaseTest.startProcess</span></code></a>. It is strongly recommended to 
-always include at <code class="docutils literal notranslate"><span class="pre">stdouterr=</span></code> since otherwise any error messages from the process will not be captured.</p></li>
-</ul>
-</dd>
-</dl>
 </dd></dl>
 
 </dd></dl>
@@ -403,7 +419,7 @@ prefix <code class="docutils literal notranslate"><span class="pre">\?\</span></
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-14
+        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-15
 
     </p>
   </div>
