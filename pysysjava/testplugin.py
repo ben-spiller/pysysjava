@@ -181,68 +181,6 @@ class JavaTestPlugin(object):
 		self.defaultJVMArgs = self._splitShellArgs(self.project.expandProperties(
 			self.testObj.descriptor.userData.get('jvmArgs', self.defaultJVMArgs)))
 	
-	def toClasspathList(self, classpath):
-		"""
-		Converts the specified classpath string to a list of classpath entries (or just returns the input if it's 
-		already a list). Glob expressions such as ``*.jar`` will be expanded if the parent directory exists and there 
-		is at least one match. 
-		
-		If None is specified, the `defaultClasspath` is used (either from the test/dir descriptor's ``classpath`` 
-		user-data or the ``defaultClasspath`` plugin property). 
-		
-		In this PySys plugin classpath strings can be delimited with the usual OS separator ``os.pathsep`` 
-		(e.g. ``:`` or ``;``), but to allow for platform-independence (given Windows uses ``:`` for drive letters), 
-		if the string contains ``;`` or a newline separator those will be used for splitting instead. Any whitespace or empty 
-		elements will be deleted. 
-		
-		It is recommended to use absolute not relative paths for classpath entries. 
-		
-		>>> plugin = JavaTestPlugin()
-
-		>>> plugin.toClasspathList(['a.jar', 'b.jar'])
-		['a.jar', 'b.jar']
-
-		>>> plugin.toClasspathList('  a.jar  ; b.jar ; c:/foo  '])
-		['a.jar', 'b.jar', 'c:/foo']
-
-		>>> plugin.toClasspathList(os.pathsep.join(['a.jar', 'b.jar'])
-		['a.jar', 'b.jar']
-
-		>>> plugin.toClasspathList(None) is None
-		True
-		
-		"""
-		if classpath is None: 
-			assert self.defaultClasspath is not None
-			return self.toClasspathList(self.defaultClasspath) # call it again in case user has messed with it
-		
-		if isstring(classpath): # assume it's already split unless it's a string
-			if ';' in classpath:
-				classpath = classpath.replace('\n',';').split(';')
-			else:
-				classpath = classpath.replace('\n',os.pathsep).split(os.pathsep)
-			classpath = [c.strip() for c in classpath if len(c.strip())>0]
-			
-		# glob expansion
-		if '*' not in ''.join(classpath): return classpath
-		
-		expanded = []
-		for c in classpath:
-			if '*' not in c:
-				expanded.append(c)
-				continue
-				
-			globbed = sorted(glob.glob(c))
-			if len(globbed)==0: # Fail in an obvious way in this case
-				raise Exception('Classpath glob entry has no matches: "%s"', c)
-			else:
-				expanded.extend(globbed)
-		return expanded
-
-	@staticmethod
-	def _splitShellArgs(commandstring):
-		# need to escape windows \ else it gets removed; do this the same on all platforms for consistency)
-		return shlex.split(commandstring.replace(u'\\',u'\\\\'))
 		
 	def compile(self, input=None, output='javaclasses', classpath=None, args=None, **kwargs):
 		"""Compile Java source files into classes. By default we compile Java files from the test's input directory to 
@@ -412,3 +350,65 @@ class JavaTestPlugin(object):
 
 		return self.owner.startProcess(self.javaExecutable, jvmArgs+args, displayName=displayName, **kwargs)
 
+	def toClasspathList(self, classpath):
+		"""
+		Converts the specified classpath string to a list of classpath entries (or just returns the input if it's 
+		already a list). Glob expressions such as ``*.jar`` will be expanded if the parent directory exists and there 
+		is at least one match. 
+		
+		If None is specified, the `defaultClasspath` is used (either from the test/dir descriptor's ``classpath`` 
+		user-data or the ``defaultClasspath`` plugin property). 
+		
+		In this PySys plugin classpath strings can be delimited with the usual OS separator ``os.pathsep`` 
+		(e.g. ``:`` or ``;``), but to allow for platform-independence (given Windows uses ``:`` for drive letters), 
+		if the string contains ``;`` or a newline separator those will be used for splitting instead. Any whitespace or empty 
+		elements will be deleted. 
+		
+		It is recommended to use absolute not relative paths for classpath entries. 
+		
+		>>> plugin = JavaTestPlugin()
+
+		>>> plugin.toClasspathList(['a.jar', 'b.jar'])
+		['a.jar', 'b.jar']
+
+		>>> plugin.toClasspathList('  a.jar  ; b.jar ; c:/foo  '])
+		['a.jar', 'b.jar', 'c:/foo']
+
+		>>> plugin.toClasspathList(os.pathsep.join(['a.jar', 'b.jar'])
+		['a.jar', 'b.jar']
+
+		>>> plugin.toClasspathList(None) is None
+		True
+		
+		"""
+		if classpath is None: 
+			assert self.defaultClasspath is not None
+			return self.toClasspathList(self.defaultClasspath) # call it again in case user has messed with it
+		
+		if isstring(classpath): # assume it's already split unless it's a string
+			if ';' in classpath:
+				classpath = classpath.replace('\n',';').split(';')
+			else:
+				classpath = classpath.replace('\n',os.pathsep).split(os.pathsep)
+			classpath = [c.strip() for c in classpath if len(c.strip())>0]
+			
+		# glob expansion
+		if '*' not in ''.join(classpath): return classpath
+		
+		expanded = []
+		for c in classpath:
+			if '*' not in c:
+				expanded.append(c)
+				continue
+				
+			globbed = sorted(glob.glob(c))
+			if len(globbed)==0: # Fail in an obvious way in this case
+				raise Exception('Classpath glob entry has no matches: "%s"', c)
+			else:
+				expanded.extend(globbed)
+		return expanded
+
+	@staticmethod
+	def _splitShellArgs(commandstring):
+		# need to escape windows \ else it gets removed; do this the same on all platforms for consistency)
+		return shlex.split(commandstring.replace(u'\\',u'\\\\'))
