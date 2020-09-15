@@ -24,7 +24,7 @@
 		<class name="JUnitTest" module="${appHome}/pysysjava/junittest"/>
 		
 		<input path="java"/>
-		<user-data name="javaClasspath" value="${appHome}/target/log4j-jars/*.jar"/>
+		<user-data name="javaClasspath" value="${appHome}/target/logging-jars/*.jar"/>
 		<user-data name="jvmArgs" value="-Xmx256M"/>
 
 		<user-data name="junitTimeoutSecs" value="600"/>

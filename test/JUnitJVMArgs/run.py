@@ -8,8 +8,8 @@ import pysysjava.junitxml
 
 class PySysTest(pysysjava.junittest.JUnitTest):
 	def validate(self):
-		# First the JnNit validation
-		super(PySysTest, self).execute()
+		# First the JUnit validation
+		super(PySysTest, self).validate()
 
 		# Now additional verification
 		
