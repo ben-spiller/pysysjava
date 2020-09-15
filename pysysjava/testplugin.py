@@ -177,9 +177,11 @@ class JavaTestPlugin(object):
 		# Assume both of these methods make a copy of the static value (which makes it safe for tests to mutate the 
 		# lists)
 		self.defaultClasspath = self.toClasspathList(self.project.expandProperties(
-			self.testObj.descriptor.userData.get('javaClasspath', self.defaultClasspath)))
+			testObj.descriptor.userData.get('javaClasspath', self.defaultClasspath)))
 		self.defaultJVMArgs = self._splitShellArgs(self.project.expandProperties(
-			self.testObj.descriptor.userData.get('jvmArgs', self.defaultJVMArgs)))
+			testObj.descriptor.userData.get('jvmArgs', self.defaultJVMArgs)))
+		
+		self.__hsperfdataCleanupRegistered = False
 	
 		
 	def compile(self, input=None, output='javaclasses', classpath=None, args=None, **kwargs):
@@ -274,7 +276,7 @@ class JavaTestPlugin(object):
 		self.owner.logFileContents(process.stderr, maxLines=0)
 		return process
 
-	def startJava(self, classOrJar, args=[], classpath=None, jvmArgs=None, props={}, disableCoverage=False, **kwargs):
+	def startJava(self, classOrJar, args=[], classpath=None, jvmArgs=None, jvmProps={}, disableCoverage=False, **kwargs):
 		"""
 		Start a Java process to execute the specified class or .jar file. 
 		
@@ -303,7 +305,7 @@ class JavaTestPlugin(object):
 		:param list[str] jvmArgs: List of JVM arguments to pass before the class/jar name, such as ``-Xmx512m``. 
 			If None is specified, the ``defaultJVMArgs`` plugin property is used. 
 		
-		:param dict[str,str] props: System properties to be added to the jvmArgs (each entry results in a 
+		:param dict[str,str] jvmProps: System properties to be added to the jvmArgs (each entry results in a 
 			``-Dkey=value`` jvmArg).
 		
 		:param bool disableCoverage: Set to True to ensure Java code coverage is not captured for this process. 
@@ -317,14 +319,19 @@ class JavaTestPlugin(object):
 		:return: The process object.
 		:rtype: pysys.process.Process
 		"""
-		
-		if jvmArgs is None: 
-			jvmArgs = list(self.defaultJVMArgs)
-		else:
-			jvmArgs = list(jvmArgs) # copy it so we can mutate it below
+		if not self.__hsperfdataCleanupRegistered:
+			# delete these non-useful (usually empty) directories Java creates to avoid distractions
+			self.__hsperfdataCleanupRegistered = True
+			self.owner.addCleanupFunction(lambda: [deletedir(self.owner.output+'/'+d) for d in os.listdir(self.owner.output)
+				if d.startswith('hsperfdata_')])
+
+
+		if jvmArgs is None: jvmArgs = self.defaultJVMArgs
+
+		jvmArgs = list(jvmArgs) # copy it so we can mutate it below
 		if (not disableCoverage) and not self.owner.disableCoverage:
 			jvmArgs = self._codeCoverageArgs+jvmArgs
-		for k,v in props.items():
+		for k,v in jvmProps.items():
 			jvmArgs.append('-D%s=%s'%(k, v))
 		originalClasspath = classpath
 
