@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+	<!-- Log4j2 configuration file (used with -Dlog4j.configurationFile=). -->
+	
+	<Properties>
+        <Property name="appenderPatternLayout">%date %-5level [%thread] - %message%n%exception</Property>
+	</Properties>
+	
+	<Appenders>
+		<Console name="ConsoleAppender" target="SYSTEM_OUT">
+			<PatternLayout pattern="${appenderPatternLayout}" />
+		</Console>
+
+	</Appenders>
+	
+	<Loggers>
+		<Root level="${sys:JUNIT_LOG_LEVEL:-INFO}"> 
+			<AppenderRef ref="ConsoleAppender"/>
+		</Root>
+	</Loggers>
+</Configuration>

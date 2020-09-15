@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pysystest type="auto">
+	
+	<description>
+		<title>JUnit - jvmArgs, adding log4j to the classpath, and JUnit parallel config options</title>
+		<purpose><![CDATA[
+		
+		]]></purpose>
+	</description>
+
+	<!-- uncomment this to skip the test:
+	<skipped reason=""/> 
+	-->
+	
+	<classification>
+		<groups inherit="true">
+			<group></group>
+		</groups>
+		<modes inherit="true">
+			<mode>MyPySysMode</mode>
+		</modes>
+	</classification>
+
+	<data>
+		<user-data name="javaClasspath" value="${appHome}/target/logging-jars/log4j-*.jar;${appHome}/target/logging-jars/slf4j-*.jar"/>
+		<user-data name="jvmArgs" value=' -Xmx256M "-DmyJVMArg=my value" -Dlog4j.configurationFile=${testRootDir}/log4j2-stdout.xml '/>
+
+		<user-data name="junitTimeoutSecs" value="600"/>
+		<user-data name="junitConfigArgs" value="--config junit.jupiter.execution.parallel.enabled=true --config junit.jupiter.execution.parallel.mode.default=concurrent --config junit.jupiter.execution.parallel.config.strategy=fixed --config junit.jupiter.execution.parallel.config.fixed.parallelism=4"/>
+	</data>
+</pysystest>

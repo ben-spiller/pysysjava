@@ -29,6 +29,10 @@ class JUnitTest(BaseTest):
 	
 	Any classpath requirements or runtime JVM arguments should be customized using the properties described 
 	in `pysysjava.testplugin` such as ``javaClasspath`` and ``jvmArgs``. 
+	
+	The JUnit process is given Java system properties for the PySys testcase Input/ directory (``pysys.input``), 
+	the test project root directory (``pysys.project.testRootDir``), and if this PySys test has any modes defined, the current 
+	mode (``pysys.mode``). 
 	"""
 
 	# NB: although these variables will end up as list[str] we define the defaults as a simple string not [] because we 
@@ -88,7 +92,7 @@ class JUnitTest(BaseTest):
 	def setup(self):
 		super(JUnitTest, self).setup()
 		
-		assert self.java, 'This test class requires the JavaTestPlugin test-plugin to be configured with alias=java'
+		assert self.java, 'This test class requires the JavaTestPlugin test-plugin to be configured, with alias=java'
 		
 		self.junitFrameworkClasspath = self.java.toClasspathList(
 			self.junitFrameworkClasspath or self.project.getProperty('junitFrameworkClasspath', ''))
@@ -97,12 +101,21 @@ class JUnitTest(BaseTest):
 		
 		# TODO: only compile if no test has already compiled them
 		self.compileTestClasses()
-	
+
+	def execute(self):
+		self.java.startJava(**self.getJUnitKwArgs()) 
+
+	def validate(self):
+		self.validateJUnitReports(self.output+'/junit-reports')
+
+	# The methods above override the standard test class; following are where they are implemented
+
 	def compileTestClasses(self):
 		self.java.compile(input=self.input, classpath=self.java.defaultClasspath+self.junitFrameworkClasspath, output=self.javaclassesDir)
 	
-	def execute(self):
-		
+	def getJUnitKwArgs(self):
+		# This is a flexible way to defining the arguments that allows a subclass to make changes if needed
+	
 		testClasses = os.path.join(self.output, self.javaclassesDir)
 		if not os.listdir(testClasses):
 			raise Exception('No classes were found after compiling "%s"'%self.input)
@@ -147,20 +160,29 @@ class JUnitTest(BaseTest):
 			'--disable-ansi-colors',
 			'--classpath=%s'%os.pathsep.join(classpath),
 			]+args
-			
-		
+
 		launcher = [cp for cp in self.junitFrameworkClasspath if 'junit-platform-console-standalone' in os.path.basename(cp)]
 		if len(launcher) != 1:
 			raise Exception('Cannot find junit-platform-console-standalone .jar file in the junitFrameworkClasspath: %s', self.junitFrameworkClasspath)
-		self.java.startJava(launcher[0], 
-			args, stdouterr='junit', expectedExitStatus=' in [0, 1]', 
-			onError=lambda process: [self.logFileContents(process.stderr), self.getExprFromFile(process.stderr, '.+')][-1],
-			displayName='JUnit %s'%' '.join(a for a in selectionArgs if a not in ['-p', '-c']),
-			timeout=self.junitTimeoutSecs) 
-			
-		# NB: the above does not give an error if no tests were selected; we rely on validation for that
-
-	def validate(self):
+		
+		kwargs = {
+			'classOrJar': launcher[0],
+			'args': args,
+			'expectedExitStatus': 'in [0, 1]', # allow failing tests to be dealt with later, but not complete failure to execure the launcher
+			'onError': lambda process: [self.logFileContents(process.stderr), self.getExprFromFile(process.stderr, '.+')][-1],
+			'displayName': 'JUnit %s'%' '.join(a for a in selectionArgs if a not in ['-p', '-c']),
+			'timeout':self.junitTimeoutSecs,
+			'stdouterr': 'junit',
+		}
+		if self.mode: 
+			kwargs['jvmProps'] = {
+				'pysys.mode': self.mode,
+				'pysys.input': self.input,
+				'pysys.project.testRootDir': self.project.testRootDir,
+				}
+		return kwargs
+		
+	def validateJUnitReports(self, reportsDir):
 		outcomeCounts = {
 			PASSED: 0,
 			SKIPPED: 0,
@@ -171,13 +193,15 @@ class JUnitTest(BaseTest):
 		
 		t = {} # just in case no tests were found at all
 		
+		self.addOutcome(PASSED) # if no failures, pass	
+	
 		logSeparator = False
 		alreadyseen = set() # JUnit 5 doesn't do this, but Ant can sometimes generate duplicates for nested test classes
-		for f in sorted(os.listdir(toLongPathSafe(self.output+'/junit-reports'))):
+		for f in sorted(os.listdir(toLongPathSafe(reportsDir))):
 			if f.endswith('.xml'):
-				suite, tests = JUnitXMLParser(toLongPathSafe(self.output+'/junit-reports/'+f)).parse()
+				suite, tests = JUnitXMLParser(toLongPathSafe(reportsDir+'/'+f)).parse()
 				if suite['tests']+suite.get('skipped',0) == 0:
-					self.log.debug('Ignoring suite "%s" which contains no tests', suite['tests'])
+					self.log.debug('Ignoring suite "%s" which contains no tests', suite['name'])
 					continue
 
 				if logSeparator:
@@ -195,7 +219,7 @@ class JUnitTest(BaseTest):
 						continue
 					alreadyseen.add(key)
 					
-					outcome = self.validateTestcaseResult(t)
+					outcome = self.validateJUnitTestcaseResult(t)
 					outcomeCounts[outcome] += 1
 				
 				# some JUnit formats (but not JUnit5) provide stdout/err at the suite level rather than per test 
@@ -217,7 +241,7 @@ class JUnitTest(BaseTest):
 			self.log.info('Summary of all testcase outcomes for %s: %s', self.descriptor.id,
 				', '.join('%d %s'%(c,o)for o, c in outcomeCounts.items() if c>0))
 	
-	def validateTestcaseResult(self, t):
+	def validateJUnitTestcaseResult(self, t):
 		outcome = {
 			'passed': PASSED,
 			'failure': FAILED,

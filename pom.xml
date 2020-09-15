@@ -52,6 +52,7 @@
     </dependency>
 
     <!-- These are included to show handling for third party libraries -->
+    
     <dependency>
         <groupId>org.apache.logging.log4j</groupId>
         <artifactId>log4j-api</artifactId>
@@ -65,7 +66,21 @@
         <version>2.13.3</version>
         <scope>runtime</scope>
     </dependency>
-        
+
+    <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-slf4j-impl</artifactId>
+        <version>2.13.3</version>
+        <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>1.7.25</version>
+        <scope>runtime</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -85,7 +100,7 @@
                     <configuration>
                       <includeScope>runtime</includeScope>
 
-                      <outputDirectory>${project.build.directory}/log4j-jars</outputDirectory>
+                      <outputDirectory>${project.build.directory}/logging-jars</outputDirectory>
                       <overWriteReleases>false</overWriteReleases>
                       <overWriteSnapshots>true</overWriteSnapshots>
                       <excludeTransitive>true</excludeTransitive>
