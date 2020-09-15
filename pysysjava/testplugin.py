@@ -156,7 +156,7 @@ class JavaTestPlugin(object):
 	"""
 
 	def setup(self, testObj):
-		self.owner = self.testObj = testObj
+		self.owner = testObj
 		self.project = self.owner.project
 		
 		# This message isn't useful for debugging errors so suppress it
@@ -248,17 +248,26 @@ class JavaTestPlugin(object):
 		"""Compile Java source files into classes. By default we compile Java files from the test's input directory to 
 		``self.output/javaclasses``. 
 		
-		:param str or list[str] input: Typically a directory (relative to the test Input dir) in which to search for 
+		For example::
+		
+			self.java.compile(self.input, args=['--Werror'])
+		
+		:param input: Typically a directory (relative to the test Input dir) in which to search for 
 			classpaths; alternatively a list of Java source files. By default we compile source files under the 
 			test Input directory. 
+		:type input: str or list[str]
 		:param str output: The path (relative to the test Output directory) where the output will be written. 
-		:param list[str] or str classpath: The classpath to use, or None if the ``self.defaultClasspath`` should 
+		:param classpath: The classpath to use, or None if the ``self.defaultClasspath`` should 
 			be used (which by default is empty). The classpath can be specified as a list or a single string delimited 
 			by ``;``, newline or ``os.pathsep``; see `toClasspathList()` for details. 
+		:type classpath: str or list[str]
 		:param list[str] args: List of compiler arguments such as ``--Werror`` or ``-nowarn`` (to control warn 
 			behaviour). If not specified, the ``defaultCompilerArgs`` plugin property is used. 
 		:param kwargs: Additional keyword arguments such as ``timeout=`` will be passed to 
 			`pysys.basetest.BaseTest.startProcess`. 
+			
+		:return: The process object, with the full path to the output dir in the ``info`` dictionary.
+		:rtype: pysys.process.Process
 		"""
 		# need to escape windows \ else it gets removed; do this the same on all platforms for consistency)
 		if args is None: args = self._splitShellArgs(self.defaultCompilerArgs)
@@ -321,7 +330,7 @@ class JavaTestPlugin(object):
 							LOG_FILE_CONTENTS))
 				),
 				self.owner.getExprFromFile(process.stderr, '(.*(error|invalid).*)')
-			][-1])
+			][-1], info={'output':output}, **kwargs)
 		
 		# log stderr even when it works so we see warnings
 		self.owner.logFileContents(process.stderr, maxLines=0)
@@ -337,7 +346,7 @@ class JavaTestPlugin(object):
 				stdouterr='my_server', background=True)
 		
 			self.java.defaultClasspath = [self.project.appHome+'/mydeps.jar']
-			self.java.compile(self.input, args=['--Werror'])
+			self.java.compile(self.input, output=self.output+'/javaclasses', args=['--Werror'])
 			self.java.startJava('myorg.MyHttpTestClient', ['127.0.0.1', port], stdouterr='httpclient', 
 				classpath=self.java.defaultClasspath+[self.output+'/javaclasses'], timeout=60)
 			
@@ -348,9 +357,10 @@ class JavaTestPlugin(object):
 			
 		:param list[str] args: Command line arguments for the specified class. 
 		
-		:param list[str] or str classpath: The classpath to use, or None if the ``self.defaultClasspath`` should 
+		:param classpath: The classpath to use, or None if the ``self.defaultClasspath`` should 
 			be used (which by default is empty). The classpath can be specified as a list or a single string delimited 
 			by ``;``, newline or ``os.pathsep``; see `toClasspathList()` for details. 
+		:type classpath: str or list[str]
 			
 		:param list[str] jvmArgs: List of JVM arguments to pass before the class/jar name, such as ``-Xmx512m``. 
 			If None is specified, the ``defaultJVMArgs`` plugin property is used. 
@@ -365,7 +375,9 @@ class JavaTestPlugin(object):
 		:param kwargs: Additional keyword arguments such as ``stdouterr=``, ``timeout=``, ``onError=`` and 
 			``background=`` will be passed to `pysys.basetest.BaseTest.startProcess`. It is strongly recommended to 
 			always include at ``stdouterr=`` since otherwise any error messages from the process will not be captured. 
-		
+
+		:return: The process object.
+		:rtype: pysys.process.Process
 		"""
 		
 		if jvmArgs is None: 
@@ -398,11 +410,5 @@ class JavaTestPlugin(object):
 			jvmArgs = ['-classpath', os.pathsep.join(classpath)] + jvmArgs
 			jvmArgs.append(classOrJar)
 
-		# TODO: maybe delete empty-ish .err files?
-		
 		return self.owner.startProcess(self.javaExecutable, jvmArgs+args, displayName=displayName, **kwargs)
-	
-	def jar(self):
-		assert False, 'Not implemented yet'
-		
-	#TODO:  could colour code logFileCOntents output from JVM
+
