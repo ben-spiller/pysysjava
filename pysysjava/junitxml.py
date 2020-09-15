@@ -98,7 +98,7 @@ class JUnitXMLParser:
 			# skipped ones; hence not doing an exact check here
 			assert len(self.results) >= self.suite['tests'], 'Suite contains %d tests but found %d testcase elements'%(
 				self.suite['tests'], len(self.results))
-		except Exception as ex:
+		except Exception as ex: # pragma: no cover
 			raise Exception('Failed to parse JUnit XML %s: %s'%(self.path, ex))
 		# The order seems to be random, so sort it
 		self.results.sort(key=lambda r: (r.get('classname'), r.get('name')))
