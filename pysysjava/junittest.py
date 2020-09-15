@@ -260,7 +260,7 @@ class JUnitTest(BaseTest):
 		if 'displayName' in t and t['displayName'] != t['name']:
 			detailLogger('   Display name: %s', t['displayName'], extra=maintag)
 
-		testFile = os.path.normpath(self.descriptor.input+'/'+t['classname'].replace('.', '/').split('$')[0]+'.java')
+		testFile = os.path.normpath(self.input+'/'+t['classname'].replace('.', '/').split('$')[0]+'.java')
 		if getattr(self, '_cachedPathExists', None) != testFile: # cache the file system lookup
 			self._cachedPathExists, self._cachedPathExistsResult = testFile, os.path.isfile(toLongPathSafe(testFile))
 		if not self._cachedPathExistsResult: 

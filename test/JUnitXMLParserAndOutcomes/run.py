@@ -20,7 +20,12 @@ class PySysTest(pysysjava.junittest.JUnitTest):
 		def addOutcomeDEBUG(outcome, outcomeReason='', callRecord=None, override=False, **kwargs):
 			if outcome != PASSED: recordedOutcomes.append(f'{outcome}: {outcomeReason}'+
 				(" ; override=True" if override else "")+
-				(" ; callRecord=%s"%','.join(callRecord) if callRecord else ""))
+				(" ; callRecord=%s"%(
+					'None' if not callRecord else ','.join(
+					[(('fullpath/'+os.path.basename(r))
+						if os.path.exists(r[:r.rfind(':')]) 
+						else r[:r.rfind(':')] 
+					) for r in callRecord]))))
 			addOutcomeSaved(outcome, outcomeReason=outcomeReason, callRecord=callRecord, override=override, **kwargs)
 		self.addOutcome = addOutcomeDEBUG
 		try:
@@ -32,11 +37,11 @@ class PySysTest(pysysjava.junittest.JUnitTest):
 		
 		self.log.info('Outcome reasons were: \n  %s\n', '\n  '.join(recordedOutcomes))
 		self.assertThat('outcomes == expected', outcomes = recordedOutcomes, expected=[
-			'TIMED OUT: JUnit error: java.util.concurrent.TimeoutException: shouldTimeout() timed out after 10 milliseconds [in myorg.mytest.JUnit5Tests.shouldTimeout()] ; callRecord=myorg.mytest.JUnit5Tests:29', 
-			'BLOCKED: JUnit error: java.lang.Exception: Bad test [in myorg.mytest.JUnit5Tests$NestedParent.shouldError()] ; callRecord=myorg.mytest.JUnit5Tests$NestedParent:43', 
-			'FAILED: Assert that (expected == actual) with expected="Hello world", actual="Hello funky world", testcaseName="myorg.mytest.JUnit5Tests$NestedParent.shouldFail()"', 
-			'BLOCKED: JUnit error: java.lang.Exception: This is a test error [in myorg.mytest.JUnit4Tests.shouldError] ; callRecord=myorg.mytest.JUnit4Tests:23', 
-			'FAILED: Assert that (expected == actual) with expected="Hello []world", actual="Hello [funky ]world", testcaseName="myorg.mytest.JUnit4Tests.shouldFail"'
+			'TIMED OUT: JUnit error: java.util.concurrent.TimeoutException: shouldTimeout() timed out after 10 milliseconds [in myorg.mytest.JUnit5Tests.shouldTimeout()] ; callRecord=fullpath/JUnit5Tests.java:29', 
+			'BLOCKED: JUnit error: java.lang.Exception: Bad test [in myorg.mytest.JUnit5Tests$NestedParent.shouldError()] ; callRecord=fullpath/JUnit5Tests.java:43',
+			'FAILED: Assert that (expected == actual) with expected="Hello world", actual="Hello funky world", testcaseName="myorg.mytest.JUnit5Tests$NestedParent.shouldFail()" ; callRecord=None', 
+			'BLOCKED: JUnit error: java.lang.Exception: This is a test error [in myorg.mytest.JUnit4Tests.shouldError] ; callRecord=fullpath/JUnit4Tests.java:23', 
+			'FAILED: Assert that (expected == actual) with expected="Hello []world", actual="Hello [funky ]world", testcaseName="myorg.mytest.JUnit4Tests.shouldFail" ; callRecord=None'		
 		])
 	
 		parsed = {}
