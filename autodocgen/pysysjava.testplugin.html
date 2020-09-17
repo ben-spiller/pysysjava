@@ -245,7 +245,7 @@ behaviour). If not specified, the <code class="docutils literal notranslate"><sp
 
 <dl class="py method">
 <dt id="pysysjava.testplugin.JavaTestPlugin.startJava">
-<code class="sig-name descname">startJava</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">classOrJar</span></em>, <em class="sig-param"><span class="n">args</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">classpath</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">jvmArgs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">jvmProps</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">disableCoverage</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pysysjava/testplugin.html#JavaTestPlugin.startJava"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pysysjava.testplugin.JavaTestPlugin.startJava" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">startJava</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">classOrJar</span></em>, <em class="sig-param"><span class="n">args</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">classpath</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">jvmArgs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">jvmProps</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">disableCoverage</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">stdouterr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pysysjava/testplugin.html#JavaTestPlugin.startJava"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pysysjava.testplugin.JavaTestPlugin.startJava" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start a Java process to execute the specified class or .jar file.</p>
 <p>For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">myserver</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">startJava</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">appHome</span><span class="o">+</span><span class="s1">&#39;/my_server*.jar&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">getNextAvailableTCPPort</span><span class="p">()],</span> 
@@ -275,6 +275,11 @@ If None is specified, the <code class="docutils literal notranslate"><span class
 <li><p><strong>disableCoverage</strong> (<em>bool</em>) – Set to True to ensure Java code coverage is not captured for this process. 
 Code coverage can also be disabled on a per-test/directory basis by setting <code class="docutils literal notranslate"><span class="pre">self.disableCoverage</span></code> or 
 adding the <code class="docutils literal notranslate"><span class="pre">disableCoverage</span></code> group to the <code class="docutils literal notranslate"><span class="pre">pysystest.xml</span></code>.</p></li>
+<li><p><strong>stdouterr</strong> (<em>str</em>) – The filename prefix to use for the stdout and stderr of the process 
+(out/err will be appended), or a tuple of (stdout,stderr) as returned from 
+<a class="reference external" href="https://pysys-test.github.io/pysys-test/BaseTest.html#pysys.basetest.BaseTest.allocateUniqueStdOutErr" title="(in PySys v1.6.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysys.basetest.BaseTest.allocateUniqueStdOutErr</span></code></a>. 
+The filenames can be accessed from the returned process object using .stdout/err from the returned process 
+object.</p></li>
 <li><p><strong>kwargs</strong> – Additional keyword arguments such as <code class="docutils literal notranslate"><span class="pre">stdouterr=</span></code>, <code class="docutils literal notranslate"><span class="pre">timeout=</span></code>, <code class="docutils literal notranslate"><span class="pre">onError=</span></code> and 
 <code class="docutils literal notranslate"><span class="pre">background=</span></code> will be passed to <a class="reference external" href="https://pysys-test.github.io/pysys-test/BaseTest.html#pysys.basetest.BaseTest.startProcess" title="(in PySys v1.6.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysys.basetest.BaseTest.startProcess</span></code></a>. It is strongly recommended to 
 always include at <code class="docutils literal notranslate"><span class="pre">stdouterr=</span></code> since otherwise any error messages from the process will not be captured.</p></li>
@@ -419,7 +424,7 @@ prefix <code class="docutils literal notranslate"><span class="pre">\?\</span></
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-15
+        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-17
 
     </p>
   </div>
