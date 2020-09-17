@@ -28,6 +28,7 @@ class RunPySysPlugin(object):
 			'PYSYS_APP_HOME': self.project.testRootDir+'/..',
 			'JAVA_HOME': self.project.javaHome,
 			'JUNIT_CLASSPATH': self.project.junitFrameworkClasspath,
+			'PYTHONPATH': os.getenv('PYTHONPATH')
 		})
 		if args[0] == 'run': args = args+['--outdir', self.owner.output+'/'+stdouterr]
 		
