@@ -8,31 +8,21 @@ import pysysjava.junitxml
 
 class PySysTest(pysys.basetest.BaseTest):
 	def execute(self):
-		def runPySys(args, stdouterr, **kwargs):
-			env = self.createEnvirons(command=PYTHON_EXE, overrides={
-				'PYSYS_APP_HOME': self.project.testRootDir+'/..',
-				'JAVA_HOME': self.project.javaHome,
-				'JUNIT_CLASSPATH': self.project.junitFrameworkClasspath,
-			})
-			
-			return self.startPython(['-m', 'pysys']+args+['--outdir', self.output+'/'+stdouterr], environs=env, 
-				workingDir=kwargs.pop('workingDir', self.input), stdouterr=stdouterr, background=True, **kwargs)
-
 		self.copy(self.input, self.output+'/no-junit-tests')
 		self.deleteDir(self.output+'/no-junit-tests/NestedTest/Input')
 		self.mkdir(self.output+'/no-junit-tests/NestedTest/Input')
 		self.write_text(self.output+'/no-junit-tests/NestedTest/Input/Foo.java', 'class Foo {}') # not a test
 		
 		self.waitForBackgroundProcesses([
-			runPySys(['run'], stdouterr='pysys-default-args'),
-			runPySys(['run', '-XjunitArgs=-tmy-tag1'], stdouterr='pysys-includetag1'),
-			runPySys(['run', '-XjunitArgs=-exclude-tag="my-tag1"'], stdouterr='pysys-excludetag1'),
-			runPySys(['run', '-XjunitArgs=-t my-tag-disabled'], stdouterr='pysys-all-skipped'),
-			runPySys(['run', '-XjunitArgs=-t nonexistent-tag'], stdouterr='pysys-include-nonexistent-tag'),
-			runPySys(['run', '-XjunitArgs=-invalidargument'], stdouterr='pysys-invalid-arg', expectedExitStatus='!= 0'),
-			runPySys(['run', '-XjunitSelectionArgs=--select-class=myorg.mytest1.TestSuite1'], stdouterr='pysys-select-class'),
-			runPySys(['run', '-XjunitSelectionArgs=--select-method=myorg.mytest1.TestSuite1#shouldPass()'], stdouterr='pysys-select-method'),
-			runPySys(['run'], stdouterr='pysys-no-tests', workingDir=self.output+'/no-junit-tests', expectedExitStatus='!= 0'),
+			self.pysys.runPySys(['run'], stdouterr='pysys-default-args'),
+			self.pysys.runPySys(['run', '-XjunitArgs=-tmy-tag1'], stdouterr='pysys-includetag1'),
+			self.pysys.runPySys(['run', '-XjunitArgs=-exclude-tag="my-tag1"'], stdouterr='pysys-excludetag1'),
+			self.pysys.runPySys(['run', '-XjunitArgs=-t my-tag-disabled'], stdouterr='pysys-all-skipped'),
+			self.pysys.runPySys(['run', '-XjunitArgs=-t nonexistent-tag'], stdouterr='pysys-include-nonexistent-tag'),
+			self.pysys.runPySys(['run', '-XjunitArgs=-invalidargument'], stdouterr='pysys-invalid-arg', expectedExitStatus='!= 0'),
+			self.pysys.runPySys(['run', '-XjunitSelectionArgs=--select-class=myorg.mytest1.TestSuite1'], stdouterr='pysys-select-class'),
+			self.pysys.runPySys(['run', '-XjunitSelectionArgs=--select-method=myorg.mytest1.TestSuite1#shouldPass()'], stdouterr='pysys-select-method'),
+			self.pysys.runPySys(['run'], stdouterr='pysys-no-tests', workingDir=self.output+'/no-junit-tests', expectedExitStatus='!= 0'),
 		])
 
 	def validate(self):

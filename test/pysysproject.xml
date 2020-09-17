@@ -35,9 +35,8 @@
 	<pythonpath value=".." />
 	<pythonpath value="./pysys-extensions" />
 	<test-plugin classname="pysysjava.testplugin.JavaTestPlugin" alias="java"/>
-	<!--
-	<runner-plugin classname="myorg.myrunnerplugin.MyServerRunnerPlugin"/>-->
-	
+	<test-plugin classname="pysysjava_internal.runpysys.RunPySysPlugin" alias="pysys"/>
+
 	<writers>
 		<writer classname="pysys.writer.testoutput.TestOutputArchiveWriter">
 			<property name="destDir" value="__pysys_output_archives/"/>
