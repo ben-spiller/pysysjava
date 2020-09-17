@@ -180,9 +180,9 @@ class JavaTestPlugin(object):
 			testObj.descriptor.userData.get('javaClasspath', self.defaultClasspath)))
 		self.defaultJVMArgs = self._splitShellArgs(self.project.expandProperties(
 			testObj.descriptor.userData.get('jvmArgs', self.defaultJVMArgs)))
-		
-		self.__hsperfdataCleanupRegistered = False
-	
+
+		self.owner.addCleanupFunction(lambda: [deletedir(self.owner.output+'/'+d) for d in os.listdir(self.owner.output)
+			if d.startswith('hsperfdata_')], ignoreErrors=True)
 		
 	def compile(self, input=None, output='javaclasses', classpath=None, args=None, **kwargs):
 		"""Compile Java source files into classes. By default we compile Java files from the test's input directory to 
@@ -239,28 +239,14 @@ class JavaTestPlugin(object):
 		args.extend(['-d', output])
 		args.extend(inputfiles)
 		
-		# duplicate the startProcess logic since these args will be hidden behind the @args filename
-		debuginfo = []
-		for i, a in enumerate(args): debuginfo.append("    arg #%-2d    : %s"%( i+1, a) )
-		debuginfo.append('  with compilation classpath: \n%s' % '\n'.join("     cp #%-2d    : %s%s"%(
+		self.log.debug('Javac compiler classpath is: \n%s' % '\n'.join("     cp #%-2d    : %s%s"%(
 			i+1, pathelement, '' if os.path.exists(pathelement) else ' (does not exist!)') for i, pathelement in enumerate(classpath)) 
 			or '(none)')
-		
-		self.log.debug("Javac compiler arguments for %s:\n%s", displayName, '\n'.join(d for d in debuginfo))
-
 		if classpath: args = ['-classpath', os.pathsep.join(classpath)]+args
 		
 		stdouterr = kwargs.pop('stdouterr', self.owner.allocateUniqueStdOutErr('javac.%s'%os.path.basename(output)))
 		
-		# Create a file using the default encoding for the javac arguments, since javac command lines can be too 
-		# long for the OS otherwise
-		argsFilename = stdouterr if isstring(stdouterr) else stdouterr[0][:-4]
-		argsFilename = os.path.join(self.owner.output, argsFilename+'.args.txt')
-		with openfile(argsFilename, 'w') as f:
-			for a in args:
-				f.write('"%s"'%a.replace('\\','\\\\')+'\n')
-		
-		process = self.owner.startProcess(self.compilerExecutable, ['@'+argsFilename], stdouterr=stdouterr, displayName=displayName, 
+		process = self.owner.startProcess(self.compilerExecutable, self._argsOrArgsFile(args, stdouterr), stdouterr=stdouterr, displayName=displayName, 
 			onError=lambda process: [
 				self.owner.logFileContents(process.stderr, maxLines=0, 
 					logFunction=lambda line: # colouring the main lines in red makes this a lot easier to read
@@ -276,7 +262,21 @@ class JavaTestPlugin(object):
 		self.owner.logFileContents(process.stderr, maxLines=0)
 		return process
 
-	def startJava(self, classOrJar, args=[], classpath=None, jvmArgs=None, jvmProps={}, disableCoverage=False, **kwargs):
+	def _argsOrArgsFile(self, args, stdouterr):
+		# If the length of the command line looks to be on the long side, put it into a separate @args file
+		# Windows allows approx 32,000 chars; POSIX limit can be as low as 4096. 3000 seems safe.
+		if len(' '.join(args)) <= 3000: return args
+		
+		# Create a file using the default encoding for the java arguments
+		
+		argsFilename = stdouterr if isstring(stdouterr) else stdouterr[0][:-4]
+		argsFilename = os.path.join(self.owner.output, argsFilename+'.args.txt')
+		with openfile(argsFilename, 'w') as f:
+			for a in args:
+				f.write('"%s"'%a.replace('\\','\\\\')+'\n')
+		return ['@'+argsFilename]
+
+	def startJava(self, classOrJar, args=[], classpath=None, jvmArgs=None, jvmProps={}, disableCoverage=False, stdouterr=None, **kwargs):
 		"""
 		Start a Java process to execute the specified class or .jar file. 
 		
@@ -312,6 +312,12 @@ class JavaTestPlugin(object):
 			Code coverage can also be disabled on a per-test/directory basis by setting ``self.disableCoverage`` or 
 			adding the ``disableCoverage`` group to the ``pysystest.xml``.
 		
+		:param str stdouterr: The filename prefix to use for the stdout and stderr of the process 
+			(out/err will be appended), or a tuple of (stdout,stderr) as returned from 
+			`pysys.basetest.BaseTest.allocateUniqueStdOutErr`. 
+			The filenames can be accessed from the returned process object using .stdout/err from the returned process 
+			object.
+
 		:param kwargs: Additional keyword arguments such as ``stdouterr=``, ``timeout=``, ``onError=`` and 
 			``background=`` will be passed to `pysys.basetest.BaseTest.startProcess`. It is strongly recommended to 
 			always include at ``stdouterr=`` since otherwise any error messages from the process will not be captured. 
@@ -319,13 +325,6 @@ class JavaTestPlugin(object):
 		:return: The process object.
 		:rtype: pysys.process.Process
 		"""
-		if not self.__hsperfdataCleanupRegistered:
-			# delete these non-useful (usually empty) directories Java creates to avoid distractions
-			self.__hsperfdataCleanupRegistered = True
-			self.owner.addCleanupFunction(lambda: [deletedir(self.owner.output+'/'+d) for d in os.listdir(self.owner.output)
-				if d.startswith('hsperfdata_')])
-
-
 		if jvmArgs is None: jvmArgs = self.defaultJVMArgs
 
 		jvmArgs = list(jvmArgs) # copy it so we can mutate it below
@@ -335,7 +334,7 @@ class JavaTestPlugin(object):
 			jvmArgs.append('-D%s=%s'%(k, v))
 		originalClasspath = classpath
 
-		displayName = kwargs.pop('displayName', 'java %s'%(kwargs.get('stdouterr',None) or os.path.basename(classOrJar)))
+		displayName = kwargs.pop('displayName', 'java %s'%(stdouterr or os.path.basename(classOrJar)))
 
 		if classOrJar.endswith('.jar'):
 			assert not originalClasspath, 'Java does not accept any classpath options when executing a .jar'
@@ -355,7 +354,7 @@ class JavaTestPlugin(object):
 			jvmArgs = ['-classpath', os.pathsep.join(classpath)] + jvmArgs
 			jvmArgs.append(classOrJar)
 
-		return self.owner.startProcess(self.javaExecutable, jvmArgs+args, displayName=displayName, **kwargs)
+		return self.owner.startProcess(self.javaExecutable, self._argsOrArgsFile(jvmArgs+args, stdouterr or 'java.%s'%os.path.basename(classOrJar)), displayName=displayName, stdouterr=stdouterr, **kwargs)
 
 	def toClasspathList(self, classpath):
 		"""
