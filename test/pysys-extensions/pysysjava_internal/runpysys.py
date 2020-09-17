@@ -18,7 +18,7 @@ class RunPySysPlugin(object):
 		"""
 		Run PySys with the specified arguments. 
 		
-		By default it runs with the test Input/ as the working directory containing the tests, but with an 
+		By default it runs in the background with the test Input/ as the working directory containing the tests, but with an 
 		outdir argument that ensures output is written to this test's output directory. 
 		
 		The main environment variables needed by this project are passed through. 
@@ -31,7 +31,7 @@ class RunPySysPlugin(object):
 		})
 		if args[0] == 'run': args = args+['--outdir', self.owner.output+'/'+stdouterr]
 		
-		return self.owner.startPython(['-m', 'pysys']+args+['--outdir', self.owner.output+'/'+stdouterr], 
+		return self.owner.startPython(['-m', 'pysys']+args, 
 			environs=env, 
 			workingDir=kwargs.pop('workingDir', self.owner.input), 
 			stdouterr=stdouterr, 
