@@ -24,8 +24,12 @@
     <dependency>
         <groupId>org.junit.platform</groupId>
         <artifactId>junit-platform-console-standalone</artifactId>
-        <version>1.6.2</version>         
-        <scope>test</scope>
+        <version>1.6.2</version>
+        
+        <!-- For testing this PySys plugin we can't use the "test" scope since then we'd also get 
+			all the runtime directories mixed with the JUnit jars. 
+		-->
+        <scope>provided</scope>
     </dependency>
 
     <!-- JUnit 5 runtime -->
@@ -33,7 +37,7 @@
         <groupId>org.junit.jupiter</groupId>
         <artifactId>junit-jupiter</artifactId>
         <version>5.6.2</version>
-        <scope>test</scope>
+        <scope>provided</scope>
     </dependency>
 
     <!-- To allow running JUnit 4 tests (the vintage engine) -->
@@ -41,14 +45,14 @@
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>4.13</version>
-        <scope>test</scope>
+        <scope>provided</scope>
     </dependency>
 
     <dependency>
         <groupId>org.junit.vintage</groupId>
         <artifactId>junit-vintage-engine</artifactId>
         <version>5.6.2</version>
-        <scope>test</scope>
+        <scope>provided</scope>
     </dependency>
 
     <!-- These are included to show handling for third party libraries -->
@@ -115,7 +119,7 @@
                       <goal>copy-dependencies</goal>
                     </goals>
                     <configuration>
-                      <includeScope>test</includeScope>
+                      <includeScope>provided</includeScope>
 
                       <outputDirectory>${project.build.directory}/junit-jars</outputDirectory>
                       <overWriteReleases>false</overWriteReleases>
