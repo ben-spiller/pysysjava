@@ -150,9 +150,16 @@
             
   <div class="section" id="java-plugins-for-pysys">
 <h1>Java plugins for PySys<a class="headerlink" href="#java-plugins-for-pysys" title="Permalink to this headline">¶</a></h1>
-<p>This is a collection of plugins that add support for compiling, running and testing Java(R) classes using the
-PySys System Test Framework.</p>
-<p>Requires:</p>
+<p>This is a collection of plugins for the PySys System Test Framework that support compiling and running Java(R) classes
+in your PySys tests, and a wrapper that allows running JUnit tests as if they were PySys tests.</p>
+<p>This project also serves as a good example of how to create, test, document and package PySys plugins, including
+the use of GitHub Actions to run PySys tests (with Python code coverage), build HTML documentation for the plugins,
+and generate a Python .whl package for installing them.</p>
+<p>So feel free to fork it and use as a starting point for your own plugins supporting the language or toolset of your
+choice. To make this as easy as possible, this plugin project has a simple Public Domain license.</p>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>To use these plugins, you will need:</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>Python 3.6+</p></li>
@@ -160,6 +167,11 @@ PySys System Test Framework.</p>
 <li><p>Java 8+ (currently tested with Java 8 and Java 14)</p></li>
 </ul>
 </div></blockquote>
+<p>To install, just use the standard <code class="docutils literal notranslate"><span class="pre">pip3</span></code> (or on Windows <code class="docutils literal notranslate"><span class="pre">pip.exe</span></code>) executable:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip3</span> <span class="n">install</span> <span class="n">PySys</span><span class="o">-</span><span class="n">Java</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="documentation-contents">
 <h2>Documentation contents<a class="headerlink" href="#documentation-contents" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">

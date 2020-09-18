@@ -164,8 +164,10 @@
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;pysys.pysysjava.JavaTestPlugin&#39;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="walkDirTree"><a class="viewcode-back" href="../../autodocgen/pysysjava.testplugin.html#pysysjava.testplugin.walkDirTree">[docs]</a><span class="k">def</span> <span class="nf">walkDirTree</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span> <span class="n">dirIgnores</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">followlinks</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">walkDirTree</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span> <span class="n">dirIgnores</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">followlinks</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	:meta private: Not public API.</span>
+<span class="sd">	</span>
 <span class="sd">	Walks the specified directory tree, yielding an item for each directory in the tree </span>
 <span class="sd">	(similar to ``os.walk`` but better). </span>
 <span class="sd">	</span>
@@ -214,12 +216,14 @@
 				<span class="k">continue</span>
 			<span class="n">contents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
 			<span class="k">yield from</span> <span class="n">walkDirTree</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">dirIgnores</span><span class="o">=</span><span class="n">dirIgnores</span><span class="p">,</span> <span class="n">followlinks</span><span class="o">=</span><span class="n">followlinks</span><span class="p">)</span>
-		<span class="k">yield</span> <span class="nb">dir</span><span class="p">,</span> <span class="n">contents</span>		</div>
+		<span class="k">yield</span> <span class="nb">dir</span><span class="p">,</span> <span class="n">contents</span>		
 
 <span class="c1"># TODO: or is it better to return (entry, contentsentries), which is simpler? or create a wrapper for this that returns that?</span>
 
-<div class="viewcode-block" id="walkDirTreeContents"><a class="viewcode-back" href="../../autodocgen/pysysjava.testplugin.html#pysysjava.testplugin.walkDirTreeContents">[docs]</a><span class="k">def</span> <span class="nf">walkDirTreeContents</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span> <span class="n">dirIgnores</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">followlinks</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>	
+<span class="k">def</span> <span class="nf">walkDirTreeContents</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span> <span class="n">dirIgnores</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">followlinks</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>	
 	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	:meta private: Not public API.</span>
+
 <span class="sd">	Walks the specified directory tree, yielding an entry for file/symlink/directory (excluding the root directory </span>
 <span class="sd">	itself). </span>
 <span class="sd">	</span>
@@ -246,7 +250,7 @@
 
 	<span class="k">for</span> <span class="n">dirpath</span><span class="p">,</span> <span class="n">contents</span> <span class="ow">in</span> <span class="n">walkDirTree</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span> <span class="n">dirIgnores</span><span class="o">=</span><span class="n">dirIgnores</span><span class="p">,</span> <span class="n">followlinks</span><span class="o">=</span><span class="n">followlinks</span><span class="p">):</span>
 		<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">contents</span><span class="p">:</span>
-			<span class="k">yield</span> <span class="n">c</span></div>
+			<span class="k">yield</span> <span class="n">c</span>
 
 <div class="viewcode-block" id="JavaTestPlugin"><a class="viewcode-back" href="../../autodocgen/pysysjava.testplugin.html#pysysjava.testplugin.JavaTestPlugin">[docs]</a><span class="k">class</span> <span class="nc">JavaTestPlugin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>

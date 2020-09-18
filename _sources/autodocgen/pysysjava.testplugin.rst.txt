@@ -13,15 +13,3 @@ JavaTestPlugin
 
 .. autoclass:: JavaTestPlugin
    :members:
-
-
-walkDirTree
-===========
-
-.. autofunction:: walkDirTree
-
-
-walkDirTreeContents
-===================
-
-.. autofunction:: walkDirTreeContents

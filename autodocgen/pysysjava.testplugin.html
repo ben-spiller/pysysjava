@@ -87,8 +87,6 @@
 <li class="toctree-l2"><a class="reference internal" href="pysysjava.junitxml.html">pysysjava.junitxml</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">pysysjava.testplugin</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#javatestplugin">JavaTestPlugin</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#walkdirtree">walkDirTree</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#walkdirtreecontents">walkDirTreeContents</a></li>
 </ul>
 </li>
 </ul>
@@ -328,77 +326,6 @@ elements will be deleted.</p>
 </div>
 </dd></dl>
 
-</dd></dl>
-
-</div>
-<div class="section" id="walkdirtree">
-<h2>walkDirTree<a class="headerlink" href="#walkdirtree" title="Permalink to this headline">¶</a></h2>
-<dl class="py function">
-<dt id="pysysjava.testplugin.walkDirTree">
-<code class="sig-prename descclassname">pysysjava.testplugin.</code><code class="sig-name descname">walkDirTree</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dir</span></em>, <em class="sig-param"><span class="n">dirIgnores</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">followlinks</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pysysjava/testplugin.html#walkDirTree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pysysjava.testplugin.walkDirTree" title="Permalink to this definition">¶</a></dt>
-<dd><p>Walks the specified directory tree, yielding an item for each directory in the tree 
-(similar to <code class="docutils literal notranslate"><span class="pre">os.walk</span></code> but better).</p>
-<p>Compared to <code class="docutils literal notranslate"><span class="pre">os.walk</span></code> this method is more efficient and easier to use, correctly handles nested paths that 
-exceed the windows MAX_PATH limit, and has a simpler mechanism for skipping directories from the search tree. 
-Entries are sorted before being returned to ensure deterministic results.</p>
-<p>For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">dirpath</span><span class="p">,</span> <span class="n">entries</span> <span class="ow">in</span> <span class="n">walkDirTree</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">dirIgnores</span><span class="o">=</span><span class="n">pysys</span><span class="o">.</span><span class="n">constants</span><span class="o">.</span><span class="n">OSWALK_IGNORES</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">entries</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">entry</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span> <span class="ow">and</span> <span class="n">entry</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.java&#39;</span><span class="p">):</span>
-                        <span class="n">inputfiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
-</pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>callable</strong><strong>(</strong><strong>DirEntry</strong><strong>)</strong><strong>-&gt;bool dirIgnores</strong> (<em>list</em><em>[</em><em>str</em><em>]</em><em>,</em>) – Either a callable that returns True if the specified 
-directory should be skipped from traversal and from being returned, or a string or list of strings which are 
-glob patterns to be evaluated against the basename, e.g. <code class="docutils literal notranslate"><span class="pre">dirIgnores=['.svn',</span> <span class="pre">'.git*']</span></code>.</p></li>
-<li><p><strong>followlinks</strong> (<em>bool</em>) – If True, directory symbolic links will be traversed as directories. Be careful of loops 
-when using this option.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return (str,list[DirEntry])</dt>
-<dd class="field-even"><p>Returns a generator that yields a tuple <code class="docutils literal notranslate"><span class="pre">(dirpath:</span> <span class="pre">str,</span> <span class="pre">contents:</span> <span class="pre">list[DirEntry])</span></code> 
-for each (non-ignored) directory in the tree. If running on Windows, the returned paths will have the long path 
-prefix <code class="docutils literal notranslate"><span class="pre">\?\</span></code> which can be removed using <a class="reference external" href="https://pysys-test.github.io/pysys-test/autodocgen/pysys.utils.fileutils.html#pysys.utils.fileutils.fromLongPathSafe" title="(in PySys v1.6.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysys.utils.fileutils.fromLongPathSafe</span></code></a> if needed.</p>
-</dd>
-</dl>
-</dd></dl>
-
-</div>
-<div class="section" id="walkdirtreecontents">
-<h2>walkDirTreeContents<a class="headerlink" href="#walkdirtreecontents" title="Permalink to this headline">¶</a></h2>
-<dl class="py function">
-<dt id="pysysjava.testplugin.walkDirTreeContents">
-<code class="sig-prename descclassname">pysysjava.testplugin.</code><code class="sig-name descname">walkDirTreeContents</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dir</span></em>, <em class="sig-param"><span class="n">dirIgnores</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">followlinks</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pysysjava/testplugin.html#walkDirTreeContents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pysysjava.testplugin.walkDirTreeContents" title="Permalink to this definition">¶</a></dt>
-<dd><p>Walks the specified directory tree, yielding an entry for file/symlink/directory (excluding the root directory 
-itself).</p>
-<p>Compared to <code class="docutils literal notranslate"><span class="pre">os.walk</span></code> this method is more efficient and easier to use, correctly handles nested paths that 
-exceed the windows MAX_PATH limit, and has a simpler mechanism for skipping directories from the search tree. 
-Entries are sorted before being returned to ensure deterministic results.</p>
-<p>For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">walkDirTreeContents</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">dirIgnores</span><span class="o">=</span><span class="n">pysys</span><span class="o">.</span><span class="n">constants</span><span class="o">.</span><span class="n">OSWALK_IGNORES</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">entry</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span> <span class="ow">and</span> <span class="n">entry</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.java&#39;</span><span class="p">):</span>
-                <span class="n">inputfiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
-</pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>callable</strong><strong>(</strong><strong>DirEntry</strong><strong>)</strong><strong>-&gt;bool dirIgnores</strong> (<em>list</em><em>[</em><em>str</em><em>]</em><em>,</em>) – Either a callable that returns True if the specified 
-directory should be skipped from traversal and from being returned, or a string or list of strings which are 
-glob patterns to be evaluated against the basename, e.g. <code class="docutils literal notranslate"><span class="pre">dirIgnores=['.svn',</span> <span class="pre">'.git*']</span></code>.</p></li>
-<li><p><strong>followlinks</strong> (<em>bool</em>) – If True, directory symbolic links will be traversed as directories. Be careful of loops 
-when using this option.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return (str,list[DirEntry])</dt>
-<dd class="field-even"><p>Returns a generator that yields a tuple <code class="docutils literal notranslate"><span class="pre">(dirpath:</span> <span class="pre">str,</span> <span class="pre">contents:</span> <span class="pre">list[DirEntry])</span></code> 
-for each (non-ignored) directory in the tree. If running on Windows, the returned paths will have the long path 
-prefix <code class="docutils literal notranslate"><span class="pre">\?\</span></code> which can be removed using <a class="reference external" href="https://pysys-test.github.io/pysys-test/autodocgen/pysys.utils.fileutils.html#pysys.utils.fileutils.fromLongPathSafe" title="(in PySys v1.6.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysys.utils.fileutils.fromLongPathSafe</span></code></a> if needed.</p>
-</dd>
-</dl>
 </dd></dl>
 
 </div>
