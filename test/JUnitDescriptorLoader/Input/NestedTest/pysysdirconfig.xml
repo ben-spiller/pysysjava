@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pysysdirconfig>
+	
+	<id-prefix>MyJUnitTests_</id-prefix>
+
+	<data>
+		<user-data name="junitTestDescriptorForEach" value="class"/>
+
+		<user-data name="junitStripPrefixes" value=" myorg.mytest1, myorg ,"/>
+
+		<user-data name="javaClasspath" value="${appHome}/target/logging-jars/*.jar"/>
+		<user-data name="jvmArgs" value="-Xmx256M"/>
+
+		<user-data name="junitTimeoutSecs" value="600"/>
+		<user-data name="junitConfigArgs" value=""/>
+	</data>
+
+
+	<!-- Comment/uncomment this to mark all tests under this directory as skipped. -->
+	<!--
+	<skipped reason=""/> 
+	-->
+	
+	<classification>
+		<groups inherit="true">
+			<group>mygroup</group>
+		</groups>
+		
+		<modes inherit="true">
+			<mode>MyMode</mode>
+		</modes>
+	</classification>
+
+	<execution-order hint="+5.0"/>
+
+</pysysdirconfig>

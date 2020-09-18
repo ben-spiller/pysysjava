@@ -1,0 +1,58 @@
+[
+  {
+    "id": "MyJUnitTests_mytest2.TestSuite2",
+    "title": "JUnit class - myorg.mytest2.TestSuite2",
+    "testDir": ".../NestedTest",
+    "purpose": ".../TestSuite2.java",
+    "groups": [
+      "junit",
+      "mygroup"
+    ],
+    "modes": [
+      "MyMode"
+    ],
+    "executionOrderHint": [
+      5.0
+    ],
+    "input": "Input",
+    "output": "Output/myorg.mytest2.TestSuite2",
+    "reference": "Reference",
+    "userData": {
+      "junitTestDescriptorForEach": "class",
+      "junitStripPrefixes": " myorg.mytest1, myorg ,",
+      "javaClasspath": ".../*.jar",
+      "jvmArgs": "-Xmx256M",
+      "junitTimeoutSecs": "600",
+      "junitConfigArgs": "",
+      "junitSelectionArgs": "--select-class myorg.mytest2.TestSuite2"
+    }
+  },
+  {
+    "id": "MyJUnitTests_TestSuite1",
+    "title": "JUnit class - myorg.mytest1.TestSuite1",
+    "testDir": ".../NestedTest",
+    "purpose": ".../TestSuite1.java",
+    "groups": [
+      "junit",
+      "mygroup"
+    ],
+    "modes": [
+      "MyMode"
+    ],
+    "executionOrderHint": [
+      5.0
+    ],
+    "input": "Input",
+    "output": "Output/myorg.mytest1.TestSuite1",
+    "reference": "Reference",
+    "userData": {
+      "junitTestDescriptorForEach": "class",
+      "junitStripPrefixes": " myorg.mytest1, myorg ,",
+      "javaClasspath": ".../*.jar",
+      "jvmArgs": "-Xmx256M",
+      "junitTimeoutSecs": "600",
+      "junitConfigArgs": "",
+      "junitSelectionArgs": "--select-class myorg.mytest1.TestSuite1"
+    }
+  }
+]

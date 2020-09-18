@@ -14,12 +14,13 @@ class RunPySysPlugin(object):
 		self.project = self.owner.project
 		self.log = logging.getLogger('pysys.runpysys')
 
-	def runPySys(self, args, stdouterr, background=True, **kwargs):
+	def runPySys(self, args, stdouterr, background=True, workingDir=None, **kwargs):
 		"""
 		Run PySys with the specified arguments. 
 		
 		By default it runs in the background with the test Input/ as the working directory containing the tests, but with an 
-		outdir argument that ensures output is written to this test's output directory. 
+		outdir argument that ensures output is written to this test's output directory (unless the workingDir is 
+		already under the output dir). 
 		
 		The main environment variables needed by this project are passed through. 
 		
@@ -30,11 +31,12 @@ class RunPySysPlugin(object):
 			'JUNIT_CLASSPATH': self.project.junitFrameworkClasspath,
 			'PYTHONPATH': os.getenv('PYTHONPATH')
 		})
-		if args[0] == 'run': args = args+['--outdir', self.owner.output+'/'+stdouterr]
+		workingDir = workingDir or self.owner.input
+		if args[0] == 'run' and not workingDir.startswith(self.owner.output): args = args+['--outdir', self.owner.output+'/'+stdouterr]
 		
 		return self.owner.startPython(['-m', 'pysys']+args, 
 			environs=env, 
-			workingDir=kwargs.pop('workingDir', self.owner.input), 
+			workingDir=workingDir, 
 			stdouterr=stdouterr, 
 			background=background, 
 			**kwargs)

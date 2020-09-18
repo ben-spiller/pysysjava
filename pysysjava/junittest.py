@@ -1,14 +1,26 @@
 import pysys
+import logging
 from pysys.constants import *
 from pysys.basetest import BaseTest
 from pysys.utils.fileutils import *
 from pysys.utils.logutils import BaseLogFormatter
+from pysys.xml.descriptor import DescriptorLoader, TestDescriptor
 
 from pysysjava.junitxml import JUnitXMLParser
+from pysysjava.testplugin import walkDirTreeContents
 
 class JUnitTest(BaseTest):
 	"""
 	A test class that compiles and runs one or more JUnit test suites. 
+	
+	To run a set of JUnit tests from a single PySys test, put the unit test .java files in the Input directory, and 
+	specify this class in the ``pysystest.xml``::
+	
+		<data>
+			<class name="JUnitTest" module="${appHome}/pysysjava/junittest"/>
+			...
+		</data>
+
 	
 	Compilation happens in `pysys.basetest.BaseTest.setup` (shared across all JUnit tests that use the same source 
 	directory), then execution in `pysys.basetest.BaseTest.execute` and finally reads the resulting XML reports and 
@@ -266,7 +278,7 @@ class JUnitTest(BaseTest):
 		if not self._cachedPathExistsResult: 
 			testFile = t['classname'] # this is a reasonable fallback for giving location information
 		else:
-			detailLogger('   Test file: %s', testFile, extra=maintag)
+			detailLogger('   Test file: %s', os.path.normpath(fromLongPathSafe(testFile)), extra=maintag)
 		
 		# It's much more useful to set the callRecord to the Java source file rather than this generic .py file
 		callRecord = ['%s:%s'%(testFile, t.get('testFileLine') or '0')]
@@ -298,3 +310,100 @@ class JUnitTest(BaseTest):
 			
 		detailLogger('')
 		return outcome
+
+log = logging.getLogger('pysys.pysysjava.junittest')
+
+class JUnitDescriptorLoader(DescriptorLoader):
+	"""
+	A DescriptorLoader that dynamically creates a separate PySys test for each .java JUnit test class under the Input 
+	directory. 
+	
+	To use this, create a ``pysysdirconfig.xml`` with a user-data element ``junitTestDescriptorForEach``. 
+	
+	You may also wish to add a ``junitStripPrefixes`` user-data to strip off long common package names from your 
+	test classes and/or an ``id-prefix`` to add a common testId prefix indicating these are JUnit tests. 
+	
+	You can also use the ``junit*`` user-data options described in `JUnitTest` and the 
+	``javaClasspath`` and ``jvmArgs`` described in `pysysjava.testplugin.JavaTestPlugin`. 
+	
+	For example::
+	
+		<pysysdirconfig>
+		
+			<id-prefix>MyJUnitTests_</id-prefix>
+
+			<data>
+				<user-data name="junitTestDescriptorForEach" value="class"/>
+
+				<user-data name="junitStripPrefixes" value="myorg.mytestpackage, myorg2"/>
+
+				<user-data name="javaClasspath" value="${appHome}/target/logging-jars/*.jar"/>
+				<user-data name="jvmArgs" value="-Xmx256M"/>
+
+				<user-data name="junitTimeoutSecs" value="600"/>
+				<user-data name="junitConfigArgs" value=""/>
+			</data>
+		
+		</pysysdirconfig>
+		
+	"""
+
+
+	def _handleSubDirectory(self, dir, subdirs, files, descriptors, parentDirDefaults, **kwargs):
+		if parentDirDefaults is None: return False
+		thing = parentDirDefaults.userData.get('junitTestDescriptorForEach', None)
+		if not thing: return False
+		
+		# we could support other granularity such as per directory, per test method etc
+		assert thing in ['class', ]
+	
+		stripPrefixes = [x.strip() for x in parentDirDefaults.userData.get('junitStripPrefixes', '').split(',') if x.strip()]
+		
+		# default regex is from the JUnit 5 console launcher
+		includeClassnameRegex = re.compile(parentDirDefaults.userData.get('junitIncludeClassnameRegex', '^(Test.*|.+[.$]Test.*|.*Tests?)$')) 
+		includeClassnameRegexCompiled = re.compile(includeClassnameRegex) 
+		
+		inputdir = toLongPathSafe(os.path.normpath(os.path.join(os.path.dirname(parentDirDefaults.file), parentDirDefaults.input)))
+	
+		found = 0
+		for entry in walkDirTreeContents(inputdir, dirIgnores=OSWALK_IGNORES):
+			if entry.is_file() and entry.name.endswith('.java'):
+				classname = entry.path[len(inputdir)+1:-5].replace(os.sep, '.')
+
+				if not includeClassnameRegexCompiled.match(classname):
+					log.debug('Ignoring JUnit class as name does not match regex for tests: "%s"', classname)
+					continue
+				
+				found += 1
+				userData = dict(parentDirDefaults.userData)
+				userData['junitSelectionArgs'] = '--select-class %s'%classname
+				
+				id = classname
+				for p in stripPrefixes:
+					if id.startswith(p):
+						id = id[len(p):].lstrip('.')
+						break
+				
+				descriptors.append(TestDescriptor(
+					file=fromLongPathSafe(parentDirDefaults.file), 
+					id=parentDirDefaults.id+id, 
+					title='JUnit %s - %s'%(thing, classname),
+					groups=[u'junit']+parentDirDefaults.groups, 
+					modes=parentDirDefaults.modes,
+					classname="JUnitTest", # pysysjava.junittest.JUnitTest
+					module=os.path.abspath(__file__.split('.')[0]),
+					purpose = fromLongPathSafe(entry.path),
+					userData = userData,
+					
+					# must ensure output dirs are unique even though lots of classes share the same testDir
+					output=parentDirDefaults.output+os.sep+classname, 
+
+					# copy everything else across from the defaults
+					input=parentDirDefaults.input,
+					traceability=parentDirDefaults.traceability,
+					executionOrderHint=parentDirDefaults.executionOrderHint,
+					skippedReason=parentDirDefaults.skippedReason,
+					))
+		if found == 0: raise Exception('No JUnit test .java files found matching "%s" in %s', includeClassnameRegex, fromLongPathSafe(inputdir))
+		
+		return True # means this directory has been fully handled so don't continue looking for PySys tests under this tree

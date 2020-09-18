@@ -1,0 +1,2 @@
+INVALID XML FILE
+should never be read, because this is treated as a JUnit directory
