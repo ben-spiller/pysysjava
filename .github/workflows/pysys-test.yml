@@ -99,6 +99,7 @@ jobs:
       - name: Upload Python package .whl
         uses: actions/upload-artifact@v2
         with:
+          name: installation_package
           path: dist/*.whl
         
       # If any tests fail, PySys will return an error code, so we need "if: always()" so the following steps will run
