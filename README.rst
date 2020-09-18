@@ -4,6 +4,8 @@
 	:target: ../../actions
 .. image:: https://codecov.io/gh/ben-spiller/pysysjava/branch/main/graph/badge.svg
 	:target: https://codecov.io/gh/ben-spiller/pysysjava
+For documentation see: https://ben-spiller.github.io/pysysjava/
+.. inclusion-marker-section-project-links
 
 Java plugins for PySys
 ======================
@@ -11,8 +13,8 @@ This is a collection of plugins that add support for compiling, running and test
 PySys System Test Framework.
 
 Requires:
+
 	- Python 3.6+
 	- PySys 1.6.1+
 	- Java 8+ (currently tested with Java 8 and Java 14)
 
-See the documentation at https://ben-spiller.github.io/pysysjava/.

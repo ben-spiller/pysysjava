@@ -1,6 +1,6 @@
 .. include:: ../README.rst
-   :end-before: inclusion-marker-section-project-links
-
+   :start-after: inclusion-marker-section-project-links
+   
 Documentation contents
 ----------------------
 
