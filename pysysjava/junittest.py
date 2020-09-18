@@ -391,7 +391,7 @@ class JUnitDescriptorLoader(DescriptorLoader):
 					groups=[u'junit']+parentDirDefaults.groups, 
 					modes=parentDirDefaults.modes,
 					classname="JUnitTest", # pysysjava.junittest.JUnitTest
-					module=os.path.abspath(__file__.split('.')[0]),
+					module=os.path.abspath(os.path.splitext(__file__)[0]),
 					purpose = fromLongPathSafe(entry.path),
 					userData = userData,
 					
