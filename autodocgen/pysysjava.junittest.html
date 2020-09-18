@@ -85,6 +85,7 @@
 <li class="toctree-l1 current"><a class="reference internal" href="pysysjava.html">API Reference</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">pysysjava.junittest</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#junittest">JUnitTest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#junitdescriptorloader">JUnitDescriptorLoader</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="pysysjava.junitxml.html">pysysjava.junitxml</a></li>
@@ -168,6 +169,14 @@
 <em class="property">class </em><code class="sig-prename descclassname">pysysjava.junittest.</code><code class="sig-name descname">JUnitTest</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">descriptor</span></em>, <em class="sig-param"><span class="n">outsubdir</span></em>, <em class="sig-param"><span class="n">runner</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pysysjava/junittest.html#JUnitTest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pysysjava.junittest.JUnitTest" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://pysys-test.github.io/pysys-test/BaseTest.html#pysys.basetest.BaseTest" title="(in PySys v1.6.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pysys.basetest.BaseTest</span></code></a></p>
 <p>A test class that compiles and runs one or more JUnit test suites.</p>
+<p>To run a set of JUnit tests from a single PySys test, put the unit test .java files in the Input directory, and 
+specify this class in the <code class="docutils literal notranslate"><span class="pre">pysystest.xml</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">data</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="k">class</span> <span class="nc">name</span><span class="o">=</span><span class="s2">&quot;JUnitTest&quot;</span> <span class="n">module</span><span class="o">=</span><span class="s2">&quot;$</span><span class="si">{appHome}</span><span class="s2">/pysysjava/junittest&quot;</span><span class="o">/&gt;</span>
+        <span class="o">...</span>
+<span class="o">&lt;/</span><span class="n">data</span><span class="o">&gt;</span>
+</pre></div>
+</div>
 <p>Compilation happens in <a class="reference external" href="https://pysys-test.github.io/pysys-test/BaseTest.html#pysys.basetest.BaseTest.setup" title="(in PySys v1.6.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysys.basetest.BaseTest.setup</span></code></a> (shared across all JUnit tests that use the same source 
 directory), then execution in <a class="reference external" href="https://pysys-test.github.io/pysys-test/BaseTest.html#pysys.basetest.BaseTest.execute" title="(in PySys v1.6.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysys.basetest.BaseTest.execute</span></code></a> and finally reads the resulting XML reports and 
 adds outcomes for each testcase in <a class="reference external" href="https://pysys-test.github.io/pysys-test/BaseTest.html#pysys.basetest.BaseTest.validate" title="(in PySys v1.6.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysys.basetest.BaseTest.validate</span></code></a>.</p>
@@ -235,6 +244,42 @@ and <a class="reference internal" href="#pysysjava.junittest.JUnitTest.junitSele
 </dd></dl>
 
 </div>
+<div class="section" id="junitdescriptorloader">
+<h2>JUnitDescriptorLoader<a class="headerlink" href="#junitdescriptorloader" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pysysjava.junittest.JUnitDescriptorLoader">
+<em class="property">class </em><code class="sig-prename descclassname">pysysjava.junittest.</code><code class="sig-name descname">JUnitDescriptorLoader</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">project</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pysysjava/junittest.html#JUnitDescriptorLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pysysjava.junittest.JUnitDescriptorLoader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://pysys-test.github.io/pysys-test/autodocgen/pysys.xml.descriptor.html#pysys.xml.descriptor.DescriptorLoader" title="(in PySys v1.6.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pysys.xml.descriptor.DescriptorLoader</span></code></a></p>
+<p>A DescriptorLoader that dynamically creates a separate PySys test for each .java JUnit test class under the Input 
+directory.</p>
+<p>To use this, create a <code class="docutils literal notranslate"><span class="pre">pysysdirconfig.xml</span></code> with a user-data element <code class="docutils literal notranslate"><span class="pre">junitTestDescriptorForEach</span></code>.</p>
+<p>You may also wish to add a <code class="docutils literal notranslate"><span class="pre">junitStripPrefixes</span></code> user-data to strip off long common package names from your 
+test classes and/or an <code class="docutils literal notranslate"><span class="pre">id-prefix</span></code> to add a common testId prefix indicating these are JUnit tests.</p>
+<p>You can also use the <code class="docutils literal notranslate"><span class="pre">junit*</span></code> user-data options described in <a class="reference internal" href="#pysysjava.junittest.JUnitTest" title="pysysjava.junittest.JUnitTest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">JUnitTest</span></code></a> and the 
+<code class="docutils literal notranslate"><span class="pre">javaClasspath</span></code> and <code class="docutils literal notranslate"><span class="pre">jvmArgs</span></code> described in <a class="reference internal" href="pysysjava.testplugin.html#pysysjava.testplugin.JavaTestPlugin" title="pysysjava.testplugin.JavaTestPlugin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysysjava.testplugin.JavaTestPlugin</span></code></a>.</p>
+<p>For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">pysysdirconfig</span><span class="o">&gt;</span>
+
+        <span class="o">&lt;</span><span class="nb">id</span><span class="o">-</span><span class="n">prefix</span><span class="o">&gt;</span><span class="n">MyJUnitTests_</span><span class="o">&lt;/</span><span class="nb">id</span><span class="o">-</span><span class="n">prefix</span><span class="o">&gt;</span>
+
+        <span class="o">&lt;</span><span class="n">data</span><span class="o">&gt;</span>
+                <span class="o">&lt;</span><span class="n">user</span><span class="o">-</span><span class="n">data</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;junitTestDescriptorForEach&quot;</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;class&quot;</span><span class="o">/&gt;</span>
+
+                <span class="o">&lt;</span><span class="n">user</span><span class="o">-</span><span class="n">data</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;junitStripPrefixes&quot;</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;myorg.mytestpackage, myorg2&quot;</span><span class="o">/&gt;</span>
+
+                <span class="o">&lt;</span><span class="n">user</span><span class="o">-</span><span class="n">data</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;javaClasspath&quot;</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;$</span><span class="si">{appHome}</span><span class="s2">/target/logging-jars/*.jar&quot;</span><span class="o">/&gt;</span>
+                <span class="o">&lt;</span><span class="n">user</span><span class="o">-</span><span class="n">data</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;jvmArgs&quot;</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;-Xmx256M&quot;</span><span class="o">/&gt;</span>
+
+                <span class="o">&lt;</span><span class="n">user</span><span class="o">-</span><span class="n">data</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;junitTimeoutSecs&quot;</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;600&quot;</span><span class="o">/&gt;</span>
+                <span class="o">&lt;</span><span class="n">user</span><span class="o">-</span><span class="n">data</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;junitConfigArgs&quot;</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="o">/&gt;</span>
+        <span class="o">&lt;/</span><span class="n">data</span><span class="o">&gt;</span>
+
+<span class="o">&lt;/</span><span class="n">pysysdirconfig</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -257,7 +302,7 @@ and <a class="reference internal" href="#pysysjava.junittest.JUnitTest.junitSele
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-17
+        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-18
 
     </p>
   </div>

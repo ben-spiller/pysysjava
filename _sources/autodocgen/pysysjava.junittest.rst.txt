@@ -13,3 +13,10 @@ JUnitTest
 
 .. autoclass:: JUnitTest
    :members:
+
+
+JUnitDescriptorLoader
+=====================
+
+.. autoclass:: JUnitDescriptorLoader
+   :members:

@@ -1,5 +1,6 @@
 pysysjava (module)
 pysysjava.junittest (module)
+pysysjava.junittest.JUnitDescriptorLoader (class)
 pysysjava.junittest.JUnitTest (class)
 pysysjava.junitxml (module)
 pysysjava.junitxml.JUnitXMLParser (class)

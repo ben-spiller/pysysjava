@@ -147,16 +147,28 @@
             
   <h1>Source code for pysysjava.junittest</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">pysys</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">pysys.constants</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">pysys.basetest</span> <span class="kn">import</span> <span class="n">BaseTest</span>
 <span class="kn">from</span> <span class="nn">pysys.utils.fileutils</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">pysys.utils.logutils</span> <span class="kn">import</span> <span class="n">BaseLogFormatter</span>
+<span class="kn">from</span> <span class="nn">pysys.xml.descriptor</span> <span class="kn">import</span> <span class="n">DescriptorLoader</span><span class="p">,</span> <span class="n">TestDescriptor</span>
 
 <span class="kn">from</span> <span class="nn">pysysjava.junitxml</span> <span class="kn">import</span> <span class="n">JUnitXMLParser</span>
+<span class="kn">from</span> <span class="nn">pysysjava.testplugin</span> <span class="kn">import</span> <span class="n">walkDirTreeContents</span>
 
 <div class="viewcode-block" id="JUnitTest"><a class="viewcode-back" href="../../autodocgen/pysysjava.junittest.html#pysysjava.junittest.JUnitTest">[docs]</a><span class="k">class</span> <span class="nc">JUnitTest</span><span class="p">(</span><span class="n">BaseTest</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	A test class that compiles and runs one or more JUnit test suites. </span>
+<span class="sd">	</span>
+<span class="sd">	To run a set of JUnit tests from a single PySys test, put the unit test .java files in the Input directory, and </span>
+<span class="sd">	specify this class in the ``pysystest.xml``::</span>
+<span class="sd">	</span>
+<span class="sd">		&lt;data&gt;</span>
+<span class="sd">			&lt;class name=&quot;JUnitTest&quot; module=&quot;${appHome}/pysysjava/junittest&quot;/&gt;</span>
+<span class="sd">			...</span>
+<span class="sd">		&lt;/data&gt;</span>
+
 <span class="sd">	</span>
 <span class="sd">	Compilation happens in `pysys.basetest.BaseTest.setup` (shared across all JUnit tests that use the same source </span>
 <span class="sd">	directory), then execution in `pysys.basetest.BaseTest.execute` and finally reads the resulting XML reports and </span>
@@ -414,7 +426,7 @@
 		<span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cachedPathExistsResult</span><span class="p">:</span> 
 			<span class="n">testFile</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;classname&#39;</span><span class="p">]</span> <span class="c1"># this is a reasonable fallback for giving location information</span>
 		<span class="k">else</span><span class="p">:</span>
-			<span class="n">detailLogger</span><span class="p">(</span><span class="s1">&#39;   Test file: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">testFile</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="n">maintag</span><span class="p">)</span>
+			<span class="n">detailLogger</span><span class="p">(</span><span class="s1">&#39;   Test file: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">fromLongPathSafe</span><span class="p">(</span><span class="n">testFile</span><span class="p">)),</span> <span class="n">extra</span><span class="o">=</span><span class="n">maintag</span><span class="p">)</span>
 		
 		<span class="c1"># It&#39;s much more useful to set the callRecord to the Java source file rather than this generic .py file</span>
 		<span class="n">callRecord</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">:</span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">testFile</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;testFileLine&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;0&#39;</span><span class="p">)]</span>
@@ -446,6 +458,103 @@
 			
 		<span class="n">detailLogger</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
 		<span class="k">return</span> <span class="n">outcome</span></div>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;pysys.pysysjava.junittest&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="JUnitDescriptorLoader"><a class="viewcode-back" href="../../autodocgen/pysysjava.junittest.html#pysysjava.junittest.JUnitDescriptorLoader">[docs]</a><span class="k">class</span> <span class="nc">JUnitDescriptorLoader</span><span class="p">(</span><span class="n">DescriptorLoader</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	A DescriptorLoader that dynamically creates a separate PySys test for each .java JUnit test class under the Input </span>
+<span class="sd">	directory. </span>
+<span class="sd">	</span>
+<span class="sd">	To use this, create a ``pysysdirconfig.xml`` with a user-data element ``junitTestDescriptorForEach``. </span>
+<span class="sd">	</span>
+<span class="sd">	You may also wish to add a ``junitStripPrefixes`` user-data to strip off long common package names from your </span>
+<span class="sd">	test classes and/or an ``id-prefix`` to add a common testId prefix indicating these are JUnit tests. </span>
+<span class="sd">	</span>
+<span class="sd">	You can also use the ``junit*`` user-data options described in `JUnitTest` and the </span>
+<span class="sd">	``javaClasspath`` and ``jvmArgs`` described in `pysysjava.testplugin.JavaTestPlugin`. </span>
+<span class="sd">	</span>
+<span class="sd">	For example::</span>
+<span class="sd">	</span>
+<span class="sd">		&lt;pysysdirconfig&gt;</span>
+<span class="sd">		</span>
+<span class="sd">			&lt;id-prefix&gt;MyJUnitTests_&lt;/id-prefix&gt;</span>
+
+<span class="sd">			&lt;data&gt;</span>
+<span class="sd">				&lt;user-data name=&quot;junitTestDescriptorForEach&quot; value=&quot;class&quot;/&gt;</span>
+
+<span class="sd">				&lt;user-data name=&quot;junitStripPrefixes&quot; value=&quot;myorg.mytestpackage, myorg2&quot;/&gt;</span>
+
+<span class="sd">				&lt;user-data name=&quot;javaClasspath&quot; value=&quot;${appHome}/target/logging-jars/*.jar&quot;/&gt;</span>
+<span class="sd">				&lt;user-data name=&quot;jvmArgs&quot; value=&quot;-Xmx256M&quot;/&gt;</span>
+
+<span class="sd">				&lt;user-data name=&quot;junitTimeoutSecs&quot; value=&quot;600&quot;/&gt;</span>
+<span class="sd">				&lt;user-data name=&quot;junitConfigArgs&quot; value=&quot;&quot;/&gt;</span>
+<span class="sd">			&lt;/data&gt;</span>
+<span class="sd">		</span>
+<span class="sd">		&lt;/pysysdirconfig&gt;</span>
+<span class="sd">		</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+
+	<span class="k">def</span> <span class="nf">_handleSubDirectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">dir</span><span class="p">,</span> <span class="n">subdirs</span><span class="p">,</span> <span class="n">files</span><span class="p">,</span> <span class="n">descriptors</span><span class="p">,</span> <span class="n">parentDirDefaults</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">parentDirDefaults</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="kc">False</span>
+		<span class="n">thing</span> <span class="o">=</span> <span class="n">parentDirDefaults</span><span class="o">.</span><span class="n">userData</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;junitTestDescriptorForEach&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">thing</span><span class="p">:</span> <span class="k">return</span> <span class="kc">False</span>
+		
+		<span class="c1"># we could support other granularity such as per directory, per test method etc</span>
+		<span class="k">assert</span> <span class="n">thing</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="p">]</span>
+	
+		<span class="n">stripPrefixes</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">parentDirDefaults</span><span class="o">.</span><span class="n">userData</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;junitStripPrefixes&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+		
+		<span class="c1"># default regex is from the JUnit 5 console launcher</span>
+		<span class="n">includeClassnameRegex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">parentDirDefaults</span><span class="o">.</span><span class="n">userData</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;junitIncludeClassnameRegex&#39;</span><span class="p">,</span> <span class="s1">&#39;^(Test.*|.+[.$]Test.*|.*Tests?)$&#39;</span><span class="p">))</span> 
+		<span class="n">includeClassnameRegexCompiled</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">includeClassnameRegex</span><span class="p">)</span> 
+		
+		<span class="n">inputdir</span> <span class="o">=</span> <span class="n">toLongPathSafe</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">parentDirDefaults</span><span class="o">.</span><span class="n">file</span><span class="p">),</span> <span class="n">parentDirDefaults</span><span class="o">.</span><span class="n">input</span><span class="p">)))</span>
+	
+		<span class="n">found</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">walkDirTreeContents</span><span class="p">(</span><span class="n">inputdir</span><span class="p">,</span> <span class="n">dirIgnores</span><span class="o">=</span><span class="n">OSWALK_IGNORES</span><span class="p">):</span>
+			<span class="k">if</span> <span class="n">entry</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span> <span class="ow">and</span> <span class="n">entry</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.java&#39;</span><span class="p">):</span>
+				<span class="n">classname</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">path</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">inputdir</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
+
+				<span class="k">if</span> <span class="ow">not</span> <span class="n">includeClassnameRegexCompiled</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">classname</span><span class="p">):</span>
+					<span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Ignoring JUnit class as name does not match regex for tests: &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span><span class="p">,</span> <span class="n">classname</span><span class="p">)</span>
+					<span class="k">continue</span>
+				
+				<span class="n">found</span> <span class="o">+=</span> <span class="mi">1</span>
+				<span class="n">userData</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">parentDirDefaults</span><span class="o">.</span><span class="n">userData</span><span class="p">)</span>
+				<span class="n">userData</span><span class="p">[</span><span class="s1">&#39;junitSelectionArgs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;--select-class </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">classname</span>
+				
+				<span class="nb">id</span> <span class="o">=</span> <span class="n">classname</span>
+				<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">stripPrefixes</span><span class="p">:</span>
+					<span class="k">if</span> <span class="nb">id</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+						<span class="nb">id</span> <span class="o">=</span> <span class="nb">id</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">):]</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+						<span class="k">break</span>
+				
+				<span class="n">descriptors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TestDescriptor</span><span class="p">(</span>
+					<span class="n">file</span><span class="o">=</span><span class="n">fromLongPathSafe</span><span class="p">(</span><span class="n">parentDirDefaults</span><span class="o">.</span><span class="n">file</span><span class="p">),</span> 
+					<span class="nb">id</span><span class="o">=</span><span class="n">parentDirDefaults</span><span class="o">.</span><span class="n">id</span><span class="o">+</span><span class="nb">id</span><span class="p">,</span> 
+					<span class="n">title</span><span class="o">=</span><span class="s1">&#39;JUnit </span><span class="si">%s</span><span class="s1"> - </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">classname</span><span class="p">),</span>
+					<span class="n">groups</span><span class="o">=</span><span class="p">[</span><span class="sa">u</span><span class="s1">&#39;junit&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">parentDirDefaults</span><span class="o">.</span><span class="n">groups</span><span class="p">,</span> 
+					<span class="n">modes</span><span class="o">=</span><span class="n">parentDirDefaults</span><span class="o">.</span><span class="n">modes</span><span class="p">,</span>
+					<span class="n">classname</span><span class="o">=</span><span class="s2">&quot;JUnitTest&quot;</span><span class="p">,</span> <span class="c1"># pysysjava.junittest.JUnitTest</span>
+					<span class="n">module</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]),</span>
+					<span class="n">purpose</span> <span class="o">=</span> <span class="n">fromLongPathSafe</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">path</span><span class="p">),</span>
+					<span class="n">userData</span> <span class="o">=</span> <span class="n">userData</span><span class="p">,</span>
+					
+					<span class="c1"># must ensure output dirs are unique even though lots of classes share the same testDir</span>
+					<span class="n">output</span><span class="o">=</span><span class="n">parentDirDefaults</span><span class="o">.</span><span class="n">output</span><span class="o">+</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="o">+</span><span class="n">classname</span><span class="p">,</span> 
+
+					<span class="c1"># copy everything else across from the defaults</span>
+					<span class="nb">input</span><span class="o">=</span><span class="n">parentDirDefaults</span><span class="o">.</span><span class="n">input</span><span class="p">,</span>
+					<span class="n">traceability</span><span class="o">=</span><span class="n">parentDirDefaults</span><span class="o">.</span><span class="n">traceability</span><span class="p">,</span>
+					<span class="n">executionOrderHint</span><span class="o">=</span><span class="n">parentDirDefaults</span><span class="o">.</span><span class="n">executionOrderHint</span><span class="p">,</span>
+					<span class="n">skippedReason</span><span class="o">=</span><span class="n">parentDirDefaults</span><span class="o">.</span><span class="n">skippedReason</span><span class="p">,</span>
+					<span class="p">))</span>
+		<span class="k">if</span> <span class="n">found</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;No JUnit test .java files found matching &quot;</span><span class="si">%s</span><span class="s1">&quot; in </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">includeClassnameRegex</span><span class="p">,</span> <span class="n">fromLongPathSafe</span><span class="p">(</span><span class="n">inputdir</span><span class="p">))</span>
+		
+		<span class="k">return</span> <span class="kc">True</span> <span class="c1"># means this directory has been fully handled so don&#39;t continue looking for PySys tests under this tree</span></div>
 </pre></div>
 
            </div>
@@ -458,7 +567,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-17
+        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-18
 
     </p>
   </div>
