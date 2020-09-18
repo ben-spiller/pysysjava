@@ -18,6 +18,8 @@ log = logging.getLogger('pysys.pysysjava.JavaTestPlugin')
 
 def walkDirTree(dir, dirIgnores=None, followlinks=False):
 	"""
+	:meta private: Not public API.
+	
 	Walks the specified directory tree, yielding an item for each directory in the tree 
 	(similar to ``os.walk`` but better). 
 	
@@ -72,6 +74,8 @@ def walkDirTree(dir, dirIgnores=None, followlinks=False):
 
 def walkDirTreeContents(dir, dirIgnores=None, followlinks=False):	
 	"""
+	:meta private: Not public API.
+
 	Walks the specified directory tree, yielding an entry for file/symlink/directory (excluding the root directory 
 	itself). 
 	
