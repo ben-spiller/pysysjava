@@ -93,6 +93,8 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../License.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../ChangeLog.html">Change Log</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/ben-spiller/pysysjava">Jump to GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pysys-test.github.io/pysys-test">Jump to PySys</a></li>
 </ul>
 
             
@@ -161,6 +163,8 @@
             
   <div class="section" id="module-pysysjava.junitxml">
 <span id="pysysjava-junitxml"></span><h1>pysysjava.junitxml<a class="headerlink" href="#module-pysysjava.junitxml" title="Permalink to this headline">¶</a></h1>
+<p>Support for reading the Ant-style XML files often used for report JUnit results (and also for some non-JUnit test 
+execution engines).</p>
 <div class="section" id="junitxmlparser">
 <h2>JUnitXMLParser<a class="headerlink" href="#junitxmlparser" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
@@ -170,7 +174,8 @@
 <p>A fast, minimal parser for Ant-style JUnit XML files.</p>
 <p>Note that there are a number of dialects of this file format with different handling of things like stdout 
 (per testsuite or per testcase) and timezone (UTC or local timezone) so check the details carefully if using 
-this for anything other than the JUnit 5 console engine.</p>
+this for anything other than the JUnit 5 console launcher. If you need something more advanced there are 
+other Python-based JUnit XML parsers out there with more features.</p>
 <dl class="py attribute">
 <dt id="pysysjava.junitxml.JUnitXMLParser.outcomeDetailsExcludeLinesRegex">
 <code class="sig-name descname">outcomeDetailsExcludeLinesRegex</code><em class="property"> = '^\\t+(at (java[.]|sun[.]|org[.]junit|org.apache.tools.ant)|\\.\\.\\. [0-9]+ more).*\\n'</em><a class="headerlink" href="#pysysjava.junitxml.JUnitXMLParser.outcomeDetailsExcludeLinesRegex" title="Permalink to this definition">¶</a></dt>
@@ -250,7 +255,7 @@ To avoid excessive verbosity lines involving org.junit.* or java.* packages are 
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-18
+        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-19
 
     </p>
   </div>

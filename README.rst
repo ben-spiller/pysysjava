@@ -1,32 +1,36 @@
-HTML documentation is available at: https://ben-spiller.github.io/pysysjava/
 .. image:: ../../workflows/PySys/badge.svg
 	:target: ../../actions
 .. image:: ../../workflows/Docs/badge.svg
 	:target: ../../actions
 .. image:: https://codecov.io/gh/ben-spiller/pysysjava/branch/main/graph/badge.svg
 	:target: https://codecov.io/gh/ben-spiller/pysysjava
-.. inclusion-marker-section-project-links
 
 Java plugins for PySys
 ======================
-This is a collection of plugins for the PySys System Test Framework that support compiling and running Java(R) classes 
-in your PySys tests, and a wrapper that allows running JUnit tests as if they were PySys tests. 
+This is a collection of plugins for the PySys System Test Framework that allow you to easily compile and run Java(R) 
+classes from your PySys tests, and a plugin that allows running JUnit tests as if they were PySys tests. 
 
-This project also serves as a good example of how to create, test, document and package PySys plugins, including 
-the use of GitHub Actions to run PySys tests (with Python code coverage), build HTML documentation for the plugins, 
-and generate a Python .whl package for installing them. 
+This project also serves as a good example of how to create, test, document and package PySys plugins, including:
+	- creating a PySys test plugin to make help methods available to all your testcases; 
+	- creating a PySys descriptor loader that dynamically creates PySys test descriptors based on the files; 
+	  found under a directory (in this case, .java JUnit test classes), allowing seamless integration of JUnit testing 
+	  alongside your other PySys tests; 
+	- using GitHub Actions to run PySys tests to check the plugins work correctly (with Python code coverage); 
+	- building HTML documentation for the plugins (with cross-references to the main PySys documentation); 
+	- generating a Python .whl package for installing them, and a GitHub Actions workflow for uploading to PyPi. 
 
-So feel free to fork it and use as a starting point for your own plugins supporting the language or toolset of your 
-choice. To make this as easy as possible, this plugin project has a simple Public Domain license. 
+Feel free to fork this repo and use as a starting point for your own plugins that add support for new 
+languages/toolsets to PySys. To make it easy to reuse code from this plugin project it has a Public Domain license. 
 
-Installation
-------------
 To use these plugins, you will need:
 
 	- Python 3.6+
 	- PySys 1.6.1+
 	- Java 8+ (currently tested with Java 8 and Java 14)
 
-To install, just use the standard ``pip3`` (or on Windows ``pip.exe``) executable::
+To install, just use the standard ``pip3`` executable (or ``pip.exe`` on Windows)::
 
 	pip3 install PySys-Java
+
+For more information about the features of this plugin and how to use it, see the documentation at 
+https://ben-spiller.github.io/pysysjava/

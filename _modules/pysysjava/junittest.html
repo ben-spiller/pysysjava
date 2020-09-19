@@ -83,6 +83,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../autodocgen/pysysjava.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../License.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../ChangeLog.html">Change Log</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/ben-spiller/pysysjava">Jump to GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pysys-test.github.io/pysys-test">Jump to PySys</a></li>
 </ul>
 
             
@@ -146,7 +148,26 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pysysjava.junittest</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">pysys</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Support for compiling/running/validating JUnit test classes from PySys.</span>
+
+<span class="sd">If you want to run a whole directory of JUnit tests as a single PySys test, create a PySys test which uses the </span>
+<span class="sd">`JUnitTest` class in place of ``run.py``. </span>
+
+<span class="sd">For large or long-running JUnit suites it&#39;s better to use the `JUnitDescriptorLoader` (configured with a </span>
+<span class="sd">``pysysdirconfig.xml`` file). This descriptor loader creates in-memory PySys test descriptors for each JUnit test </span>
+<span class="sd">class found under the input directory (each of which is run using `JUnitTest`). This allows each test class to run </span>
+<span class="sd">in its own PySys worker thread (with its own JVM process, and its own separate output directory), and provides an </span>
+<span class="sd">easier way to re-run failed JUnit classes just as you would for a normal PySys test. It means there is no need to </span>
+<span class="sd">create separate ``pysystest.xml`` files on disk for each test class, yet you can interact with them using the </span>
+<span class="sd">full power of PySys. </span>
+
+<span class="sd">Both approaches allow the stdout/err (for example log output) to be captured from each testcase, and reporting of </span>
+<span class="sd">the (``.java``) location and nature of any test failures, with colour coding (if coloured output is enabled), and </span>
+<span class="sd">highlighting of actual vs expected comparison failure, to make it as easy as possible to read the output. </span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">pysys</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">pysys.constants</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">pysys.basetest</span> <span class="kn">import</span> <span class="n">BaseTest</span>
@@ -160,6 +181,9 @@
 <div class="viewcode-block" id="JUnitTest"><a class="viewcode-back" href="../../autodocgen/pysysjava.junittest.html#pysysjava.junittest.JUnitTest">[docs]</a><span class="k">class</span> <span class="nc">JUnitTest</span><span class="p">(</span><span class="n">BaseTest</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	A test class that compiles and runs one or more JUnit test suites. </span>
+<span class="sd">	</span>
+<span class="sd">	This class requires the JUnit 5 console launcher, which itself supports running older JUnit 4 testcases - so </span>
+<span class="sd">	whichever version you need, you should be covered. </span>
 <span class="sd">	</span>
 <span class="sd">	To run a set of JUnit tests from a single PySys test, put the unit test .java files in the Input directory, and </span>
 <span class="sd">	specify this class in the ``pysystest.xml``::</span>
@@ -463,8 +487,8 @@
 
 <div class="viewcode-block" id="JUnitDescriptorLoader"><a class="viewcode-back" href="../../autodocgen/pysysjava.junittest.html#pysysjava.junittest.JUnitDescriptorLoader">[docs]</a><span class="k">class</span> <span class="nc">JUnitDescriptorLoader</span><span class="p">(</span><span class="n">DescriptorLoader</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	A DescriptorLoader that dynamically creates a separate PySys test for each .java JUnit test class under the Input </span>
-<span class="sd">	directory. </span>
+<span class="sd">	A `pysys.xml.descriptor.DescriptorLoader` that dynamically creates a separate PySys test descriptor for each .java </span>
+<span class="sd">	JUnit test class found under the ``Input/`` directory. </span>
 <span class="sd">	</span>
 <span class="sd">	To use this, create a ``pysysdirconfig.xml`` with a user-data element ``junitTestDescriptorForEach``. </span>
 <span class="sd">	</span>
@@ -567,7 +591,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-18
+        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-19
 
     </p>
   </div>

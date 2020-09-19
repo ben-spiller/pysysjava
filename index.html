@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Java plugins for PySys &mdash; PySys Java plugins v0.1  documentation</title>
+  <title>PySys Java Plugins &mdash; PySys Java plugins v0.1  documentation</title>
   
 
   
@@ -84,6 +84,8 @@
 <li class="toctree-l1"><a class="reference internal" href="autodocgen/pysysjava.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="License.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ChangeLog.html">Change Log</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/ben-spiller/pysysjava">Jump to GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pysys-test.github.io/pysys-test">Jump to PySys</a></li>
 </ul>
 
             
@@ -129,7 +131,7 @@
     
       <li><a href="#">Docs</a> &raquo;</li>
         
-      <li>Java plugins for PySys</li>
+      <li>PySys Java Plugins</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -148,29 +150,58 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="java-plugins-for-pysys">
-<h1>Java plugins for PySys<a class="headerlink" href="#java-plugins-for-pysys" title="Permalink to this headline">¶</a></h1>
-<p>This is a collection of plugins for the PySys System Test Framework that support compiling and running Java(R) classes
-in your PySys tests, and a wrapper that allows running JUnit tests as if they were PySys tests.</p>
-<p>This project also serves as a good example of how to create, test, document and package PySys plugins, including
-the use of GitHub Actions to run PySys tests (with Python code coverage), build HTML documentation for the plugins,
-and generate a Python .whl package for installing them.</p>
-<p>So feel free to fork it and use as a starting point for your own plugins supporting the language or toolset of your
-choice. To make this as easy as possible, this plugin project has a simple Public Domain license.</p>
-<div class="section" id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
-<p>To use these plugins, you will need:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>Python 3.6+</p></li>
-<li><p>PySys 1.6.1+</p></li>
-<li><p>Java 8+ (currently tested with Java 8 and Java 14)</p></li>
-</ul>
-</div></blockquote>
-<p>To install, just use the standard <code class="docutils literal notranslate"><span class="pre">pip3</span></code> (or on Windows <code class="docutils literal notranslate"><span class="pre">pip.exe</span></code>) executable:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip3</span> <span class="n">install</span> <span class="n">PySys</span><span class="o">-</span><span class="n">Java</span>
+  <div class="section" id="pysys-java-plugins">
+<h1>PySys Java Plugins<a class="headerlink" href="#pysys-java-plugins" title="Permalink to this headline">¶</a></h1>
+<p>This project consists of a plugin for the PySys System Test Framework that allows you to easily compile and run Java(R)
+classes from your PySys tests, and a plugin that allows running JUnit tests as if they were PySys tests.</p>
+<div class="section" id="test-plugin-for-java">
+<h2>Test Plugin for Java<a class="headerlink" href="#test-plugin-for-java" title="Permalink to this headline">¶</a></h2>
+<p>See <a class="reference internal" href="autodocgen/pysysjava.testplugin.html#module-pysysjava.testplugin" title="pysysjava.testplugin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysysjava.testplugin</span></code></a> for information about the PySys test plugin.</p>
+<p>Once configured in your PySys project, this plugin makes it easy to run Java classes and jars from your PySys
+<code class="docutils literal notranslate"><span class="pre">run.py</span></code> tests, and also to compile small testing tools needed by individual test cases.</p>
+<p>For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">myserver</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">startJava</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">appHome</span><span class="o">+</span><span class="s1">&#39;/my_server*.jar&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">getNextAvailableTCPPort</span><span class="p">()],</span>
+        <span class="n">stdouterr</span><span class="o">=</span><span class="s1">&#39;my_server&#39;</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">defaultClasspath</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">appHome</span><span class="o">+</span><span class="s1">&#39;/mydeps.jar&#39;</span><span class="p">]</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">+</span><span class="s1">&#39;/javaclasses&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;--Werror&#39;</span><span class="p">])</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">startJava</span><span class="p">(</span><span class="s1">&#39;myorg.MyHttpTestClient&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="n">port</span><span class="p">],</span> <span class="n">stdouterr</span><span class="o">=</span><span class="s1">&#39;httpclient&#39;</span><span class="p">,</span>
+        <span class="n">classpath</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">defaultClasspath</span><span class="o">+</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">+</span><span class="s1">&#39;/javaclasses&#39;</span><span class="p">],</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="section" id="junit-execution-from-pysys">
+<h2>JUnit Execution from PySys<a class="headerlink" href="#junit-execution-from-pysys" title="Permalink to this headline">¶</a></h2>
+<p>See <a class="reference internal" href="autodocgen/pysysjava.junittest.html#module-pysysjava.junittest" title="pysysjava.junittest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysysjava.junittest</span></code></a> for information about running JUnit tests from PySys.</p>
+<p>You can either have a single PySys test for a whole directory tree of JUnit tests, or for larger projects and
+increased control, use the JUnit descriptor loader that creates separate PySys tests (in-memory) for each JUnit test
+class, allowing them to be executed individually (and in separate JVM processes):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pysys</span> <span class="n">run</span> <span class="o">--</span><span class="n">threads</span><span class="o">=</span><span class="mi">10</span> <span class="n">MyJUnitTests_org</span><span class="o">.</span><span class="n">myorg</span><span class="o">.</span><span class="n">TestSuiteFoo</span> <span class="n">MyJUnitTests_org</span><span class="o">.</span><span class="n">myorg</span><span class="o">.</span><span class="n">TestSuiteBar</span>
+</pre></div>
+</div>
+<p>Classpath, JVM arguments, timeout and more can be customized on a per-test or per-directory basis using <code class="docutils literal notranslate"><span class="pre">&lt;user-data&gt;</span></code>
+properties in the <code class="docutils literal notranslate"><span class="pre">pysystest.xml</span></code> or <code class="docutils literal notranslate"><span class="pre">pysysdirconfig.xml</span></code> file, for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">pysysdirconfig</span><span class="o">&gt;</span>
+
+        <span class="o">&lt;</span><span class="nb">id</span><span class="o">-</span><span class="n">prefix</span><span class="o">&gt;</span><span class="n">MyJUnitTests_</span><span class="o">&lt;/</span><span class="nb">id</span><span class="o">-</span><span class="n">prefix</span><span class="o">&gt;</span>
+
+        <span class="o">&lt;</span><span class="n">data</span><span class="o">&gt;</span>
+                <span class="o">&lt;</span><span class="n">user</span><span class="o">-</span><span class="n">data</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;junitTestDescriptorForEach&quot;</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;class&quot;</span><span class="o">/&gt;</span>
+
+                <span class="o">&lt;</span><span class="n">user</span><span class="o">-</span><span class="n">data</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;junitStripPrefixes&quot;</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;myorg.mytest1, myorg&quot;</span><span class="o">/&gt;</span>
+
+                <span class="o">&lt;</span><span class="n">user</span><span class="o">-</span><span class="n">data</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;javaClasspath&quot;</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;$</span><span class="si">{appHome}</span><span class="s2">/target/logging-jars/*.jar&quot;</span><span class="o">/&gt;</span>
+                <span class="o">&lt;</span><span class="n">user</span><span class="o">-</span><span class="n">data</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;jvmArgs&quot;</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;-Xmx256M&quot;</span><span class="o">/&gt;</span>
+
+                <span class="o">&lt;</span><span class="n">user</span><span class="o">-</span><span class="n">data</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;junitTimeoutSecs&quot;</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;600&quot;</span><span class="o">/&gt;</span>
+                <span class="o">&lt;</span><span class="n">user</span><span class="o">-</span><span class="n">data</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;junitConfigArgs&quot;</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="o">/&gt;</span>
+        <span class="o">&lt;/</span><span class="n">data</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">pysysdirconfig</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>There is also a simple parser for Ant-style JUnit XML reports (used to implement the above) in <a class="reference internal" href="autodocgen/pysysjava.junitxml.html#module-pysysjava.junitxml" title="pysysjava.junitxml"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysysjava.junitxml</span></code></a>,
+which could also be useful for getting data from other (non-JUnit) testing engines that use the same reporting file
+format.</p>
 </div>
 <div class="section" id="documentation-contents">
 <h2>Documentation contents<a class="headerlink" href="#documentation-contents" title="Permalink to this headline">¶</a></h2>
@@ -183,7 +214,12 @@ choice. To make this as easy as possible, this plugin project has a simple Publi
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="License.html">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ChangeLog.html">Change Log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ChangeLog.html">Change Log</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ChangeLog.html#v0-1">v0.1</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/ben-spiller/pysysjava">Jump to GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pysys-test.github.io/pysys-test">Jump to PySys</a></li>
 </ul>
 </div>
 </div>
@@ -207,7 +243,7 @@ choice. To make this as easy as possible, this plugin project has a simple Publi
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-18
+        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-19
 
     </p>
   </div>

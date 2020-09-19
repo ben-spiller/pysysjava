@@ -83,6 +83,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../autodocgen/pysysjava.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../License.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../ChangeLog.html">Change Log</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/ben-spiller/pysysjava">Jump to GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pysys-test.github.io/pysys-test">Jump to PySys</a></li>
 </ul>
 
             
@@ -147,7 +149,7 @@
             
   <h1>Source code for pysysjava.testplugin</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">About the module. Yeehaw!</span>
+<span class="sd">Support for compiling and running Java applications from the ``run.py`` of your PySys tests. </span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -256,13 +258,33 @@
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	This is a PySys test plugin that for compiling and running Java applications from a PySys testcase. </span>
 <span class="sd">	</span>
-<span class="sd">	You can access the methods of this class from any test using ``self.java.XXX`` if you add it to your project </span>
-<span class="sd">	configuration with an alias such as ``java``::</span>
+<span class="sd">	You can access the methods of this class from any test using ``self.java.XXX``. To enable this, just add it to your </span>
+<span class="sd">	project configuration with an alias such as ``java``::</span>
 <span class="sd">	</span>
 <span class="sd">		&lt;test-plugin classname=&quot;pysysjava.javatestplugin.JavaTestPlugin&quot; alias=&quot;java&quot;/&gt;</span>
 <span class="sd">	</span>
 <span class="sd">	This plugin assumes the existence of a project property named ``javaHome`` that contains the path to the JDK, </span>
 <span class="sd">	with a ``bin/`` subdirectory containing executables such as ``java`` and ``javac``. </span>
+<span class="sd">	</span>
+<span class="sd">	Since you often want the same JVM arguments (e.g. max heap size etc), compiler arguments and classpath for </span>
+<span class="sd">	many of your tests, defaults for these can be configured via properties on the plugin (and in some cases also </span>
+<span class="sd">	on a per-test/per-directory basis by adding ``&lt;user-data name=&quot;...&quot; value=&quot;...&quot;&gt;`` to your ``pysystest.xml`` </span>
+<span class="sd">	or ``pysysdirconfig.xml`` file. For example::</span>
+<span class="sd">	</span>
+<span class="sd">		&lt;test-plugin classname=&quot;pysysjava.javatestplugin.JavaTestPlugin&quot; alias=&quot;java&quot;&gt;</span>
+<span class="sd">			&lt;property name=&quot;defaultJVMArgs&quot; value=&quot;-Xmx256m -XX:+HeapDumpOnOutOfMemoryError&quot;/&gt;</span>
+<span class="sd">		&lt;/test-plugin&gt;</span>
+<span class="sd">		</span>
+<span class="sd">	Or::</span>
+<span class="sd">	</span>
+<span class="sd">		&lt;pysysdirconfig&gt;</span>
+<span class="sd">			&lt;data&gt;</span>
+<span class="sd">				&lt;user-data name=&quot;javaClasspath&quot; value=&quot;${appHome}/target/logging-jars/*.jar&quot;/&gt;</span>
+<span class="sd">				&lt;user-data name=&quot;jvmArgs&quot; value=&quot;-Xmx256M&quot;/&gt;</span>
+<span class="sd">			&lt;/data&gt;</span>
+<span class="sd">		&lt;/pysysdirconfig&gt;</span>
+
+<span class="sd">	See below for more details about these properties. </span>
 <span class="sd">	</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
@@ -568,7 +590,8 @@
 
 	<span class="nd">@staticmethod</span>
 	<span class="k">def</span> <span class="nf">_splitShellArgs</span><span class="p">(</span><span class="n">commandstring</span><span class="p">):</span>
-		<span class="c1"># need to escape windows \ else it gets removed; do this the same on all platforms for consistency)</span>
+		<span class="c1"># Internal, not part of the API</span>
+		<span class="c1"># Need to escape windows \ else it gets removed; do this the same on all platforms for consistency)</span>
 		<span class="k">return</span> <span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">commandstring</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">u</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">,</span><span class="sa">u</span><span class="s1">&#39;</span><span class="se">\\\\</span><span class="s1">&#39;</span><span class="p">))</span></div>
 </pre></div>
 
@@ -582,7 +605,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-18
+        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-19
 
     </p>
   </div>

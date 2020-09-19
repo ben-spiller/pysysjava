@@ -93,6 +93,8 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../License.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../ChangeLog.html">Change Log</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/ben-spiller/pysysjava">Jump to GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pysys-test.github.io/pysys-test">Jump to PySys</a></li>
 </ul>
 
             
@@ -161,7 +163,7 @@
             
   <div class="section" id="module-pysysjava.testplugin">
 <span id="pysysjava-testplugin"></span><h1>pysysjava.testplugin<a class="headerlink" href="#module-pysysjava.testplugin" title="Permalink to this headline">¶</a></h1>
-<p>About the module. Yeehaw!</p>
+<p>Support for compiling and running Java applications from the <code class="docutils literal notranslate"><span class="pre">run.py</span></code> of your PySys tests.</p>
 <div class="section" id="javatestplugin">
 <h2>JavaTestPlugin<a class="headerlink" href="#javatestplugin" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
@@ -169,13 +171,32 @@
 <em class="property">class </em><code class="sig-prename descclassname">pysysjava.testplugin.</code><code class="sig-name descname">JavaTestPlugin</code><a class="reference internal" href="../_modules/pysysjava/testplugin.html#JavaTestPlugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pysysjava.testplugin.JavaTestPlugin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>This is a PySys test plugin that for compiling and running Java applications from a PySys testcase.</p>
-<p>You can access the methods of this class from any test using <code class="docutils literal notranslate"><span class="pre">self.java.XXX</span></code> if you add it to your project 
-configuration with an alias such as <code class="docutils literal notranslate"><span class="pre">java</span></code>:</p>
+<p>You can access the methods of this class from any test using <code class="docutils literal notranslate"><span class="pre">self.java.XXX</span></code>. To enable this, just add it to your 
+project configuration with an alias such as <code class="docutils literal notranslate"><span class="pre">java</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">test</span><span class="o">-</span><span class="n">plugin</span> <span class="n">classname</span><span class="o">=</span><span class="s2">&quot;pysysjava.javatestplugin.JavaTestPlugin&quot;</span> <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;java&quot;</span><span class="o">/&gt;</span>
 </pre></div>
 </div>
 <p>This plugin assumes the existence of a project property named <code class="docutils literal notranslate"><span class="pre">javaHome</span></code> that contains the path to the JDK, 
 with a <code class="docutils literal notranslate"><span class="pre">bin/</span></code> subdirectory containing executables such as <code class="docutils literal notranslate"><span class="pre">java</span></code> and <code class="docutils literal notranslate"><span class="pre">javac</span></code>.</p>
+<p>Since you often want the same JVM arguments (e.g. max heap size etc), compiler arguments and classpath for 
+many of your tests, defaults for these can be configured via properties on the plugin (and in some cases also 
+on a per-test/per-directory basis by adding <code class="docutils literal notranslate"><span class="pre">&lt;user-data</span> <span class="pre">name=&quot;...&quot;</span> <span class="pre">value=&quot;...&quot;&gt;</span></code> to your <code class="docutils literal notranslate"><span class="pre">pysystest.xml</span></code> 
+or <code class="docutils literal notranslate"><span class="pre">pysysdirconfig.xml</span></code> file. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">test</span><span class="o">-</span><span class="n">plugin</span> <span class="n">classname</span><span class="o">=</span><span class="s2">&quot;pysysjava.javatestplugin.JavaTestPlugin&quot;</span> <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;java&quot;</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="nb">property</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;defaultJVMArgs&quot;</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;-Xmx256m -XX:+HeapDumpOnOutOfMemoryError&quot;</span><span class="o">/&gt;</span>
+<span class="o">&lt;/</span><span class="n">test</span><span class="o">-</span><span class="n">plugin</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Or:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">pysysdirconfig</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="n">data</span><span class="o">&gt;</span>
+                <span class="o">&lt;</span><span class="n">user</span><span class="o">-</span><span class="n">data</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;javaClasspath&quot;</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;$</span><span class="si">{appHome}</span><span class="s2">/target/logging-jars/*.jar&quot;</span><span class="o">/&gt;</span>
+                <span class="o">&lt;</span><span class="n">user</span><span class="o">-</span><span class="n">data</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;jvmArgs&quot;</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;-Xmx256M&quot;</span><span class="o">/&gt;</span>
+        <span class="o">&lt;/</span><span class="n">data</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">pysysdirconfig</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>See below for more details about these properties.</p>
 <dl class="py attribute">
 <dt id="pysysjava.testplugin.JavaTestPlugin.defaultCompilerArgs">
 <code class="sig-name descname">defaultCompilerArgs</code><em class="property"> = '-g'</em><a class="headerlink" href="#pysysjava.testplugin.JavaTestPlugin.defaultCompilerArgs" title="Permalink to this definition">¶</a></dt>
@@ -351,7 +372,7 @@ elements will be deleted.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-18
+        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-19
 
     </p>
   </div>
