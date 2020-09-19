@@ -1,5 +1,5 @@
 """
-About the module. Yeehaw!
+Support for compiling and running Java applications from the ``run.py`` of your PySys tests. 
 """
 import sys
 import os
@@ -108,13 +108,33 @@ class JavaTestPlugin(object):
 	"""
 	This is a PySys test plugin that for compiling and running Java applications from a PySys testcase. 
 	
-	You can access the methods of this class from any test using ``self.java.XXX`` if you add it to your project 
-	configuration with an alias such as ``java``::
+	You can access the methods of this class from any test using ``self.java.XXX``. To enable this, just add it to your 
+	project configuration with an alias such as ``java``::
 	
 		<test-plugin classname="pysysjava.javatestplugin.JavaTestPlugin" alias="java"/>
 	
 	This plugin assumes the existence of a project property named ``javaHome`` that contains the path to the JDK, 
 	with a ``bin/`` subdirectory containing executables such as ``java`` and ``javac``. 
+	
+	Since you often want the same JVM arguments (e.g. max heap size etc), compiler arguments and classpath for 
+	many of your tests, defaults for these can be configured via properties on the plugin (and in some cases also 
+	on a per-test/per-directory basis by adding ``<user-data name="..." value="...">`` to your ``pysystest.xml`` 
+	or ``pysysdirconfig.xml`` file. For example::
+	
+		<test-plugin classname="pysysjava.javatestplugin.JavaTestPlugin" alias="java">
+			<property name="defaultJVMArgs" value="-Xmx256m -XX:+HeapDumpOnOutOfMemoryError"/>
+		</test-plugin>
+		
+	Or::
+	
+		<pysysdirconfig>
+			<data>
+				<user-data name="javaClasspath" value="${appHome}/target/logging-jars/*.jar"/>
+				<user-data name="jvmArgs" value="-Xmx256M"/>
+			</data>
+		</pysysdirconfig>
+
+	See below for more details about these properties. 
 	
 	"""
 
@@ -420,5 +440,6 @@ class JavaTestPlugin(object):
 
 	@staticmethod
 	def _splitShellArgs(commandstring):
-		# need to escape windows \ else it gets removed; do this the same on all platforms for consistency)
+		# Internal, not part of the API
+		# Need to escape windows \ else it gets removed; do this the same on all platforms for consistency)
 		return shlex.split(commandstring.replace(u'\\',u'\\\\'))

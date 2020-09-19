@@ -1,3 +1,9 @@
+"""
+Support for reading the Ant-style XML files often used for report JUnit results (and also for some non-JUnit test 
+execution engines). 
+
+"""
+
 import pysys
 from pysys.constants import *
 from pysys.utils.fileutils import *
@@ -13,7 +19,8 @@ class JUnitXMLParser:
 	
 	Note that there are a number of dialects of this file format with different handling of things like stdout 
 	(per testsuite or per testcase) and timezone (UTC or local timezone) so check the details carefully if using 
-	this for anything other than the JUnit 5 console engine. """
+	this for anything other than the JUnit 5 console launcher. If you need something more advanced there are 
+	other Python-based JUnit XML parsers out there with more features.  """
 	
 	outcomeDetailsExcludeLinesRegex = r'^\t+(at (java[.]|sun[.]|org[.]junit|org.apache.tools.ant)|\.\.\. [0-9]+ more).*\n'
 	"""
