@@ -11,7 +11,9 @@ To use these plugins, you will need:
 	- Java 8+ (currently tested with Java 8 and Java 14)
 	- Optionally: JUnit 5 (if you want to run JUnit tests); JUnit 4 is supported via the JUnit 5 vintage engine
 
-To install, just use the standard ``pip3`` executable (or ``pip.exe`` on Windows): ``pip3 install PySys-Java``
+To install, just use the standard ``pip3`` executable (or ``pip.exe`` on Windows):: 
+
+	pip3 install PySys-Java
 
 Test Plugin for Java
 --------------------
