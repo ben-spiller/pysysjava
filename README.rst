@@ -23,15 +23,5 @@ This project also serves as a good example of how to create, test, document and 
 Feel free to fork this project and use as a starting point for your own plugins that add support for new 
 languages/toolsets to PySys. To make it easy to reuse code from this plugin project it has a Public Domain license. 
 
-To use these plugins, you will need:
-
-	- Python 3.6+
-	- PySys 1.6.1+
-	- Java 8+ (currently tested with Java 8 and Java 14)
-
-To install, just use the standard ``pip3`` executable (or ``pip.exe`` on Windows)::
-
-	pip3 install PySys-Java
-
-For more information about the features of this plugin and how to use it, see the documentation at 
+For more information about the features of this plugin and how to install and use it, see the documentation: 
 https://ben-spiller.github.io/pysysjava/
