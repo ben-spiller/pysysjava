@@ -40,11 +40,8 @@ CLASSIFIERS = [
 ]+PLATFORMS_CLASSIFIERS
 KEYWORDS = ['pysys', 'java', 'junit']
 
-with codecs.open(ROOTDIR+'/README.rst', "r", encoding="ascii") as f:
+with codecs.open(ROOTDIR+'/docs/ProjectOverview.rst', "r", encoding="ascii") as f:
 	long_description = f.read()
-	# Strip out the current build status badges from the top of the readme
-	long_description = long_description[long_description.find(os.linesep*2):].strip()
-	assert len(long_description)>100, repr(long_description)
 
 with codecs.open(ROOTDIR+'/VERSION', "r", encoding="ascii") as f:
 	version = f.read().strip()

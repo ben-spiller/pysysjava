@@ -11,6 +11,7 @@ This is a collection of plugins for the PySys System Test Framework that allow y
 classes from your PySys tests, and a plugin that allows running JUnit tests as if they were PySys tests. 
 
 This project also serves as a good example of how to create, test, document and package PySys plugins, including:
+
 	- creating a PySys test plugin to make help methods available to all your testcases; 
 	- creating a PySys descriptor loader that dynamically creates PySys test descriptors based on the files; 
 	  found under a directory (in this case, .java JUnit test classes), allowing seamless integration of JUnit testing 
@@ -19,7 +20,7 @@ This project also serves as a good example of how to create, test, document and 
 	- building HTML documentation for the plugins (with cross-references to the main PySys documentation); 
 	- generating a Python .whl package for installing them, and a GitHub Actions workflow for uploading to PyPi. 
 
-Feel free to fork this repo and use as a starting point for your own plugins that add support for new 
+Feel free to fork this project and use as a starting point for your own plugins that add support for new 
 languages/toolsets to PySys. To make it easy to reuse code from this plugin project it has a Public Domain license. 
 
 To use these plugins, you will need:
