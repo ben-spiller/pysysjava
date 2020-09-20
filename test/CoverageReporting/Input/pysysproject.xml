@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pysysproject>
+	<!-- PySys project file for nested tests -->
+
+	<property name="appHome" value="${env.PYSYS_APP_HOME}" pathMustExist="true"/>
+
+	<property name="javaHome" value="${env.JAVA_HOME}" pathMustExist="true"/>
+	<property name="defaultEnvirons.JAVA_HOME" value="${javaHome}"/>
+
+	<!-- Make sure temporary files go to the test output dir not the OS's default temp directory. -->
+	<property name="defaultEnvironsTempDir" value="self.output"/>
+	
+	<pythonpath value="${appHome}" />
+	<test-plugin classname="pysysjava.testplugin.JavaTestPlugin" alias="java"/>
+	
+	<writers>
+	
+		<writer classname="pysysjava.coverage.JavaCoverageWriter" alias="javaCoverageWriter">
+			<property name="jacocoDir" value="${env.JACOCO_DIR}"/>
+
+			<property name="destDir" value="__coverage_java.${outDirName}"/>
+			<property name="destArchive" value="JavaCoverage.zip"/>
+			
+			<property name="agentArgs" value='includes=myorg*:otherpackage,excludes=myorg.DepXXX*'/>
+
+			<property name="classpath" value="${testRootDir}/../classpath1;${testRootDir}/../classpath2"/>
+			<property name="sourceDirs" value="${testRootDir}/src1;${testRootDir}/src2"/>
+			<property name="reportArgs" value='--name "My amazing report" --encoding utf-8'/>
+		</writer>
+
+	</writers>
+
+	<default-file-encodings>
+		<default-file-encoding pattern="run.log" encoding="utf-8"/>
+		
+		<default-file-encoding pattern="*.xml"  encoding="utf-8"/>
+		<default-file-encoding pattern="*.json" encoding="utf-8"/>
+		<default-file-encoding pattern="*.yaml" encoding="utf-8"/>
+	</default-file-encodings>	
+	
+</pysysproject>

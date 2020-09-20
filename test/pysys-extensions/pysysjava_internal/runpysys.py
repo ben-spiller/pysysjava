@@ -29,6 +29,7 @@ class RunPySysPlugin(object):
 			'PYSYS_APP_HOME': self.project.testRootDir+'/..',
 			'JAVA_HOME': self.project.javaHome,
 			'JUNIT_CLASSPATH': self.project.junitFrameworkClasspath,
+			'JACOCO_DIR': self.project.jacocoDir,
 			'PYTHONPATH': os.getenv('PYTHONPATH')
 		})
 		workingDir = workingDir or self.owner.input

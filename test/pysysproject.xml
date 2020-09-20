@@ -20,7 +20,8 @@
 	<property name="defaultEnvirons.JAVA_HOME" value="${javaHome}"/>
 
 	<property name="junitFrameworkClasspath" value="${testRootDir}/../target/junit-jars/*.jar"/>
-	
+	<property name="jacocoDir" value="${testRootDir}/../target/junit-jars"/>
+
 	<!-- 
 	This sets Java(R)'s JAVA_TOOL_OPTIONS environment variable to set a default limit on max heap size to avoid each 
 	process using up a large proportion of the machine's virtual address space which can cause problem with rlimits
@@ -53,9 +54,16 @@
 			<property name="includeThisPySysProcess" value="True"/>
 			<property name="pythonCoverageConfigFile" value="${testRootDir}/pysys-extensions/python.coveragerc"/>
 		</writer>
+
+		<writer classname="pysysjava.coverage.JavaCoverageWriter" alias="javaCoverageWriter">
+			<property name="destDir" value="__coverage_java.${outDirName}"/>
+			<property name="jacocoDir" value="${jacocoDir}"/>
+			<!-- Since we don't have any Java application to test in this project we don't set the classpath property; 
+				so we won't get a report
+			-->
+		</writer>
 		
 		<writer classname="pysys.writer.ci.GitHubActionsCIWriter"></writer>
-		<writer classname="pysys.writer.ci.TravisCIWriter"></writer>
 		
 		<writer classname="pysys.writer.console.ConsoleSummaryResultsWriter"></writer>
 	</writers>

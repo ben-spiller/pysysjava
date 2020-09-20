@@ -1,8 +1,9 @@
 PySys Java Plugins
 ==================
 
-This project consists of a plugin for the PySys System Test Framework that allows you to easily compile and run Java(R) 
-classes from your PySys tests, and a plugin that allows running JUnit tests as if they were PySys tests. 
+This is a collection of plugins for the PySys System Test Framework that allow you to easily compile and run Java(R) 
+classes from your PySys tests, and a plugin that allows running JUnit tests as if they were PySys tests, 
+plus support for generating Java code coverage reports. 
 
 To use these plugins, you will need:
 
@@ -10,6 +11,7 @@ To use these plugins, you will need:
 	- PySys 1.6.1+
 	- Java 8+ (currently tested with Java 8 and Java 14)
 	- Optionally: JUnit 5 (if you want to run JUnit tests); JUnit 4 is supported via the JUnit 5 vintage engine
+	- Optionally: JaCoCo (if you want to generate coverage reports; currently tested with JaCoCo 0.8.6)
 
 To install, just use the standard ``pip3`` executable (or ``pip.exe`` on Windows):: 
 
@@ -65,3 +67,26 @@ properties in the ``pysystest.xml`` or ``pysysdirconfig.xml`` file, for example:
 There is also a simple parser for Ant-style JUnit XML reports (used to implement the above) in `pysysjava.junitxml`, 
 which could also be useful for getting data from other (non-JUnit) testing engines that use the same reporting file 
 format. 
+
+Java Code Coverage Reporting
+----------------------------
+See `pysysjava.coverage` for information about generating Java code coverage reports from any Java process 
+launched by PySys (including JUnit tests and integration tests). 
+
+The writer can merge together all the individual coverage files into a single combined one, and generate both an 
+XML report (suitable for uploading to an online coverage reporting service) and an HTML report (for human consumption). 
+For the reporting to run it is necessary to specify the classpath and if possible the directories under which the 
+source .java files can be found. An example configuration is::
+
+		<writer classname="pysysjava.coverage.JavaCoverageWriter" alias="javaCoverageWriter">
+			<property name="jacocoDir" value="${testRootDir}/../jacoco"/>
+
+			<property name="destDir" value="__coverage_java.${outDirName}"/>
+			<property name="destArchive" value="JavaCoverage.zip"/>
+			
+			<property name="agentArgs" value='includes=myorg*'/>
+
+			<property name="classpath" value="${appHome}/*.jar"/>
+			<property name="sourceDirs" value="${testRootDir}/../src"/>
+			<property name="reportArgs" value='--name "My amazing report"'/>
+		</writer>

@@ -173,12 +173,6 @@ class JavaTestPlugin(object):
 	
 	"""
 
-	_codeCoverageArgs = []
-	"""
-	A list of JVM arguments to add whenever starting a Java process, unless the ``disableCoverage`` 
-	flag is set. This property is not set in pysysproject.xml but by a Java code coverage writer (if enabled). 
-	"""
-
 	def setup(self, testObj):
 		self.owner = testObj
 		self.project = self.owner.project
@@ -200,13 +194,14 @@ class JavaTestPlugin(object):
 		
 		# Assume both of these methods make a copy of the static value (which makes it safe for tests to mutate the 
 		# lists)
+		descriptorUserData = testObj.descriptor.userData if hasattr(testObj, 'descriptor') else {} # Also support using it from a runner
 		self.defaultClasspath = self.toClasspathList(self.project.expandProperties(
-			testObj.descriptor.userData.get('javaClasspath', self.defaultClasspath)))
+			descriptorUserData.get('javaClasspath', self.defaultClasspath)))
 		self.defaultJVMArgs = self._splitShellArgs(self.project.expandProperties(
-			testObj.descriptor.userData.get('jvmArgs', self.defaultJVMArgs)))
+			descriptorUserData.get('jvmArgs', self.defaultJVMArgs)))
 
 		self.owner.addCleanupFunction(lambda: [deletedir(self.owner.output+'/'+d) for d in os.listdir(self.owner.output)
-			if d.startswith('hsperfdata_')], ignoreErrors=True)
+			if d.startswith('hsperfdata_')] if os.path.exists(self.owner.output) else None, ignoreErrors=True)
 		
 	def compile(self, input=None, output='javaclasses', classpath=None, args=None, **kwargs):
 		"""Compile Java source files into classes. By default we compile Java files from the test's input directory to 
@@ -313,7 +308,10 @@ class JavaTestPlugin(object):
 			self.java.compile(self.input, output=self.output+'/javaclasses', args=['--Werror'])
 			self.java.startJava('myorg.MyHttpTestClient', ['127.0.0.1', port], stdouterr='httpclient', 
 				classpath=self.java.defaultClasspath+[self.output+'/javaclasses'], timeout=60)
-			
+		
+		If the project includes a writer with alias "javaCoverageWriter" then that writer is requested to add some 
+		JVM arguments to control code coverage (unless disableCoverage=True). 
+		
 		:param str classOrJar: Either a class (from the classpath) to execute, or the path to a ``.jar`` file 
 			(an absolute path or relative to the output directory) whose manifest indicates the main class.
 			Since some jar names contain a version number, a ``*`` glob expression can be used in the .jar file 
@@ -352,13 +350,14 @@ class JavaTestPlugin(object):
 		if jvmArgs is None: jvmArgs = self.defaultJVMArgs
 
 		jvmArgs = list(jvmArgs) # copy it so we can mutate it below
-		if (not disableCoverage) and not self.owner.disableCoverage:
-			jvmArgs = self._codeCoverageArgs+jvmArgs
+		if (not disableCoverage) and (not self.owner.disableCoverage) and hasattr(self.owner.runner, 'javaCoverageWriter'):
+			jvmArgs = self.owner.runner.javaCoverageWriter.getCoverageJVMArgs(
+				owner=self.owner, stdouterr=stdouterr)+jvmArgs
 		for k,v in jvmProps.items():
 			jvmArgs.append('-D%s=%s'%(k, v))
 		originalClasspath = classpath
 
-		displayName = kwargs.pop('displayName', 'java %s'%(stdouterr or os.path.basename(classOrJar)))
+		displayName = kwargs.pop('displayName', 'java %s'%(os.path.basename(stdouterr or classOrJar)))
 
 		if classOrJar.endswith('.jar'):
 			assert not originalClasspath, 'Java does not accept any classpath options when executing a .jar'
