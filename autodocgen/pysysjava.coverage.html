@@ -1,0 +1,302 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pysysjava.coverage &mdash; PySys Java plugins v0.1  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pysysjava.junittest" href="pysysjava.junittest.html" />
+    <link rel="prev" title="API Reference" href="pysysjava.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> PySys Java plugins v0.1
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="pysysjava.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">pysysjava.coverage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#javacoveragewriter">JavaCoverageWriter</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pysysjava.junittest.html">pysysjava.junittest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pysysjava.junitxml.html">pysysjava.junitxml</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pysysjava.testplugin.html">pysysjava.testplugin</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../License.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ChangeLog.html">Change Log</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/ben-spiller/pysysjava">Jump to GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pysys-test.github.io/pysys-test">Jump to PySys</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PySys Java plugins v0.1</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="pysysjava.html">API Reference</a> &raquo;</li>
+        
+      <li>pysysjava.coverage</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/autodocgen/pysysjava.coverage.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-pysysjava.coverage">
+<span id="pysysjava-coverage"></span><h1>pysysjava.coverage<a class="headerlink" href="#module-pysysjava.coverage" title="Permalink to this headline">¶</a></h1>
+<p>Writer that collects and reports on Java code coverage, using the JaCoCo library.</p>
+<div class="section" id="javacoveragewriter">
+<h2>JavaCoverageWriter<a class="headerlink" href="#javacoveragewriter" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pysysjava.coverage.JavaCoverageWriter">
+<em class="property">class </em><code class="sig-prename descclassname">pysysjava.coverage.</code><code class="sig-name descname">JavaCoverageWriter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">logfile</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pysysjava/coverage.html#JavaCoverageWriter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pysysjava.coverage.JavaCoverageWriter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://pysys-test.github.io/pysys-test/autodocgen/pysys.writer.testoutput.html#pysys.writer.testoutput.CollectTestOutputWriter" title="(in PySys v1.6.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pysys.writer.testoutput.CollectTestOutputWriter</span></code></a></p>
+<p>Writer that collects that coverage data in a single directory and writes coverage XML and HTML reports during 
+runner cleanup.</p>
+<p>Requires the “JaCoCo” code coverage library.</p>
+<p>To enable this, run with <code class="docutils literal notranslate"><span class="pre">-XcodeCoverage</span></code> (or <code class="docutils literal notranslate"><span class="pre">-XjavaCoverage</span></code>) and configure the <code class="docutils literal notranslate"><span class="pre">destDir</span></code> plugin property 
+in pysysproject.xml (e.g. to <code class="docutils literal notranslate"><span class="pre">__coverage_java.${outDirName}</span></code>).</p>
+<p>When enabled, the <a class="reference internal" href="#pysysjava.coverage.JavaCoverageWriter.getCoverageJVMArgs" title="pysysjava.coverage.JavaCoverageWriter.getCoverageJVMArgs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getCoverageJVMArgs</span></code></a> method can be used to generate the JVM arguments needed to collect coverage 
+data (for example, <a class="reference internal" href="pysysjava.testplugin.html#pysysjava.testplugin.JavaTestPlugin.startJava" title="pysysjava.testplugin.JavaTestPlugin.startJava"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysysjava.testplugin.JavaTestPlugin.startJava</span></code></a> calls this method). You must configure the 
+writer with the alias <code class="docutils literal notranslate"><span class="pre">javaCoverageWriter</span></code> so that the plugin knows to use it when starting Java processes.</p>
+<p>Note that this writer uses <code class="docutils literal notranslate"><span class="pre">output=file</span></code> JaCoCo agent option which 
+dumps coverage information to a file when the Java process exits. This means background processes that are still 
+running when the PySys test finishes (and get killed by PySys) will not generate any coverage - so try to ensure 
+clean termination where possible. (An alternative approach would be to implement a Java TCP server using the JaCoCo 
+API which each Java process connects to, but this writer doesn’t go that far).</p>
+<p>If coverage is generated, the directory containing all coverage files is published as an artifact named 
+“coverageDestDir”. Optionally an archive of this directory can be generated by setting the 
+<code class="docutils literal notranslate"><span class="pre">destArchive</span></code> property (see <a class="reference external" href="https://pysys-test.github.io/pysys-test/autodocgen/pysys.writer.testoutput.html#pysys.writer.testoutput.CollectTestOutputWriter" title="(in PySys v1.6.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysys.writer.testoutput.CollectTestOutputWriter</span></code></a>), and published as “JavaCoverageArchive”.</p>
+<p>The following properties can be set in the project configuration for this writer:</p>
+<dl class="py attribute">
+<dt id="pysysjava.coverage.JavaCoverageWriter.jacocoDir">
+<code class="sig-name descname">jacocoDir</code><em class="property"> = ''</em><a class="headerlink" href="#pysysjava.coverage.JavaCoverageWriter.jacocoDir" title="Permalink to this definition">¶</a></dt>
+<dd><p>This mandatory writer property configures the directory containing the JaCoCo jar files <code class="docutils literal notranslate"><span class="pre">org.jacoco.agent*.jar</span></code> 
+and <code class="docutils literal notranslate"><span class="pre">org.jacoco.cli*.jar</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pysysjava.coverage.JavaCoverageWriter.agentArgs">
+<code class="sig-name descname">agentArgs</code><em class="property"> = ''</em><a class="headerlink" href="#pysysjava.coverage.JavaCoverageWriter.agentArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>A comma-separated string of additional agent parameters to pass to the JaCoCo agent to control gathering of coverage data.</p>
+<p>For example “includes=myorg.myserver.*,excludes=myorg.myserver.tests.*” can be used to include/exclude packages 
+from coverage data. See the JaCoCo documentation for more information about the Java Agent.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pysysjava.coverage.JavaCoverageWriter.classpath">
+<code class="sig-name descname">classpath</code><em class="property"> = ''</em><a class="headerlink" href="#pysysjava.coverage.JavaCoverageWriter.classpath" title="Permalink to this definition">¶</a></dt>
+<dd><p>The classpath containing the application classes which should be included in the code coverage report. 
+If this property is not set then no HTML or XML report will be generated.</p>
+<p>Glob <code class="docutils literal notranslate"><span class="pre">*</span></code> expressions can be used. For full details of how this plugin handles the classpath string see 
+<a class="reference internal" href="pysysjava.testplugin.html#pysysjava.testplugin.JavaTestPlugin.toClasspathList" title="pysysjava.testplugin.JavaTestPlugin.toClasspathList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysysjava.testplugin.JavaTestPlugin.toClasspathList()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pysysjava.coverage.JavaCoverageWriter.sourceDirs">
+<code class="sig-name descname">sourceDirs</code><em class="property"> = ''</em><a class="headerlink" href="#pysysjava.coverage.JavaCoverageWriter.sourceDirs" title="Permalink to this definition">¶</a></dt>
+<dd><p>A semi-colon separated list of directories containing the <code class="docutils literal notranslate"><span class="pre">.java</span></code> source files used to compile the classpath classes.</p>
+<p>This is required for the HTML report to show the line-by-line source file coverage.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pysysjava.coverage.JavaCoverageWriter.reportArgs">
+<code class="sig-name descname">reportArgs</code><em class="property"> = ''</em><a class="headerlink" href="#pysysjava.coverage.JavaCoverageWriter.reportArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>A space-separated string of additional command line arguments to pass to the JaCoCo report command line.</p>
+<p>For example “–encoding utf-8”.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pysysjava.coverage.JavaCoverageWriter.getCoverageJVMArgs">
+<code class="sig-name descname">getCoverageJVMArgs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">owner</span></em>, <em class="sig-param"><span class="n">stdouterr</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pysysjava/coverage.html#JavaCoverageWriter.getCoverageJVMArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pysysjava.coverage.JavaCoverageWriter.getCoverageJVMArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the JVM arguments needed to add Java coverage to a new Java process, or empty if this coverage writer is 
+not currently enabled.</p>
+<p>This is called by <a class="reference internal" href="pysysjava.testplugin.html#pysysjava.testplugin.JavaTestPlugin.startJava" title="pysysjava.testplugin.JavaTestPlugin.startJava"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysysjava.testplugin.JavaTestPlugin.startJava</span></code></a> (and any custom methods that start JVMs) 
+to add coverage collection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>owner</strong> (<a class="reference external" href="https://pysys-test.github.io/pysys-test/BaseTest.html#pysys.basetest.BaseTest" title="(in PySys v1.6.1)"><em>pysys.basetest.BaseTest</em></a>) – The BaseTest/BaseRunner owner of the process that is to be started. 
+This is used to keep track of coverage names already allocated, and str(owner) is used as sessionId metadata.</p></li>
+<li><p><strong>stdouterr</strong> (<em>str</em>) – The name of the stdouterr for the process being measured (or None if not available), used 
+to contribute to the coverage filename.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="pysysjava.junittest.html" class="btn btn-neutral float-right" title="pysysjava.junittest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="pysysjava.html" class="btn btn-neutral float-left" title="API Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-20
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

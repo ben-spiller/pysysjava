@@ -10,6 +10,7 @@ API Reference
 .. autosummary::
   :toctree: ./
 
+  pysysjava.coverage
   pysysjava.junittest
   pysysjava.junitxml
   pysysjava.testplugin

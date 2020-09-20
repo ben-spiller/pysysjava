@@ -323,12 +323,6 @@
 <span class="sd">	</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
-	<span class="n">_codeCoverageArgs</span> <span class="o">=</span> <span class="p">[]</span>
-	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	A list of JVM arguments to add whenever starting a Java process, unless the ``disableCoverage`` </span>
-<span class="sd">	flag is set. This property is not set in pysysproject.xml but by a Java code coverage writer (if enabled). </span>
-<span class="sd">	&quot;&quot;&quot;</span>
-
 	<span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">testObj</span><span class="p">):</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">owner</span> <span class="o">=</span> <span class="n">testObj</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">project</span>
@@ -350,13 +344,14 @@
 		
 		<span class="c1"># Assume both of these methods make a copy of the static value (which makes it safe for tests to mutate the </span>
 		<span class="c1"># lists)</span>
+		<span class="n">descriptorUserData</span> <span class="o">=</span> <span class="n">testObj</span><span class="o">.</span><span class="n">descriptor</span><span class="o">.</span><span class="n">userData</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">testObj</span><span class="p">,</span> <span class="s1">&#39;descriptor&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}</span> <span class="c1"># Also support using it from a runner</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">defaultClasspath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">toClasspathList</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">expandProperties</span><span class="p">(</span>
-			<span class="n">testObj</span><span class="o">.</span><span class="n">descriptor</span><span class="o">.</span><span class="n">userData</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;javaClasspath&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaultClasspath</span><span class="p">)))</span>
+			<span class="n">descriptorUserData</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;javaClasspath&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaultClasspath</span><span class="p">)))</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">defaultJVMArgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_splitShellArgs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">expandProperties</span><span class="p">(</span>
-			<span class="n">testObj</span><span class="o">.</span><span class="n">descriptor</span><span class="o">.</span><span class="n">userData</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;jvmArgs&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaultJVMArgs</span><span class="p">)))</span>
+			<span class="n">descriptorUserData</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;jvmArgs&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaultJVMArgs</span><span class="p">)))</span>
 
 		<span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">addCleanupFunction</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="n">deletedir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">output</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
-			<span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;hsperfdata_&#39;</span><span class="p">)],</span> <span class="n">ignoreErrors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;hsperfdata_&#39;</span><span class="p">)]</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">output</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ignoreErrors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 		
 <div class="viewcode-block" id="JavaTestPlugin.compile"><a class="viewcode-back" href="../../autodocgen/pysysjava.testplugin.html#pysysjava.testplugin.JavaTestPlugin.compile">[docs]</a>	<span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;javaclasses&#39;</span><span class="p">,</span> <span class="n">classpath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;Compile Java source files into classes. By default we compile Java files from the test&#39;s input directory to </span>
@@ -463,7 +458,10 @@
 <span class="sd">			self.java.compile(self.input, output=self.output+&#39;/javaclasses&#39;, args=[&#39;--Werror&#39;])</span>
 <span class="sd">			self.java.startJava(&#39;myorg.MyHttpTestClient&#39;, [&#39;127.0.0.1&#39;, port], stdouterr=&#39;httpclient&#39;, </span>
 <span class="sd">				classpath=self.java.defaultClasspath+[self.output+&#39;/javaclasses&#39;], timeout=60)</span>
-<span class="sd">			</span>
+<span class="sd">		</span>
+<span class="sd">		If the project includes a writer with alias &quot;javaCoverageWriter&quot; then that writer is requested to add some </span>
+<span class="sd">		JVM arguments to control code coverage (unless disableCoverage=True). </span>
+<span class="sd">		</span>
 <span class="sd">		:param str classOrJar: Either a class (from the classpath) to execute, or the path to a ``.jar`` file </span>
 <span class="sd">			(an absolute path or relative to the output directory) whose manifest indicates the main class.</span>
 <span class="sd">			Since some jar names contain a version number, a ``*`` glob expression can be used in the .jar file </span>
@@ -502,13 +500,14 @@
 		<span class="k">if</span> <span class="n">jvmArgs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">jvmArgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaultJVMArgs</span>
 
 		<span class="n">jvmArgs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">jvmArgs</span><span class="p">)</span> <span class="c1"># copy it so we can mutate it below</span>
-		<span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">disableCoverage</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">disableCoverage</span><span class="p">:</span>
-			<span class="n">jvmArgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_codeCoverageArgs</span><span class="o">+</span><span class="n">jvmArgs</span>
+		<span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">disableCoverage</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">disableCoverage</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">runner</span><span class="p">,</span> <span class="s1">&#39;javaCoverageWriter&#39;</span><span class="p">):</span>
+			<span class="n">jvmArgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">javaCoverageWriter</span><span class="o">.</span><span class="n">getCoverageJVMArgs</span><span class="p">(</span>
+				<span class="n">owner</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="p">,</span> <span class="n">stdouterr</span><span class="o">=</span><span class="n">stdouterr</span><span class="p">)</span><span class="o">+</span><span class="n">jvmArgs</span>
 		<span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">jvmProps</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 			<span class="n">jvmArgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;-D</span><span class="si">%s</span><span class="s1">=</span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
 		<span class="n">originalClasspath</span> <span class="o">=</span> <span class="n">classpath</span>
 
-		<span class="n">displayName</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;displayName&#39;</span><span class="p">,</span> <span class="s1">&#39;java </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">stdouterr</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">classOrJar</span><span class="p">)))</span>
+		<span class="n">displayName</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;displayName&#39;</span><span class="p">,</span> <span class="s1">&#39;java </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">stdouterr</span> <span class="ow">or</span> <span class="n">classOrJar</span><span class="p">)))</span>
 
 		<span class="k">if</span> <span class="n">classOrJar</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.jar&#39;</span><span class="p">):</span>
 			<span class="k">assert</span> <span class="ow">not</span> <span class="n">originalClasspath</span><span class="p">,</span> <span class="s1">&#39;Java does not accept any classpath options when executing a .jar&#39;</span>
@@ -605,7 +604,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-19
+        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-20
 
     </p>
   </div>

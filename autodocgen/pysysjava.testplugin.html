@@ -83,6 +83,7 @@
             
               <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="pysysjava.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="pysysjava.coverage.html">pysysjava.coverage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pysysjava.junittest.html">pysysjava.junittest</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pysysjava.junitxml.html">pysysjava.junitxml</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">pysysjava.testplugin</a><ul>
@@ -276,6 +277,8 @@ behaviour). If not specified, the <code class="docutils literal notranslate"><sp
         <span class="n">classpath</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">defaultClasspath</span><span class="o">+</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">+</span><span class="s1">&#39;/javaclasses&#39;</span><span class="p">],</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>If the project includes a writer with alias “javaCoverageWriter” then that writer is requested to add some 
+JVM arguments to control code coverage (unless disableCoverage=True).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -372,7 +375,7 @@ elements will be deleted.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-19
+        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-20
 
     </p>
   </div>

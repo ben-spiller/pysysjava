@@ -1,4 +1,6 @@
 pysysjava (module)
+pysysjava.coverage (module)
+pysysjava.coverage.JavaCoverageWriter (class)
 pysysjava.junittest (module)
 pysysjava.junittest.JUnitDescriptorLoader (class)
 pysysjava.junittest.JUnitTest (class)
