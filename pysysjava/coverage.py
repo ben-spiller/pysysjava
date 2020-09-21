@@ -7,7 +7,7 @@ __all__ = [
 	"JavaCoverageWriter",
 ]
 
-import logging, sys, io, os, shlex, glob
+import logging, sys, io, os, shlex, glob, time
 
 from pysys.constants import *
 from pysys.writer.api import *
@@ -201,5 +201,9 @@ class JavaCoverageWriter(CollectTestOutputWriter):
 			p = os.path.join(coverageDestDir, p)
 			if p.endswith(('.out', '.err')) and os.path.getsize(p)==0:
 				os.remove(p)
-			
-		self.archiveAndPublish()
+		
+		try:
+			self.archiveAndPublish()
+		except PermissionError: # can occur transiently on Windows due to file system locking
+			time.sleep(5.0)
+			self.archiveAndPublish()
