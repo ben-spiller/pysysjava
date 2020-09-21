@@ -8,7 +8,7 @@ class PySysTest(pysys.basetest.BaseTest):
 		self.copy(self.input, self.output+'/testroot')
 
 		self.waitForBackgroundProcesses([
-			self.pysys.runPySys(['run', '--threads=10', '--outdir', 'myoutputdir'], stdouterr='pysys-run', workingDir=self.output+'/testroot'),
+			self.pysys.runPySys(['run', '-j0', '--outdir', 'myoutputdir'], stdouterr='pysys-run', workingDir=self.output+'/testroot'),
 			self.pysys.runPySys(['print', '--json'], stdouterr='pysys-print', workingDir=self.output+'/testroot'),
 		])
 
