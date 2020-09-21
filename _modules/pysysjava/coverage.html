@@ -157,7 +157,7 @@
 	<span class="s2">&quot;JavaCoverageWriter&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
-<span class="kn">import</span> <span class="nn">logging</span><span class="o">,</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">io</span><span class="o">,</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">shlex</span><span class="o">,</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">logging</span><span class="o">,</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">io</span><span class="o">,</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">shlex</span><span class="o">,</span> <span class="nn">glob</span><span class="o">,</span> <span class="nn">time</span>
 
 <span class="kn">from</span> <span class="nn">pysys.constants</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">pysys.writer.api</span> <span class="kn">import</span> <span class="o">*</span>
@@ -351,8 +351,12 @@
 			<span class="n">p</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">coverageDestDir</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
 			<span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="s1">&#39;.out&#39;</span><span class="p">,</span> <span class="s1">&#39;.err&#39;</span><span class="p">))</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
 				<span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-			
-		<span class="bp">self</span><span class="o">.</span><span class="n">archiveAndPublish</span><span class="p">()</span></div>
+		
+		<span class="k">try</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">archiveAndPublish</span><span class="p">()</span>
+		<span class="k">except</span> <span class="ne">PermissionError</span><span class="p">:</span> <span class="c1"># can occur transiently on Windows due to file system locking</span>
+			<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">5.0</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">archiveAndPublish</span><span class="p">()</span></div>
 </pre></div>
 
            </div>
@@ -365,7 +369,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-20
+        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-21
 
     </p>
   </div>
