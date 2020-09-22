@@ -30,9 +30,8 @@ class RunPySysPlugin(object):
 			'JAVA_HOME': self.project.javaHome,
 			'JUNIT_CLASSPATH': self.project.junitFrameworkClasspath,
 			'JACOCO_DIR': self.project.jacocoDir,
-			'PYTHONPATH': os.pathsep.join(sys.path)
+			'PYTHONPATH': os.pathsep.join(sys.path), # Coverage can get confused if this is different than the parent process
 		})
-		self.owner.log.info('Starting PySys with PYTHONPATH=\n%s (parent process=\n%s', env['PYTHONPATH'], os.getenv('PYTHONPATH'))
 		workingDir = workingDir or self.owner.input
 		if args[0] == 'run' and not workingDir.startswith(self.owner.output): args = args+['--outdir', self.owner.output+'/'+stdouterr]
 		
