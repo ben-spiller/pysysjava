@@ -19,7 +19,6 @@
 	<!-- Make sure temporary files go to the test output dir not the OS's default temp directory. -->
 	<property name="defaultEnvironsTempDir" value="self.output"/>
 	
-	<pythonpath value="${appHome}" />
 	<!-- Custom test framework plugins -->
 	<test-plugin classname="pysysjava.testplugin.JavaTestPlugin" alias="java"/>
 	<descriptor-loader classname="pysysjava.junittest.JUnitDescriptorLoader"/>
