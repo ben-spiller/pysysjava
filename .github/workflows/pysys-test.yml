@@ -85,7 +85,7 @@ jobs:
           # Check it can be built and installed
           python setup.py bdist_wheel
           pip install dist/*.whl
-          pip uninstall PySys-Java
+          pip uninstall --yes PySys-Java
 
           # Use older version of coverage as 5.0 requires an SQLite version that doesn't work on this macos image currently
           pip install coverage==4.5.4
