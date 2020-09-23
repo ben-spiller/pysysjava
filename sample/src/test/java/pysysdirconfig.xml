@@ -8,7 +8,8 @@
 			starting/ending in Test/Tests as a separate PySys test. 
 		-->
 		<user-data name="junitTestDescriptorForEach" value="class"/>
-		<input name="."/>
+		<input path="."/>
+		<output path="__pysys_output"/>
 
 		<!-- To avoid the PySys test ids getting needlessly long, strip off the beginning of the Java packages. -->
 		<user-data name="junitStripPrefixes" value="myorg"/>
@@ -31,7 +32,7 @@
 	
 	<classification>
 		<groups inherit="true">
-			<group>myserver-junit</group>
+			<group>myserverJUnit</group>
 		</groups>
 		
 		<modes inherit="true">

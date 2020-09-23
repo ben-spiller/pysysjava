@@ -14,9 +14,10 @@ class PySysTest(pysys.basetest.BaseTest):
 		self.logFileContents('pysys.out', maxLines=0)
 		s = self.output+'/sample'
 		
-		# Check we executed the JUnit tests
+		# Check we executed the JUnit tests, and that the output went to the right place
 		self.assertGrep('pysys.out', 'Id: +JUnitTests_myserver.MyArgsParserTests')
 		self.assertGrep('pysys.out', 'Id: +JUnitTests_myserver.MyServerJUnit4Tests')
+		self.assertPathExists(s+'/src/test/java/__pysys_output/myorg.myserver.MyArgsParserTests/myoutdir/run.log')
 		
 		# Check the coverage found the source files
 		self.assertPathExists(s+'/target/pysys/__coverage_java.myoutdir/myorg.myserver/MyArgsParser.java.html')

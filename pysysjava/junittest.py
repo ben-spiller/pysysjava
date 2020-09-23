@@ -385,7 +385,7 @@ class JUnitDescriptorLoader(DescriptorLoader):
 		includeClassnameRegex = re.compile(parentDirDefaults.userData.get('junitIncludeClassnameRegex', '^(Test.*|.+[.$]Test.*|.*Tests?)$')) 
 		includeClassnameRegexCompiled = re.compile(includeClassnameRegex) 
 		
-		inputdir = toLongPathSafe(os.path.normpath(os.path.join(os.path.dirname(parentDirDefaults.file), parentDirDefaults.input)))
+		inputdir = toLongPathSafe(os.path.normpath(fromLongPathSafe(os.path.join(os.path.dirname(parentDirDefaults.file), parentDirDefaults.input))))
 	
 		found = 0
 		for entry in walkDirTreeContents(inputdir, dirIgnores=OSWALK_IGNORES):
@@ -418,7 +418,7 @@ class JUnitDescriptorLoader(DescriptorLoader):
 					userData = userData,
 					
 					# must ensure output dirs are unique even though lots of classes share the same testDir
-					output=parentDirDefaults.output+os.sep+classname, 
+					output=((parentDirDefaults.output+os.sep) if parentDirDefaults.output else '')+classname, 
 
 					# copy everything else across from the defaults
 					input=parentDirDefaults.input,

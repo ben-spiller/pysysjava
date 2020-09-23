@@ -25,6 +25,9 @@ This project also serves as a good example of how to create, test, document and 
 Feel free to fork this project and use as a starting point for your own plugins that add support for new 
 languages/toolsets to PySys. To make it easy to reuse code from this plugin project it has a Public Domain license. 
 
+If this project inspires you to create new PySys plugins that may be useful for others in the PySys community, please 
+consider whether you could make them available as an open-source project and on PyPi so that everyone can benefit.
+
 For more information about the features of this plugin and how to install and use it, see the documentation: 
 https://ben-spiller.github.io/pysysjava/
 
