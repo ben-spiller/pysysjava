@@ -9,6 +9,6 @@ Documentation contents
    _autodocgen/pysysjava
    License.rst
    ChangeLog.rst
-   Jump to GitHub <https://github.com/ben-spiller/pysysjava>
-   Jump to PySys <https://pysys-test.github.io/pysys-test>
+   Jump To GitHub Sample <https://github.com/ben-spiller/pysysjava/tree/main/sample>
+   Jump To PySys Docs <https://pysys-test.github.io/pysys-test>
    

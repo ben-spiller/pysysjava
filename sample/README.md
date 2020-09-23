@@ -73,6 +73,9 @@ plugin. It shows how to configure the test-plugin, how to enable the JUnit descr
 the Java code coverage report writer (which uses JaCoCo), and some project properties and defaults that are helpful 
 for Java-based projects, especially ones that follow the directory layout popularized by Maven. 
 
+Finally, if you want to use GitHub Actions to run your PySys tests with a Java environment, the link at the top of 
+this page will take you to the workflow file this sample uses, which is a good starting point. 
+
 If you want to see how the system and JUnit test results look when there are failures, try changing the source of 
 MyServer.java to make it do the wrong thing.
 
