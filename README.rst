@@ -28,5 +28,6 @@ languages/toolsets to PySys. To make it easy to reuse code from this plugin proj
 For more information about the features of this plugin and how to install and use it, see the documentation: 
 https://ben-spiller.github.io/pysysjava/
 
-This repo uses a Maven POM to download the Java dependencies used for testing. However if you prefer to download the 
-jars through some other mechanism that's fine. 
+This repo uses a Maven POM to download the Java dependencies used for testing and for building the sample application. 
+However Maven isn't used by the plugin itself if you prefer to download the jars through some other mechanism that's 
+fine. 
