@@ -1,4 +1,5 @@
-# This workflow will run a suite of tests using the PySys system test framework and PySys-Java
+# This workflow will run and generate coverage for a suite of tests using the PySys system test framework that use Java
+
 # Copy from this workflow (and adjust the path to the sample) if you want to run GitHub Actions tests using PySys-Java
 
 name: PySys-Java-Sample
@@ -16,27 +17,23 @@ jobs:
       fail-fast: false
       
       matrix:
-        # A selection range of OS, Python and Java versions
+        # Specify the matrix of OS/Java/Python versions to test
         include:
-          - test-run-id: ubuntu-java8-py3.6
+          - test-run-id: ubuntu
             os: ubuntu-latest
             java-version: 8
             python-version: 3.6
             
-          #- test-run-id: macos-java14-py3.8
-          #  os: macos-latest
-          #  java-version: 14
-          #  python-version: 3.8
+          - test-run-id: macos
+            os: macos-latest
+            java-version: 8
+            python-version: 3.6
 
-          #- test-run-id: win-java8-py3.6
-          #  os: windows-latest
-          #  java-version: 8
-          #  python-version: 3.6
-
-          - test-run-id: win-java14-py3.8
+          - test-run-id: win
             os: windows-latest
-            java-version: 14
-            python-version: 3.8
+            java-version: 8
+            python-version: 3.6
+
             
     runs-on: ${{matrix.os}}
     
@@ -97,7 +94,7 @@ jobs:
         uses: codecov/codecov-action@v1
         if: steps.pysys.outputs.artifact_JavaCoverageDir
         with:
-          file: ${{ steps.pysys.outputs.artifact_JavaCoverageDir }}/coverage.xml
+          file: ${{ steps.pysys.outputs.artifact_JavaCoverageDir }}/java-coverage.xml
 
       - name: Upload Python code coverage
         uses: codecov/codecov-action@v1

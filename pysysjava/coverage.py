@@ -58,7 +58,7 @@ class JavaCoverageWriter(CollectTestOutputWriter):
 	destDir = u''
 	fileIncludesRegex = u'.*[.]javacoverage' # executed against the path relative to the test root dir e.g. (pattern1|pattern2)
 	outputPattern = u'@TESTID@_@FILENAME@.@UNIQUE@.@FILENAME_EXT@' 
-	publishArtifactDirCategory = u'JavaCoverageDestDir'
+	publishArtifactDirCategory = u'JavaCoverageDir'
 	publishArtifactArchiveCategory = u'JavaCoverageArchive'
 	
 	jacocoDir = ''
