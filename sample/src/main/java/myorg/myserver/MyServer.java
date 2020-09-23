@@ -1,13 +1,11 @@
 package myorg.myserver;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.zip.GZIPOutputStream;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -70,18 +68,6 @@ public class MyServer
 			body.append("\"dataPaths\": \"c:\\devicedata*\\sensor.json\"".replace("\\", "\\\\"));
 			body.append("}");
 			byte[] bytes = body.toString().getBytes("UTF-8");
-
-
-			if ("gzip".equals(e.getRequestHeaders().getFirst("Accept-encoding")))
-			{
-				e.getResponseHeaders().set("Content-Encoding", "gzip");
-	            
-		        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-	            GZIPOutputStream gzipOS = new GZIPOutputStream(buffer, true);
-            	gzipOS.write(bytes);
-            	gzipOS.flush();
-            	bytes = buffer.toByteArray();
-			}
 
 	        e.sendResponseHeaders(200, bytes.length);
 			e.getResponseBody().write(bytes);

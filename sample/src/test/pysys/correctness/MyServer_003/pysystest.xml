@@ -2,7 +2,7 @@
 <pysystest type="auto">
 	
 	<description> 
-		<title>MyServer responses: /sensorValues endpoint (+ demo of PySys assertions, and multiple modes)</title>		
+		<title>MyServer responses: /sensorValues endpoint (+ demo of PySys assertions)</title>		
 		<purpose><![CDATA[
 		To verify that responses from MyServer are correct on the /sensorValues REST endpoint. 
 		
@@ -18,14 +18,6 @@
 		</groups>
 		
 		<modes inherit="true">
-		<!-- This test will be executed for each of the following modes, in this case controlling the compression 
-			of results from the server and whether authentication is used. The test can use self.mode to find out which 
-			mode it is executing. Keep these strings short but self-describing. 
-			
-			The first mode listed is the primary one. 
-		-->
-		<mode>CompressionNone_AuthNone</mode>
-		<!-- <mode>CompressionGZip_AuthNone</mode> -->
 		</modes>
 	</classification>
 
