@@ -1,4 +1,4 @@
-# This workflow will run a suite of tests using the PySys system test framework
+# This workflow is for testing the PySys-Java plugins
 
 name: PySys
 
@@ -21,16 +21,17 @@ jobs:
             os: ubuntu-latest
             java-version: 8
             python-version: 3.6
-            
+          
+          # TODO: re-enable macos when we have PySys 1.6.2 
           #- test-run-id: macos-java14-py3.8
           #  os: macos-latest
           #  java-version: 14
           #  python-version: 3.8
 
-          #- test-run-id: win-java8-py3.6
-          #  os: windows-latest
-          #  java-version: 8
-          #  python-version: 3.6
+          - test-run-id: win-java8-py3.6
+            os: windows-latest
+            java-version: 8
+            python-version: 3.6
 
           - test-run-id: win-java14-py3.8
             os: windows-latest
