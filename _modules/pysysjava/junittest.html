@@ -83,8 +83,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../_autodocgen/pysysjava.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../License.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../ChangeLog.html">Change Log</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/ben-spiller/pysysjava">Jump to GitHub</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://pysys-test.github.io/pysys-test">Jump to PySys</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/ben-spiller/pysysjava/tree/main/sample">Jump To GitHub Sample</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pysys-test.github.io/pysys-test">Jump To PySys Docs</a></li>
 </ul>
 
             
@@ -176,7 +176,7 @@
 <span class="kn">from</span> <span class="nn">pysys.xml.descriptor</span> <span class="kn">import</span> <span class="n">DescriptorLoader</span><span class="p">,</span> <span class="n">TestDescriptor</span>
 
 <span class="kn">from</span> <span class="nn">pysysjava.junitxml</span> <span class="kn">import</span> <span class="n">JUnitXMLParser</span>
-<span class="kn">from</span> <span class="nn">pysysjava.javaplugin</span> <span class="kn">import</span> <span class="n">walkDirTreeContents</span>
+<span class="kn">from</span> <span class="nn">pysysjava.javaplugin</span> <span class="kn">import</span> <span class="n">JavaPlugin</span><span class="p">,</span> <span class="n">walkDirTreeContents</span>
 
 <div class="viewcode-block" id="JUnitTest"><a class="viewcode-back" href="../../_autodocgen/pysysjava.junittest.html#pysysjava.junittest.JUnitTest">[docs]</a><span class="k">class</span> <span class="nc">JUnitTest</span><span class="p">(</span><span class="n">BaseTest</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
@@ -268,15 +268,17 @@
 <span class="sd">	The time allowed in total for execution of all JUnit tests. </span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
-	<span class="c1"># Properties that could be overridden by a subclass if needed</span>
-	<span class="n">_testGenre</span> <span class="o">=</span> <span class="s1">&#39;JUnit&#39;</span>
-	
+	<span class="c1"># Undocumented properties that could be overridden by a subclass if needed</span>
 	<span class="n">javaclassesDir</span> <span class="o">=</span> <span class="s1">&#39;javaclasses&#39;</span>
+	<span class="n">junitReportsDir</span> <span class="o">=</span> <span class="s1">&#39;junit-reports&#39;</span>
+	<span class="n">_testGenre</span> <span class="o">=</span> <span class="s1">&#39;JUnit&#39;</span>
 	
 	<span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="nb">super</span><span class="p">(</span><span class="n">JUnitTest</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
 		
-		<span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="p">,</span> <span class="s1">&#39;This test class requires the JavaPlugin test-plugin to be configured, with alias=java&#39;</span>
+		<span class="c1"># Don&#39;t assume that the alias &quot;java&quot; has been used; instead locate it based on class</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">java</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">plugin</span> <span class="k">for</span> <span class="n">plugin</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">testPlugins</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">plugin</span><span class="p">,</span> <span class="n">JavaPlugin</span><span class="p">)),</span> <span class="kc">None</span><span class="p">)</span>
+		<span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="p">,</span> <span class="s1">&#39;This test class requires JavaPlugin to be configured as a &lt;test-plugin&gt; in pysysproject.xml&#39;</span>
 		
 		<span class="bp">self</span><span class="o">.</span><span class="n">junitFrameworkClasspath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">toClasspathList</span><span class="p">(</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">junitFrameworkClasspath</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">getProperty</span><span class="p">(</span><span class="s1">&#39;junitFrameworkClasspath&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
@@ -290,7 +292,7 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">startJava</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">getJUnitKwArgs</span><span class="p">())</span> 
 
 	<span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">validateJUnitReports</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">+</span><span class="s1">&#39;/junit-reports&#39;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">validateJUnitReports</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">junitReportsDir</span><span class="p">))</span>
 
 	<span class="c1"># The methods above override the standard test class; following are where they are implemented</span>
 
@@ -340,7 +342,7 @@
 			<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Running with additional JUnit args: </span><span class="se">\n</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;    arg #</span><span class="si">%-2d</span><span class="s2">    : </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span>
 				<span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">customArgs</span><span class="p">)))</span>
 		
-		<span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;--reports-dir&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">+</span><span class="s1">&#39;/junit-reports&#39;</span><span class="p">,</span> 
+		<span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;--reports-dir&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">junitReportsDir</span><span class="p">),</span> 
 			<span class="s1">&#39;--disable-ansi-colors&#39;</span><span class="p">,</span>
 			<span class="s1">&#39;--classpath=</span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">os</span><span class="o">.</span><span class="n">pathsep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">classpath</span><span class="p">),</span>
 			<span class="p">]</span><span class="o">+</span><span class="n">args</span>
