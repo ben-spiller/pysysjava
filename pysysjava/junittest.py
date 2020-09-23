@@ -390,7 +390,7 @@ class JUnitDescriptorLoader(DescriptorLoader):
 		found = 0
 		for entry in walkDirTreeContents(inputdir, dirIgnores=OSWALK_IGNORES):
 			if entry.is_file() and entry.name.endswith('.java'):
-				classname = entry.path[len(inputdir)+1:-5].replace(os.sep, '.')
+				classname = entry.path[len(inputdir):-5].strip(os.sep).replace(os.sep, '.')
 
 				if not includeClassnameRegexCompiled.match(classname):
 					log.debug('Ignoring JUnit class as name does not match regex for tests: "%s"', classname)

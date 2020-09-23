@@ -35,12 +35,19 @@
 	<property name="javaHome" value="${env.JAVA_HOME}" pathMustExist="true"/>
 	<property name="defaultEnvirons.JAVA_HOME" value="${javaHome}"/>
 
-	<!-- Custom test framework plugins, if needed -->
-
-	<pythonpath value="./pysys/pysys-extensions" />
+	<!-- PySys-Java plugins -->
 	<test-plugin classname="pysysjava.javaplugin.JavaPlugin" alias="java">
-		<!-- TODO: put plugin properties here -->
+		<!-- Optionally can specify global default properties for things like JVM args and default to avoid 
+			repeating in each test. Disabling PerfData avoids the creation of hsperfdata_XXX files in the 
+			test output directory that can cause file locking problems
+		-->
+		<property name="defaultJVMArgs" value="-Xmx512M -XX:+HeapDumpOnOutOfMemoryError -XX:-UsePerfData"/>
 	</test-plugin>
+	<descriptor-loader classname="pysysjava.junittest.JUnitDescriptorLoader"/>
+	<property name="junitFrameworkClasspath" value="${testJarsDir}/*junit*.jar"/>
+
+	<!-- Custom test framework plugins, if needed -->
+	<pythonpath value="./pysys/pysys-extensions" />
 	
 	<writers>
 		<writer classname="pysys.writer.testoutput.TestOutputArchiveWriter">
@@ -60,7 +67,7 @@
 			<property name="destDir" value="__coverage_java.${outDirName}"/>
 			<property name="destArchive" value="JavaCoverage.zip"/>
 			
-			<property name="agentArgs" value='includes=myorg.*'/>
+			<property name="agentArgs" value='includes=myorg.*,excludes=*Tests'/>
 
 			<property name="reportArgs" value='--name "MyServer Java Coverage Report"'/>
 		</writer>

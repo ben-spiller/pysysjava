@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pysysdirconfig>
+
+	<id-prefix>JUnitTests_</id-prefix>
+
+	<data>
+		<!-- This instructs the JUnitDescriptorLoader to run every .java class from the input directory 
+			starting/ending in Test/Tests as a separate PySys test. 
+		-->
+		<user-data name="junitTestDescriptorForEach" value="class"/>
+		<input name="."/>
+
+		<!-- To avoid the PySys test ids getting needlessly long, strip off the beginning of the Java packages. -->
+		<user-data name="junitStripPrefixes" value="myorg"/>
+
+		<!-- Total time for each PySys test/JUnit class (best to keep this high as a final fail-safe but use JUnit 
+			@Timeout for actual checking of timeouts within your tests),
+		-->
+		<user-data name="junitTimeoutSecs" value="600"/>
+		<user-data name="junitConfigArgs" value=""/>
+		
+		<!-- JavaPlugin user-data properties should be used for customizing the execution classpath and JVM args. -->
+		<user-data name="javaClasspath" value="${appHome}/my-server*.jar;${appHome}/dependency-jars/*.jar"/>
+	</data>
+
+
+	<!-- Comment/uncomment this to mark all tests under this directory as skipped. -->
+	<!--
+	<skipped reason=""/> 
+	-->
+	
+	<classification>
+		<groups inherit="true">
+			<group>myserver-junit</group>
+		</groups>
+		
+		<modes inherit="true">
+		</modes>
+	</classification>
+
+	<!-- Execute the JUnit tests before other tests -->
+	<execution-order hint="-10.0"/>
+
+</pysysdirconfig>

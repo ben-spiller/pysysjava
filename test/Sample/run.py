@@ -14,9 +14,16 @@ class PySysTest(pysys.basetest.BaseTest):
 		self.logFileContents('pysys.out', maxLines=0)
 		s = self.output+'/sample'
 		
+		# Check we executed the JUnit tests
+		self.assertGrep('pysys.out', 'Id: +JUnitTests_myserver.MyArgsParserTests')
+		self.assertGrep('pysys.out', 'Id: +JUnitTests_myserver.MyServerJUnit4Tests')
+		
 		# Check the coverage found the source files
 		self.assertPathExists(s+'/target/pysys/__coverage_java.myoutdir/myorg.myserver/MyArgsParser.java.html')
+
 		self.assertGrep(s+'/target/pysys/__coverage_java.myoutdir/jacoco-sessions.html', 'MyServer_002.my_server1', encoding='utf-8')
-		# Coverage should not include unit tests
+		self.assertGrep(s+'/target/pysys/__coverage_java.myoutdir/jacoco-sessions.html', 'JUnitTests_myserver.MyServerTests.junit', encoding='utf-8')
+
+		# Coverage should not include unit tests as source classes
 		self.assertThat('len(coverageFiles)>0 and "Test" not in ",".join(coverageFiles)', coverageFiles=os.listdir(s+'/target/pysys/__coverage_java.myoutdir/myorg.myserver'))
 		
