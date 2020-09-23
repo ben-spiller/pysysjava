@@ -183,6 +183,8 @@ class JavaPlugin(object):
 
 	def setup(self, owner):
 		self.owner = owner # Usually a BaseTest, but since this is a dual-purpose plugin could also be a runner
+		self.runner = getattr(owner, 'runner', owner)
+
 		self.project = self.owner.project
 		
 		# This message isn't useful for debugging errors so suppress it
@@ -358,8 +360,8 @@ class JavaPlugin(object):
 		if jvmArgs is None: jvmArgs = self.defaultJVMArgs
 
 		jvmArgs = list(jvmArgs) # copy it so we can mutate it below
-		if (not disableCoverage) and (not self.owner.disableCoverage) and hasattr(self.owner.runner, 'javaCoverageWriter'):
-			jvmArgs = self.owner.runner.javaCoverageWriter.getCoverageJVMArgs(
+		if (not disableCoverage) and (not self.owner.disableCoverage) and hasattr(self.runner, 'javaCoverageWriter'):
+			jvmArgs = self.runner.javaCoverageWriter.getCoverageJVMArgs(
 				owner=self.owner, stdouterr=stdouterr)+jvmArgs
 		for k,v in jvmProps.items():
 			jvmArgs.append('-D%s=%s'%(k, v))
