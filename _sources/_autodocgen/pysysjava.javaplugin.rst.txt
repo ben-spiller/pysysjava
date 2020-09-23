@@ -1,0 +1,15 @@
+
+pysysjava.javaplugin
+~~~~~~~~~~~~~~~~~~~~
+
+.. automodule:: pysysjava.javaplugin
+
+.. currentmodule:: pysysjava.javaplugin
+
+
+
+JavaPlugin
+==========
+
+.. autoclass:: JavaPlugin
+   :members:

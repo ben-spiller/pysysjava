@@ -36,7 +36,7 @@
   <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="pysysjava.junittest" href="pysysjava.junittest.html" />
+    <link rel="next" title="pysysjava.javaplugin" href="pysysjava.javaplugin.html" />
     <link rel="prev" title="API Reference" href="pysysjava.html" /> 
 </head>
 
@@ -87,9 +87,9 @@
 <li class="toctree-l3"><a class="reference internal" href="#javacoveragewriter">JavaCoverageWriter</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="pysysjava.javaplugin.html">pysysjava.javaplugin</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pysysjava.junittest.html">pysysjava.junittest</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pysysjava.junitxml.html">pysysjava.junitxml</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pysysjava.testplugin.html">pysysjava.testplugin</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../License.html">License</a></li>
@@ -177,7 +177,7 @@ runner cleanup.</p>
 <p>To enable this, run with <code class="docutils literal notranslate"><span class="pre">-XcodeCoverage</span></code> (or <code class="docutils literal notranslate"><span class="pre">-XjavaCoverage</span></code>) and configure the <code class="docutils literal notranslate"><span class="pre">destDir</span></code> plugin property 
 in pysysproject.xml (e.g. to <code class="docutils literal notranslate"><span class="pre">__coverage_java.${outDirName}</span></code>).</p>
 <p>When enabled, the <a class="reference internal" href="#pysysjava.coverage.JavaCoverageWriter.getCoverageJVMArgs" title="pysysjava.coverage.JavaCoverageWriter.getCoverageJVMArgs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getCoverageJVMArgs</span></code></a> method can be used to generate the JVM arguments needed to collect coverage 
-data (for example, <a class="reference internal" href="pysysjava.testplugin.html#pysysjava.testplugin.JavaTestPlugin.startJava" title="pysysjava.testplugin.JavaTestPlugin.startJava"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysysjava.testplugin.JavaTestPlugin.startJava</span></code></a> calls this method). You must configure the 
+data (for example, <a class="reference internal" href="pysysjava.javaplugin.html#pysysjava.javaplugin.JavaPlugin.startJava" title="pysysjava.javaplugin.JavaPlugin.startJava"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysysjava.javaplugin.JavaPlugin.startJava</span></code></a> calls this method). You must configure the 
 writer with the alias <code class="docutils literal notranslate"><span class="pre">javaCoverageWriter</span></code> so that the plugin knows to use it when starting Java processes.</p>
 <p>Note that this writer uses <code class="docutils literal notranslate"><span class="pre">output=file</span></code> JaCoCo agent option which 
 dumps coverage information to a file when the Java process exits. This means background processes that are still 
@@ -209,7 +209,7 @@ from coverage data. See the JaCoCo documentation for more information about the 
 <dd><p>The classpath containing the application classes which should be included in the code coverage report. 
 If this property is not set then no HTML or XML report will be generated.</p>
 <p>Glob <code class="docutils literal notranslate"><span class="pre">*</span></code> expressions can be used. For full details of how this plugin handles the classpath string see 
-<a class="reference internal" href="pysysjava.testplugin.html#pysysjava.testplugin.JavaTestPlugin.toClasspathList" title="pysysjava.testplugin.JavaTestPlugin.toClasspathList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysysjava.testplugin.JavaTestPlugin.toClasspathList()</span></code></a>.</p>
+<a class="reference internal" href="pysysjava.javaplugin.html#pysysjava.javaplugin.JavaPlugin.toClasspathList" title="pysysjava.javaplugin.JavaPlugin.toClasspathList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysysjava.javaplugin.JavaPlugin.toClasspathList()</span></code></a>.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -231,7 +231,7 @@ If this property is not set then no HTML or XML report will be generated.</p>
 <code class="sig-name descname">getCoverageJVMArgs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">owner</span></em>, <em class="sig-param"><span class="n">stdouterr</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pysysjava/coverage.html#JavaCoverageWriter.getCoverageJVMArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pysysjava.coverage.JavaCoverageWriter.getCoverageJVMArgs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the JVM arguments needed to add Java coverage to a new Java process, or empty if this coverage writer is 
 not currently enabled.</p>
-<p>This is called by <a class="reference internal" href="pysysjava.testplugin.html#pysysjava.testplugin.JavaTestPlugin.startJava" title="pysysjava.testplugin.JavaTestPlugin.startJava"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysysjava.testplugin.JavaTestPlugin.startJava</span></code></a> (and any custom methods that start JVMs) 
+<p>This is called by <a class="reference internal" href="pysysjava.javaplugin.html#pysysjava.javaplugin.JavaPlugin.startJava" title="pysysjava.javaplugin.JavaPlugin.startJava"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysysjava.javaplugin.JavaPlugin.startJava</span></code></a> (and any custom methods that start JVMs) 
 to add coverage collection.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -258,7 +258,7 @@ to contribute to the coverage filename.</p></li>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="pysysjava.junittest.html" class="btn btn-neutral float-right" title="pysysjava.junittest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="pysysjava.javaplugin.html" class="btn btn-neutral float-right" title="pysysjava.javaplugin" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="pysysjava.html" class="btn btn-neutral float-left" title="API Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

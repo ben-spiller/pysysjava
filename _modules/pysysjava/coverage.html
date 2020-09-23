@@ -188,7 +188,7 @@
 <span class="sd">	in pysysproject.xml (e.g. to ``__coverage_java.${outDirName}``). </span>
 
 <span class="sd">	When enabled, the `getCoverageJVMArgs` method can be used to generate the JVM arguments needed to collect coverage </span>
-<span class="sd">	data (for example, `pysysjava.testplugin.JavaTestPlugin.startJava` calls this method). You must configure the </span>
+<span class="sd">	data (for example, `pysysjava.javaplugin.JavaPlugin.startJava` calls this method). You must configure the </span>
 <span class="sd">	writer with the alias ``javaCoverageWriter`` so that the plugin knows to use it when starting Java processes. </span>
 
 <span class="sd">	Note that this writer uses ``output=file`` JaCoCo agent option which </span>
@@ -231,7 +231,7 @@
 <span class="sd">	If this property is not set then no HTML or XML report will be generated. </span>
 <span class="sd">	</span>
 <span class="sd">	Glob ``*`` expressions can be used. For full details of how this plugin handles the classpath string see </span>
-<span class="sd">	`pysysjava.testplugin.JavaTestPlugin.toClasspathList()`.</span>
+<span class="sd">	`pysysjava.javaplugin.JavaPlugin.toClasspathList()`.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	
 	<span class="n">sourceDirs</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
@@ -266,7 +266,7 @@
 <span class="sd">		Get the JVM arguments needed to add Java coverage to a new Java process, or empty if this coverage writer is </span>
 <span class="sd">		not currently enabled. </span>
 <span class="sd">		</span>
-<span class="sd">		This is called by `pysysjava.testplugin.JavaTestPlugin.startJava` (and any custom methods that start JVMs) </span>
+<span class="sd">		This is called by `pysysjava.javaplugin.JavaPlugin.startJava` (and any custom methods that start JVMs) </span>
 <span class="sd">		to add coverage collection. </span>
 <span class="sd">		</span>
 <span class="sd">		:param pysys.basetest.BaseTest owner: The BaseTest/BaseRunner owner of the process that is to be started. </span>
@@ -298,7 +298,7 @@
 		<span class="k">return</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;-javaagent:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__agentJar</span><span class="si">}</span><span class="s1">=sessionid=</span><span class="si">{</span><span class="n">sessionid</span><span class="si">}{</span><span class="n">agentArgs</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span></div>
 
 	<span class="k">def</span> <span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-		<span class="n">java</span> <span class="o">=</span> <span class="n">pysysjava</span><span class="o">.</span><span class="n">testplugin</span><span class="o">.</span><span class="n">JavaTestPlugin</span><span class="p">()</span>
+		<span class="n">java</span> <span class="o">=</span> <span class="n">pysysjava</span><span class="o">.</span><span class="n">javaplugin</span><span class="o">.</span><span class="n">JavaPlugin</span><span class="p">()</span>
 		<span class="n">java</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="p">)</span>
 		
 		<span class="n">coverageDestDir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">destDir</span>

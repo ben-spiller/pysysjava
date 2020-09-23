@@ -37,7 +37,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="pysysjava.junitxml" href="pysysjava.junitxml.html" />
-    <link rel="prev" title="pysysjava.coverage" href="pysysjava.coverage.html" /> 
+    <link rel="prev" title="pysysjava.javaplugin" href="pysysjava.javaplugin.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -84,13 +84,13 @@
               <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="pysysjava.html">API Reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="pysysjava.coverage.html">pysysjava.coverage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pysysjava.javaplugin.html">pysysjava.javaplugin</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">pysysjava.junittest</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#junittest">JUnitTest</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#junitdescriptorloader">JUnitDescriptorLoader</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="pysysjava.junitxml.html">pysysjava.junitxml</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pysysjava.testplugin.html">pysysjava.testplugin</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../License.html">License</a></li>
@@ -212,7 +212,7 @@ command line (<em>in addition</em> to the above arguments), e.g. <code class="do
 </ul>
 </div></blockquote>
 <p>Any classpath requirements or runtime JVM arguments should be customized using the properties described 
-in <a class="reference internal" href="pysysjava.testplugin.html#module-pysysjava.testplugin" title="pysysjava.testplugin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysysjava.testplugin</span></code></a> such as <code class="docutils literal notranslate"><span class="pre">javaClasspath</span></code> and <code class="docutils literal notranslate"><span class="pre">jvmArgs</span></code>.</p>
+in <a class="reference internal" href="pysysjava.javaplugin.html#module-pysysjava.javaplugin" title="pysysjava.javaplugin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysysjava.javaplugin</span></code></a> such as <code class="docutils literal notranslate"><span class="pre">javaClasspath</span></code> and <code class="docutils literal notranslate"><span class="pre">jvmArgs</span></code>.</p>
 <p>The JUnit process is given Java system properties for the PySys testcase Input/ directory (<code class="docutils literal notranslate"><span class="pre">pysys.input</span></code>), 
 the test project root directory (<code class="docutils literal notranslate"><span class="pre">pysys.project.testRootDir</span></code>), and if this PySys test has any modes defined, the current 
 mode (<code class="docutils literal notranslate"><span class="pre">pysys.mode</span></code>).</p>
@@ -274,7 +274,7 @@ JUnit test class found under the <code class="docutils literal notranslate"><spa
 <p>You may also wish to add a <code class="docutils literal notranslate"><span class="pre">junitStripPrefixes</span></code> user-data to strip off long common package names from your 
 test classes and/or an <code class="docutils literal notranslate"><span class="pre">id-prefix</span></code> to add a common testId prefix indicating these are JUnit tests.</p>
 <p>You can also use the <code class="docutils literal notranslate"><span class="pre">junit*</span></code> user-data options described in <a class="reference internal" href="#pysysjava.junittest.JUnitTest" title="pysysjava.junittest.JUnitTest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">JUnitTest</span></code></a> and the 
-<code class="docutils literal notranslate"><span class="pre">javaClasspath</span></code> and <code class="docutils literal notranslate"><span class="pre">jvmArgs</span></code> described in <a class="reference internal" href="pysysjava.testplugin.html#pysysjava.testplugin.JavaTestPlugin" title="pysysjava.testplugin.JavaTestPlugin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysysjava.testplugin.JavaTestPlugin</span></code></a>.</p>
+<code class="docutils literal notranslate"><span class="pre">javaClasspath</span></code> and <code class="docutils literal notranslate"><span class="pre">jvmArgs</span></code> described in <a class="reference internal" href="pysysjava.javaplugin.html#pysysjava.javaplugin.JavaPlugin" title="pysysjava.javaplugin.JavaPlugin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysysjava.javaplugin.JavaPlugin</span></code></a>.</p>
 <p>For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">pysysdirconfig</span><span class="o">&gt;</span>
 
@@ -311,7 +311,7 @@ test classes and/or an <code class="docutils literal notranslate"><span class="p
         <a href="pysysjava.junitxml.html" class="btn btn-neutral float-right" title="pysysjava.junitxml" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="pysysjava.coverage.html" class="btn btn-neutral float-left" title="pysysjava.coverage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="pysysjava.javaplugin.html" class="btn btn-neutral float-left" title="pysysjava.javaplugin" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

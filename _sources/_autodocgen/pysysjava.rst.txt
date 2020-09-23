@@ -11,6 +11,6 @@ API Reference
   :toctree: ./
 
   pysysjava.coverage
+  pysysjava.javaplugin
   pysysjava.junittest
   pysysjava.junitxml
-  pysysjava.testplugin
