@@ -39,21 +39,21 @@ jobs:
       - name: Sphinx
         shell: bash
         run: |
-          mkdir docs/build_output
+          mkdir docs/_build
           
           # Build the documentation with warnings as errors so we notice problems
-          python -m sphinx -M html docs docs/build_output -w docs/build_output/doc_warnings.txt -W
+          python -m sphinx -M html docs docs/_build -w docs/_build/doc_warnings.txt -W
 
           # Include some other useful files with the documentation
-          cp *.rst LICENSE docs/build_output/autodocgen_documented_items.txt docs/build_output/html/
-          cd docs/build_output/html/
+          cp *.rst LICENSE docs/_build/autodocgen_documented_items.txt docs/_build/html/
+          cd docs/_build/html/
           zip -r --quiet ../../../docs.zip .
           
       #- name: Upload to artifact
       #  uses: actions/upload-artifact@v2
       #  with:
       #    name: docs
-      #    path: docs/build_output/html/*
+      #    path: docs/_build/html/*
 
       - name: Upload to gh-pages
         uses: JamesIves/github-pages-deploy-action@3.5.9
@@ -62,4 +62,4 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages
-          FOLDER: docs/build_output/html/
+          FOLDER: docs/_build/html/

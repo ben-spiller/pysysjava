@@ -1,7 +1,7 @@
 # Configuration file for the Sphinx documentation builder.
 #
 # Requires: sphinx, sphinx_rtd_theme, sphinx-autodocgen
-# With run: python -m sphinx -M html docs docs/build_output -W
+# With run: python -m sphinx -M html docs docs/_build -W
 #
 
 import os
@@ -44,9 +44,9 @@ extensions = [
 import pysysjava
 autodocgen_config = {
 	'modules':[pysysjava], 
-	'generated_source_dir': DOCS_DIR+'/autodocgen/',
+	'generated_source_dir': DOCS_DIR+'/_autodocgen/',
 	'skip_module_regex': '(.*[.]__)', # if module matches this then it and any of its submodules will be skipped
-	'write_documented_items_output_file': DOCS_DIR+'/build_output/autodocgen_documented_items.txt',
+	'write_documented_items_output_file': DOCS_DIR+'/_build/autodocgen_documented_items.txt',
 	'autodoc_options_decider': { },
 	'module_title_decider': lambda modulename: 'API Reference' if modulename=='pysysjava' else modulename,
 }
@@ -94,7 +94,7 @@ def setup(app):
 	app.connect("autodoc-skip-member", autodoc_skip_member)
 
 	def supportGitHubPages(app, exception):
-		outputdir = os.path.abspath(DOCS_DIR+'/build_output/html')
+		outputdir = os.path.abspath(DOCS_DIR+'/_build/html')
 		open(outputdir+'/.nojekyll', 'wb').close()
 	app.connect('build-finished', supportGitHubPages)
 
