@@ -1,62 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <groupId>pysys-java</groupId>
-  <artifactId>pysys-java</artifactId>
-  <version>1.0-SNAPSHOT</version>
+	<groupId>pysys-java</groupId>
+	<artifactId>pysys-java</artifactId>
+	<version>1.0-SNAPSHOT</version>
 
-  <name>pysys-java</name>
+	<name>pysys-java</name>
 
-  <!-- This Maven POM exists purely to download some dependency jars needed by our testing. 
-  
-  Execute with: 
-  
-    mvn initialize
-  
-  -->
+	<!-- This Maven POM exists purely to download some dependency jars needed by our testing. 
+	
+	Execute with: 
+		
+		mvn initialize
+	
+	-->
 
-  <dependencies>
-  
-    <!-- This is the JUnit 5 launcher jar that pysys-java uses to execute JUnit 4 and 5 tests -->
-    <dependency>
-        <groupId>org.junit.platform</groupId>
-        <artifactId>junit-platform-console-standalone</artifactId>
-        <version>1.6.2</version>
-        
-        <!-- For testing this PySys plugin we can't use the "test" scope since then we'd also get 
+	<dependencies>
+	
+	<!-- This is the JUnit 5 launcher jar that pysys-java uses to execute JUnit 4 and 5 tests -->
+	<dependency>
+		<groupId>org.junit.platform</groupId>
+		<artifactId>junit-platform-console-standalone</artifactId>
+		<version>1.6.2</version>
+		
+		<!-- For testing this PySys plugin we can't use the "test" scope since then we'd also get 
 			all the runtime directories mixed with the JUnit jars. 
 		-->
-        <scope>provided</scope>
-    </dependency>
+		<scope>provided</scope>
+	</dependency>
 
-    <!-- JUnit 5 runtime -->
-    <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter</artifactId>
-        <version>5.6.2</version>
-        
-        <scope>provided</scope>
-    </dependency>
+	<!-- JUnit 5 runtime -->
+	<dependency>
+		<groupId>org.junit.jupiter</groupId>
+		<artifactId>junit-jupiter</artifactId>
+		<version>5.6.2</version>
+		
+		<scope>provided</scope>
+	</dependency>
 
-    <!-- To allow running JUnit 4 tests (the vintage engine) -->
-    <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>4.13</version>
-        
-        <scope>provided</scope>
-    </dependency>
+	<!-- To allow running JUnit 4 tests (the vintage engine) -->
+	<dependency>
+		<groupId>junit</groupId>
+		<artifactId>junit</artifactId>
+		<version>4.13</version>
+		
+		<scope>provided</scope>
+	</dependency>
 
-    <dependency>
-        <groupId>org.junit.vintage</groupId>
-        <artifactId>junit-vintage-engine</artifactId>
-        <version>5.6.2</version>
-        
-        <scope>provided</scope>
-    </dependency>
+	<dependency>
+		<groupId>org.junit.vintage</groupId>
+		<artifactId>junit-vintage-engine</artifactId>
+		<version>5.6.2</version>
+		
+		<scope>provided</scope>
+	</dependency>
 
 	<dependency>
 		<groupId>org.jacoco</groupId>
@@ -64,7 +64,7 @@
 		<classifier>nodeps</classifier>
 		<version>0.8.6</version>
 		
-        <scope>provided</scope>
+		<scope>provided</scope>
 	</dependency>
 	<dependency>
 		<groupId>org.jacoco</groupId>
@@ -72,91 +72,91 @@
 		<classifier>runtime</classifier>
 		<version>0.8.6</version>
 		
-        <scope>provided</scope>
+		<scope>provided</scope>
 	</dependency>
 
-    <!-- These are included to show handling for third party libraries -->
-    
-    <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-api</artifactId>
-        <version>2.13.3</version>
-        
-        <scope>runtime</scope>
-    </dependency>
+	<!-- These are included to show handling for third party libraries -->
+	
+	<dependency>
+		<groupId>org.apache.logging.log4j</groupId>
+		<artifactId>log4j-api</artifactId>
+		<version>2.13.3</version>
+		
+		<scope>runtime</scope>
+	</dependency>
 
-    <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-core</artifactId>
-        <version>2.13.3</version>
-        
-        <scope>runtime</scope>
-    </dependency>
+	<dependency>
+		<groupId>org.apache.logging.log4j</groupId>
+		<artifactId>log4j-core</artifactId>
+		<version>2.13.3</version>
+		
+		<scope>runtime</scope>
+	</dependency>
 
-    <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-slf4j-impl</artifactId>
-        <version>2.13.3</version>
-        
-        <scope>runtime</scope>
-    </dependency>
+	<dependency>
+		<groupId>org.apache.logging.log4j</groupId>
+		<artifactId>log4j-slf4j-impl</artifactId>
+		<version>2.13.3</version>
+		
+		<scope>runtime</scope>
+	</dependency>
 
-    <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-api</artifactId>
-        <version>1.7.25</version>
-        
-        <scope>runtime</scope>
-    </dependency>
+	<dependency>
+		<groupId>org.slf4j</groupId>
+		<artifactId>slf4j-api</artifactId>
+		<version>1.7.25</version>
+		
+		<scope>runtime</scope>
+	</dependency>
 
-  </dependencies>
+	</dependencies>
 
-  <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.1.2</version>
-                
-                <executions>
-                  <execution>
-                    <id>copy-runtime-dependencies</id>
-                    <phase>initialize</phase>
-                    <goals>
-                      <goal>copy-dependencies</goal>
-                    </goals>
-                    <configuration>
-                      <includeScope>runtime</includeScope>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.1.2</version>
+				
+				<executions>
+					<execution>
+					<id>copy-runtime-dependencies</id>
+					<phase>initialize</phase>
+					<goals>
+						<goal>copy-dependencies</goal>
+					</goals>
+					<configuration>
+						<includeScope>runtime</includeScope>
 
-                      <outputDirectory>${project.build.directory}/logging-jars</outputDirectory>
-                      <overWriteReleases>false</overWriteReleases>
-                      <overWriteSnapshots>true</overWriteSnapshots>
-                      <excludeTransitive>true</excludeTransitive>
-                    </configuration>
-                  </execution>
-                  
+						<outputDirectory>${project.build.directory}/logging-jars</outputDirectory>
+						<overWriteReleases>false</overWriteReleases>
+						<overWriteSnapshots>true</overWriteSnapshots>
+						<excludeTransitive>true</excludeTransitive>
+					</configuration>
+					</execution>
+					
 
-                  <execution>
-                    <id>copy-junit-dependencies</id>
-                    <phase>initialize</phase>
-                    <goals>
-                      <goal>copy-dependencies</goal>
-                    </goals>
-                    <configuration>
-                      <includeScope>provided</includeScope>
+					<execution>
+					<id>copy-junit-dependencies</id>
+					<phase>initialize</phase>
+					<goals>
+						<goal>copy-dependencies</goal>
+					</goals>
+					<configuration>
+						<includeScope>provided</includeScope>
 
-                      <outputDirectory>${project.build.directory}/junit-jars</outputDirectory>
-                      <overWriteReleases>false</overWriteReleases>
-                      <overWriteSnapshots>true</overWriteSnapshots>
-                    </configuration>
-                  </execution>
-                </executions>
-            </plugin>
+						<outputDirectory>${project.build.directory}/junit-jars</outputDirectory>
+						<overWriteReleases>false</overWriteReleases>
+						<overWriteSnapshots>true</overWriteSnapshots>
+					</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
-        <plugin>
-          <artifactId>maven-clean-plugin</artifactId>
-          <version>3.1.0</version>
-        </plugin>
-      </plugins>
-  </build>
+		<plugin>
+			<artifactId>maven-clean-plugin</artifactId>
+			<version>3.1.0</version>
+		</plugin>
+		</plugins>
+	</build>
 </project>
