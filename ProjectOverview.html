@@ -80,7 +80,7 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="autodocgen/pysysjava.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_autodocgen/pysysjava.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="License.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ChangeLog.html">Change Log</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/ben-spiller/pysysjava">Jump to GitHub</a></li>
@@ -170,7 +170,7 @@ plus support for generating Java code coverage reports.</p>
 </div>
 <div class="section" id="test-plugin-for-java">
 <h2>Test Plugin for Java<a class="headerlink" href="#test-plugin-for-java" title="Permalink to this headline">¶</a></h2>
-<p>See <a class="reference internal" href="autodocgen/pysysjava.testplugin.html#module-pysysjava.testplugin" title="pysysjava.testplugin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysysjava.testplugin</span></code></a> for information about the PySys test plugin.</p>
+<p>See <a class="reference internal" href="_autodocgen/pysysjava.testplugin.html#module-pysysjava.testplugin" title="pysysjava.testplugin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysysjava.testplugin</span></code></a> for information about the PySys test plugin.</p>
 <p>Once configured in your PySys project, this plugin makes it easy to run Java classes and jars from your PySys
 <code class="docutils literal notranslate"><span class="pre">run.py</span></code> tests, and also to compile small testing tools needed by individual test cases.</p>
 <p>For example:</p>
@@ -186,7 +186,7 @@ plus support for generating Java code coverage reports.</p>
 </div>
 <div class="section" id="junit-execution-from-pysys">
 <h2>JUnit Execution from PySys<a class="headerlink" href="#junit-execution-from-pysys" title="Permalink to this headline">¶</a></h2>
-<p>See <a class="reference internal" href="autodocgen/pysysjava.junittest.html#module-pysysjava.junittest" title="pysysjava.junittest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysysjava.junittest</span></code></a> for information about running JUnit tests from PySys.</p>
+<p>See <a class="reference internal" href="_autodocgen/pysysjava.junittest.html#module-pysysjava.junittest" title="pysysjava.junittest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysysjava.junittest</span></code></a> for information about running JUnit tests from PySys.</p>
 <p>You can either have a single PySys test for a whole directory tree of JUnit tests, or for larger projects and
 increased control, use the JUnit descriptor loader that creates separate PySys tests (in-memory) for each JUnit test
 class, allowing them to be executed individually (and in separate JVM processes):</p>
@@ -213,13 +213,13 @@ properties in the <code class="docutils literal notranslate"><span class="pre">p
 <span class="o">&lt;/</span><span class="n">pysysdirconfig</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-<p>There is also a simple parser for Ant-style JUnit XML reports (used to implement the above) in <a class="reference internal" href="autodocgen/pysysjava.junitxml.html#module-pysysjava.junitxml" title="pysysjava.junitxml"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysysjava.junitxml</span></code></a>,
+<p>There is also a simple parser for Ant-style JUnit XML reports (used to implement the above) in <a class="reference internal" href="_autodocgen/pysysjava.junitxml.html#module-pysysjava.junitxml" title="pysysjava.junitxml"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysysjava.junitxml</span></code></a>,
 which could also be useful for getting data from other (non-JUnit) testing engines that use the same reporting file
 format.</p>
 </div>
 <div class="section" id="java-code-coverage-reporting">
 <h2>Java Code Coverage Reporting<a class="headerlink" href="#java-code-coverage-reporting" title="Permalink to this headline">¶</a></h2>
-<p>See <a class="reference internal" href="autodocgen/pysysjava.coverage.html#module-pysysjava.coverage" title="pysysjava.coverage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysysjava.coverage</span></code></a> for information about generating Java code coverage reports from any Java process
+<p>See <a class="reference internal" href="_autodocgen/pysysjava.coverage.html#module-pysysjava.coverage" title="pysysjava.coverage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysysjava.coverage</span></code></a> for information about generating Java code coverage reports from any Java process
 launched by PySys (including JUnit tests and integration tests).</p>
 <p>The writer can merge together all the individual coverage files into a single combined one, and generate both an
 XML report (suitable for uploading to an online coverage reporting service) and an HTML report (for human consumption).

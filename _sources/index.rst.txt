@@ -6,7 +6,7 @@ Documentation contents
 .. toctree::
    :maxdepth: 2
    
-   autodocgen/pysysjava
+   _autodocgen/pysysjava
    License.rst
    ChangeLog.rst
    Jump to GitHub <https://github.com/ben-spiller/pysysjava>

@@ -1,0 +1,352 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pysysjava.junittest &mdash; PySys Java plugins v0.1  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pysysjava.junitxml" href="pysysjava.junitxml.html" />
+    <link rel="prev" title="pysysjava.coverage" href="pysysjava.coverage.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> PySys Java plugins v0.1
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="pysysjava.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="pysysjava.coverage.html">pysysjava.coverage</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">pysysjava.junittest</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#junittest">JUnitTest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#junitdescriptorloader">JUnitDescriptorLoader</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pysysjava.junitxml.html">pysysjava.junitxml</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pysysjava.testplugin.html">pysysjava.testplugin</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../License.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ChangeLog.html">Change Log</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/ben-spiller/pysysjava">Jump to GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pysys-test.github.io/pysys-test">Jump to PySys</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PySys Java plugins v0.1</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="pysysjava.html">API Reference</a> &raquo;</li>
+        
+      <li>pysysjava.junittest</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/_autodocgen/pysysjava.junittest.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-pysysjava.junittest">
+<span id="pysysjava-junittest"></span><h1>pysysjava.junittest<a class="headerlink" href="#module-pysysjava.junittest" title="Permalink to this headline">¶</a></h1>
+<p>Support for compiling/running/validating JUnit test classes from PySys.</p>
+<p>If you want to run a whole directory of JUnit tests as a single PySys test, create a PySys test which uses the 
+<a class="reference internal" href="#pysysjava.junittest.JUnitTest" title="pysysjava.junittest.JUnitTest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">JUnitTest</span></code></a> class in place of <code class="docutils literal notranslate"><span class="pre">run.py</span></code>.</p>
+<p>For large or long-running JUnit suites it’s better to use the <a class="reference internal" href="#pysysjava.junittest.JUnitDescriptorLoader" title="pysysjava.junittest.JUnitDescriptorLoader"><code class="xref py py-obj docutils literal notranslate"><span class="pre">JUnitDescriptorLoader</span></code></a> (configured with a 
+<code class="docutils literal notranslate"><span class="pre">pysysdirconfig.xml</span></code> file). This descriptor loader creates in-memory PySys test descriptors for each JUnit test 
+class found under the input directory (each of which is run using <a class="reference internal" href="#pysysjava.junittest.JUnitTest" title="pysysjava.junittest.JUnitTest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">JUnitTest</span></code></a>). This allows each test class to run 
+in its own PySys worker thread (with its own JVM process, and its own separate output directory), and provides an 
+easier way to re-run failed JUnit classes just as you would for a normal PySys test. It means there is no need to 
+create separate <code class="docutils literal notranslate"><span class="pre">pysystest.xml</span></code> files on disk for each test class, yet you can interact with them using the 
+full power of PySys.</p>
+<p>Both approaches allow the stdout/err (for example log output) to be captured from each testcase, and reporting of 
+the (<code class="docutils literal notranslate"><span class="pre">.java</span></code>) location and nature of any test failures, with colour coding (if coloured output is enabled), and 
+highlighting of actual vs expected comparison failure, to make it as easy as possible to read the output.</p>
+<div class="section" id="junittest">
+<h2>JUnitTest<a class="headerlink" href="#junittest" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pysysjava.junittest.JUnitTest">
+<em class="property">class </em><code class="sig-prename descclassname">pysysjava.junittest.</code><code class="sig-name descname">JUnitTest</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">descriptor</span></em>, <em class="sig-param"><span class="n">outsubdir</span></em>, <em class="sig-param"><span class="n">runner</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pysysjava/junittest.html#JUnitTest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pysysjava.junittest.JUnitTest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://pysys-test.github.io/pysys-test/BaseTest.html#pysys.basetest.BaseTest" title="(in PySys v1.6.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pysys.basetest.BaseTest</span></code></a></p>
+<p>A test class that compiles and runs one or more JUnit test suites.</p>
+<p>This class requires the JUnit 5 console launcher, which itself supports running older JUnit 4 testcases - so 
+whichever version you need, you should be covered.</p>
+<p>To run a set of JUnit tests from a single PySys test, put the unit test .java files in the Input directory, and 
+specify this class in the <code class="docutils literal notranslate"><span class="pre">pysystest.xml</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">data</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="k">class</span> <span class="nc">name</span><span class="o">=</span><span class="s2">&quot;JUnitTest&quot;</span> <span class="n">module</span><span class="o">=</span><span class="s2">&quot;$</span><span class="si">{appHome}</span><span class="s2">/pysysjava/junittest&quot;</span><span class="o">/&gt;</span>
+        <span class="o">...</span>
+<span class="o">&lt;/</span><span class="n">data</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Compilation happens in <a class="reference external" href="https://pysys-test.github.io/pysys-test/BaseTest.html#pysys.basetest.BaseTest.setup" title="(in PySys v1.6.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysys.basetest.BaseTest.setup</span></code></a> (shared across all JUnit tests that use the same source 
+directory), then execution in <a class="reference external" href="https://pysys-test.github.io/pysys-test/BaseTest.html#pysys.basetest.BaseTest.execute" title="(in PySys v1.6.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysys.basetest.BaseTest.execute</span></code></a> and finally reads the resulting XML reports and 
+adds outcomes for each testcase in <a class="reference external" href="https://pysys-test.github.io/pysys-test/BaseTest.html#pysys.basetest.BaseTest.validate" title="(in PySys v1.6.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysys.basetest.BaseTest.validate</span></code></a>.</p>
+<p>There are 3 options for customizing the arguments that will be passed to the JUnit console launcher:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">junitConfigArgs</span></code> should be used for configuration options (e.g. <code class="docutils literal notranslate"><span class="pre">--config=</span></code>) that should always be 
+used for these tests, typically configured in the <code class="docutils literal notranslate"><span class="pre">user-data</span></code> of the test or directory descriptor.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">junitSelectionArgs</span></code> should be used for <code class="docutils literal notranslate"><span class="pre">--select-*</span></code> arguments that identify which tests are covered by 
+this PySys tess, typically a descriptor’s <code class="docutils literal notranslate"><span class="pre">user-data</span></code>. 
+If not specified, selection arguments are automatically added for every package in the compiled classes 
+directory.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">junitArgs</span></code> exists to provide a way to add one-off arguments runs on the PySys 
+command line (<em>in addition</em> to the above arguments), e.g. <code class="docutils literal notranslate"><span class="pre">pysys</span> <span class="pre">run</span> <span class="pre">&quot;-XjunitArgs=-t</span> <span class="pre">MYTAG&quot;</span></code>.</p></li>
+</ul>
+</div></blockquote>
+<p>Any classpath requirements or runtime JVM arguments should be customized using the properties described 
+in <a class="reference internal" href="pysysjava.testplugin.html#module-pysysjava.testplugin" title="pysysjava.testplugin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysysjava.testplugin</span></code></a> such as <code class="docutils literal notranslate"><span class="pre">javaClasspath</span></code> and <code class="docutils literal notranslate"><span class="pre">jvmArgs</span></code>.</p>
+<p>The JUnit process is given Java system properties for the PySys testcase Input/ directory (<code class="docutils literal notranslate"><span class="pre">pysys.input</span></code>), 
+the test project root directory (<code class="docutils literal notranslate"><span class="pre">pysys.project.testRootDir</span></code>), and if this PySys test has any modes defined, the current 
+mode (<code class="docutils literal notranslate"><span class="pre">pysys.mode</span></code>).</p>
+<dl class="py attribute">
+<dt id="pysysjava.junittest.JUnitTest.junitConfigArgs">
+<code class="sig-name descname">junitConfigArgs</code><em class="property"> = ''</em><a class="headerlink" href="#pysysjava.junittest.JUnitTest.junitConfigArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>JUnit console launcher command line arguments needed to configure the JUnit tests, e.g. <code class="docutils literal notranslate"><span class="pre">--config</span> <span class="pre">key=value</span></code>.</p>
+<p>If needed, this should be set in the test descriptor <code class="docutils literal notranslate"><span class="pre">user-data</span></code>.</p>
+<p>See JUnit documentation for more information about the console launcher command line arguments.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pysysjava.junittest.JUnitTest.junitSelectionArgs">
+<code class="sig-name descname">junitSelectionArgs</code><em class="property"> = ''</em><a class="headerlink" href="#pysysjava.junittest.JUnitTest.junitSelectionArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>JUnit console launcher command line arguments needed to select which JUnit tests are part of this PySys test, 
+e.g. <code class="docutils literal notranslate"><span class="pre">--select-package=myorg.myserver</span></code>.</p>
+<p>If needed, this should be set in the test descriptor <code class="docutils literal notranslate"><span class="pre">user-data</span></code>. If not specified, selection arguments are 
+automatically added for every package in the compiled classes directory.</p>
+<p>See JUnit documentation for more information about the console launcher command line arguments.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pysysjava.junittest.JUnitTest.junitArgs">
+<code class="sig-name descname">junitArgs</code><em class="property"> = ''</em><a class="headerlink" href="#pysysjava.junittest.JUnitTest.junitArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extra JUnit console launcher command line arguments, which will be used in addition to any <a class="reference internal" href="#pysysjava.junittest.JUnitTest.junitConfigArgs" title="pysysjava.junittest.JUnitTest.junitConfigArgs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">junitConfigArgs</span></code></a> 
+and <a class="reference internal" href="#pysysjava.junittest.JUnitTest.junitSelectionArgs" title="pysysjava.junittest.JUnitTest.junitSelectionArgs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">junitSelectionArgs</span></code></a>.</p>
+<p>This is usually not set in a test descriptor <code class="docutils literal notranslate"><span class="pre">user-data</span></code> but instead on the PySys command line with <code class="docutils literal notranslate"><span class="pre">-X</span></code>.</p>
+<p>For example: <code class="docutils literal notranslate"><span class="pre">pysys</span> <span class="pre">run</span> <span class="pre">-XjunitArgs=a</span> <span class="pre">b</span> <span class="pre">&quot;--config=foo=bar</span> <span class="pre">baz&quot;</span> <span class="pre">c</span> <span class="pre">d</span> <span class="pre">e&quot;</span></code>, or more realistically: 
+<code class="docutils literal notranslate"><span class="pre">-XjunitArgs=-tMY-TAG</span></code> (to run just the testcases with the specified JUnit tag).</p>
+<p>See JUnit documentation for more information about the console launcher command line arguments.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pysysjava.junittest.JUnitTest.junitFrameworkClasspath">
+<code class="sig-name descname">junitFrameworkClasspath</code><em class="property"> = ''</em><a class="headerlink" href="#pysysjava.junittest.JUnitTest.junitFrameworkClasspath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Must be set as either a project property or in the as test/directory descriptor <code class="docutils literal notranslate"><span class="pre">user-data</span></code>.</p>
+<p>The value is a list of jars (delimited by semicolon, os.pathsep, or newline), making up the JUnit framework and the 
+<code class="docutils literal notranslate"><span class="pre">junit-platform-console-standalone</span></code> launcher jar.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pysysjava.junittest.JUnitTest.junitTimeoutSecs">
+<code class="sig-name descname">junitTimeoutSecs</code><em class="property"> = 600.0</em><a class="headerlink" href="#pysysjava.junittest.JUnitTest.junitTimeoutSecs" title="Permalink to this definition">¶</a></dt>
+<dd><p>The time allowed in total for execution of all JUnit tests.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="junitdescriptorloader">
+<h2>JUnitDescriptorLoader<a class="headerlink" href="#junitdescriptorloader" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pysysjava.junittest.JUnitDescriptorLoader">
+<em class="property">class </em><code class="sig-prename descclassname">pysysjava.junittest.</code><code class="sig-name descname">JUnitDescriptorLoader</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">project</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pysysjava/junittest.html#JUnitDescriptorLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pysysjava.junittest.JUnitDescriptorLoader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://pysys-test.github.io/pysys-test/autodocgen/pysys.xml.descriptor.html#pysys.xml.descriptor.DescriptorLoader" title="(in PySys v1.6.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pysys.xml.descriptor.DescriptorLoader</span></code></a></p>
+<p>A <a class="reference external" href="https://pysys-test.github.io/pysys-test/autodocgen/pysys.xml.descriptor.html#pysys.xml.descriptor.DescriptorLoader" title="(in PySys v1.6.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysys.xml.descriptor.DescriptorLoader</span></code></a> that dynamically creates a separate PySys test descriptor for each .java 
+JUnit test class found under the <code class="docutils literal notranslate"><span class="pre">Input/</span></code> directory.</p>
+<p>To use this, create a <code class="docutils literal notranslate"><span class="pre">pysysdirconfig.xml</span></code> with a user-data element <code class="docutils literal notranslate"><span class="pre">junitTestDescriptorForEach</span></code>.</p>
+<p>You may also wish to add a <code class="docutils literal notranslate"><span class="pre">junitStripPrefixes</span></code> user-data to strip off long common package names from your 
+test classes and/or an <code class="docutils literal notranslate"><span class="pre">id-prefix</span></code> to add a common testId prefix indicating these are JUnit tests.</p>
+<p>You can also use the <code class="docutils literal notranslate"><span class="pre">junit*</span></code> user-data options described in <a class="reference internal" href="#pysysjava.junittest.JUnitTest" title="pysysjava.junittest.JUnitTest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">JUnitTest</span></code></a> and the 
+<code class="docutils literal notranslate"><span class="pre">javaClasspath</span></code> and <code class="docutils literal notranslate"><span class="pre">jvmArgs</span></code> described in <a class="reference internal" href="pysysjava.testplugin.html#pysysjava.testplugin.JavaTestPlugin" title="pysysjava.testplugin.JavaTestPlugin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pysysjava.testplugin.JavaTestPlugin</span></code></a>.</p>
+<p>For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">pysysdirconfig</span><span class="o">&gt;</span>
+
+        <span class="o">&lt;</span><span class="nb">id</span><span class="o">-</span><span class="n">prefix</span><span class="o">&gt;</span><span class="n">MyJUnitTests_</span><span class="o">&lt;/</span><span class="nb">id</span><span class="o">-</span><span class="n">prefix</span><span class="o">&gt;</span>
+
+        <span class="o">&lt;</span><span class="n">data</span><span class="o">&gt;</span>
+                <span class="o">&lt;</span><span class="n">user</span><span class="o">-</span><span class="n">data</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;junitTestDescriptorForEach&quot;</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;class&quot;</span><span class="o">/&gt;</span>
+
+                <span class="o">&lt;</span><span class="n">user</span><span class="o">-</span><span class="n">data</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;junitStripPrefixes&quot;</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;myorg.mytestpackage, myorg2&quot;</span><span class="o">/&gt;</span>
+
+                <span class="o">&lt;</span><span class="n">user</span><span class="o">-</span><span class="n">data</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;javaClasspath&quot;</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;$</span><span class="si">{appHome}</span><span class="s2">/target/logging-jars/*.jar&quot;</span><span class="o">/&gt;</span>
+                <span class="o">&lt;</span><span class="n">user</span><span class="o">-</span><span class="n">data</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;jvmArgs&quot;</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;-Xmx256M&quot;</span><span class="o">/&gt;</span>
+
+                <span class="o">&lt;</span><span class="n">user</span><span class="o">-</span><span class="n">data</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;junitTimeoutSecs&quot;</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;600&quot;</span><span class="o">/&gt;</span>
+                <span class="o">&lt;</span><span class="n">user</span><span class="o">-</span><span class="n">data</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;junitConfigArgs&quot;</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="o">/&gt;</span>
+        <span class="o">&lt;/</span><span class="n">data</span><span class="o">&gt;</span>
+
+<span class="o">&lt;/</span><span class="n">pysysdirconfig</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="pysysjava.junitxml.html" class="btn btn-neutral float-right" title="pysysjava.junitxml" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="pysysjava.coverage.html" class="btn btn-neutral float-left" title="pysysjava.coverage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-23
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

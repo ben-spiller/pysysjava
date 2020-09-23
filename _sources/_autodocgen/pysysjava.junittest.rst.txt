@@ -1,0 +1,22 @@
+
+pysysjava.junittest
+~~~~~~~~~~~~~~~~~~~
+
+.. automodule:: pysysjava.junittest
+
+.. currentmodule:: pysysjava.junittest
+
+
+
+JUnitTest
+=========
+
+.. autoclass:: JUnitTest
+   :members:
+
+
+JUnitDescriptorLoader
+=====================
+
+.. autoclass:: JUnitDescriptorLoader
+   :members:

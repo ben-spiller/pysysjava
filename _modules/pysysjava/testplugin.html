@@ -80,7 +80,7 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../autodocgen/pysysjava.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_autodocgen/pysysjava.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../License.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../ChangeLog.html">Change Log</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/ben-spiller/pysysjava">Jump to GitHub</a></li>
@@ -254,7 +254,7 @@
 		<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">contents</span><span class="p">:</span>
 			<span class="k">yield</span> <span class="n">c</span>
 
-<div class="viewcode-block" id="JavaTestPlugin"><a class="viewcode-back" href="../../autodocgen/pysysjava.testplugin.html#pysysjava.testplugin.JavaTestPlugin">[docs]</a><span class="k">class</span> <span class="nc">JavaTestPlugin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="JavaTestPlugin"><a class="viewcode-back" href="../../_autodocgen/pysysjava.testplugin.html#pysysjava.testplugin.JavaTestPlugin">[docs]</a><span class="k">class</span> <span class="nc">JavaTestPlugin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	This is a PySys test plugin that for compiling and running Java applications from a PySys testcase. </span>
 <span class="sd">	</span>
@@ -296,7 +296,7 @@
 <span class="sd">	You may also want to add other options such as ``-source`` and ``-target`` release version. </span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	
-	<span class="n">defaultJVMArgs</span> <span class="o">=</span> <span class="s1">&#39;-Xmx512m -XX:+HeapDumpOnOutOfMemoryError&#39;</span>
+	<span class="n">defaultJVMArgs</span> <span class="o">=</span> <span class="s1">&#39;-Xmx512m -XX:+HeapDumpOnOutOfMemoryError -XX:-UsePerfData&#39;</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	A space-delimited string of JVM arguments to use by default when running ``java`` processes, unless overridden </span>
 <span class="sd">	by a per-test/dirconfig ``jvmArgs`` or a ``jvmArgs=`` keyword argument.  </span>
@@ -304,6 +304,8 @@
 <span class="sd">	By default the maximum heap size is limited to 512MB, but you may wish to set a larger heap limit if you are </span>
 <span class="sd">	starting processes that require more memory - but be careful that the test machine has sufficient resources to </span>
 <span class="sd">	cope with multiple tests running concurrently without risking out of memory conditions. </span>
+<span class="sd">	Also by default the ``-XX:-UsePerfData`` option is used to avoid creation of ``hsperfdata_XXX`` files </span>
+<span class="sd">	in the temp directory (typically the test output directory) which aren&#39;t useful and can prevent test cleanup. </span>
 <span class="sd">	</span>
 <span class="sd">	This is converted to a ``list[str]`` when the plugin is setup ready for use by the test. </span>
 <span class="sd">	If a key named ``jvmArgs`` exists in the test or directory descriptor&#39;s ``user-data`` that value takes </span>
@@ -353,7 +355,7 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">addCleanupFunction</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="n">deletedir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">output</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
 			<span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;hsperfdata_&#39;</span><span class="p">)]</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">output</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ignoreErrors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 		
-<div class="viewcode-block" id="JavaTestPlugin.compile"><a class="viewcode-back" href="../../autodocgen/pysysjava.testplugin.html#pysysjava.testplugin.JavaTestPlugin.compile">[docs]</a>	<span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;javaclasses&#39;</span><span class="p">,</span> <span class="n">classpath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="JavaTestPlugin.compile"><a class="viewcode-back" href="../../_autodocgen/pysysjava.testplugin.html#pysysjava.testplugin.JavaTestPlugin.compile">[docs]</a>	<span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;javaclasses&#39;</span><span class="p">,</span> <span class="n">classpath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;Compile Java source files into classes. By default we compile Java files from the test&#39;s input directory to </span>
 <span class="sd">		``self.output/javaclasses``. </span>
 <span class="sd">		</span>
@@ -445,7 +447,7 @@
 				<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;&quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span><span class="o">%</span><span class="n">a</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">,</span><span class="s1">&#39;</span><span class="se">\\\\</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 		<span class="k">return</span> <span class="p">[</span><span class="s1">&#39;@&#39;</span><span class="o">+</span><span class="n">argsFilename</span><span class="p">]</span>
 
-<div class="viewcode-block" id="JavaTestPlugin.startJava"><a class="viewcode-back" href="../../autodocgen/pysysjava.testplugin.html#pysysjava.testplugin.JavaTestPlugin.startJava">[docs]</a>	<span class="k">def</span> <span class="nf">startJava</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">classOrJar</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="p">[],</span> <span class="n">classpath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">jvmArgs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">jvmProps</span><span class="o">=</span><span class="p">{},</span> <span class="n">disableCoverage</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">stdouterr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="JavaTestPlugin.startJava"><a class="viewcode-back" href="../../_autodocgen/pysysjava.testplugin.html#pysysjava.testplugin.JavaTestPlugin.startJava">[docs]</a>	<span class="k">def</span> <span class="nf">startJava</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">classOrJar</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="p">[],</span> <span class="n">classpath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">jvmArgs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">jvmProps</span><span class="o">=</span><span class="p">{},</span> <span class="n">disableCoverage</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">stdouterr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Start a Java process to execute the specified class or .jar file. </span>
 <span class="sd">		</span>
@@ -531,7 +533,7 @@
 
 		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">startProcess</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">javaExecutable</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_argsOrArgsFile</span><span class="p">(</span><span class="n">jvmArgs</span><span class="o">+</span><span class="n">arguments</span><span class="p">,</span> <span class="n">shortName</span><span class="p">),</span> <span class="n">stdouterr</span><span class="o">=</span><span class="n">stdouterr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="JavaTestPlugin.toClasspathList"><a class="viewcode-back" href="../../autodocgen/pysysjava.testplugin.html#pysysjava.testplugin.JavaTestPlugin.toClasspathList">[docs]</a>	<span class="k">def</span> <span class="nf">toClasspathList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">classpath</span><span class="p">):</span>
+<div class="viewcode-block" id="JavaTestPlugin.toClasspathList"><a class="viewcode-back" href="../../_autodocgen/pysysjava.testplugin.html#pysysjava.testplugin.JavaTestPlugin.toClasspathList">[docs]</a>	<span class="k">def</span> <span class="nf">toClasspathList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">classpath</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Converts the specified classpath string to a list of classpath entries (or just returns the input if it&#39;s </span>
 <span class="sd">		already a list). Glob expressions such as ``*.jar`` will be expanded if the parent directory exists and there </span>

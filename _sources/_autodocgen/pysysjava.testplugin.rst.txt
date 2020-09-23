@@ -1,0 +1,15 @@
+
+pysysjava.testplugin
+~~~~~~~~~~~~~~~~~~~~
+
+.. automodule:: pysysjava.testplugin
+
+.. currentmodule:: pysysjava.testplugin
+
+
+
+JavaTestPlugin
+==============
+
+.. autoclass:: JavaTestPlugin
+   :members:
