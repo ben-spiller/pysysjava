@@ -354,7 +354,7 @@
 		
 		<span class="k">try</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">archiveAndPublish</span><span class="p">()</span>
-		<span class="k">except</span> <span class="ne">PermissionError</span><span class="p">:</span> <span class="c1"># can occur transiently on Windows due to file system locking</span>
+		<span class="k">except</span> <span class="ne">PermissionError</span><span class="p">:</span> <span class="c1"># pragma: no cover - can occur transiently on Windows due to file system locking</span>
 			<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">5.0</span><span class="p">)</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">archiveAndPublish</span><span class="p">()</span></div>
 </pre></div>
@@ -369,7 +369,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-22
+        &copy; Copyright 2020 Ben Spiller; documentation last updated on 2020-09-23
 
     </p>
   </div>
