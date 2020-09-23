@@ -3,7 +3,7 @@
 	<!-- Log4j2 configuration file (used with -Dlog4j.configurationFile=). -->
 	
 	<Properties>
-        <Property name="appenderPatternLayout">%date %-5level [%thread] - %message%n%exception</Property>
+		<Property name="appenderPatternLayout">%date %-5level [%thread] - %message%n%exception</Property>
 	</Properties>
 	
 	<Appenders>

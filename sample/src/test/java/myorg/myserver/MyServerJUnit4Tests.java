@@ -9,11 +9,11 @@ import org.junit.*;
  */
 public class MyServerJUnit4Tests {
 
-    @Test
-    public void testThatVersionIsValid() throws Exception {
-    	Assert.assertTrue("Version is of the form digit.digit", 
-    		Pattern.matches("[0-9]+\\.[0-9]+", MyServer.VERSION));
-    }
+	@Test
+	public void testThatVersionIsValid() throws Exception {
+		Assert.assertTrue("Version is of the form digit.digit", 
+			Pattern.matches("[0-9]+\\.[0-9]+", MyServer.VERSION));
+	}
 
 	@Test
 	@Ignore("Not implemented this JUnit 4 test yet")

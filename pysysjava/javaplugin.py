@@ -155,7 +155,7 @@ class JavaPlugin(object):
 	defaultJVMArgs = '-Xmx512m -XX:+HeapDumpOnOutOfMemoryError -XX:-UsePerfData'
 	"""
 	A space-delimited string of JVM arguments to use by default when running ``java`` processes, unless overridden 
-	by a per-test/dirconfig ``jvmArgs`` or a ``jvmArgs=`` keyword argument.  
+	by a per-test/dirconfig ``jvmArgs`` or a ``jvmArgs=`` keyword argument.
 	
 	By default the maximum heap size is limited to 512MB, but you may wish to set a larger heap limit if you are 
 	starting processes that require more memory - but be careful that the test machine has sufficient resources to 

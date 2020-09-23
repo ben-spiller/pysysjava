@@ -35,9 +35,9 @@ public class MyServer
 				public void handle(HttpExchange e) throws IOException
 				{
 					log.info("Clean shutdown requested");
-			        e.sendResponseHeaders(200, 0);
-			        e.close();
-			        System.exit(0);
+					e.sendResponseHeaders(200, 0);
+					e.close();
+					System.exit(0);
 				}
 			});
 			
@@ -69,7 +69,7 @@ public class MyServer
 			body.append("}");
 			byte[] bytes = body.toString().getBytes("UTF-8");
 
-	        e.sendResponseHeaders(200, bytes.length);
+			e.sendResponseHeaders(200, bytes.length);
 			e.getResponseBody().write(bytes);
 			e.getResponseBody().flush();
 			
