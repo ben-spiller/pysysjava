@@ -146,7 +146,7 @@ class JavaTestPlugin(object):
 	You may also want to add other options such as ``-source`` and ``-target`` release version. 
 	"""
 	
-	defaultJVMArgs = '-Xmx512m -XX:+HeapDumpOnOutOfMemoryError'
+	defaultJVMArgs = '-Xmx512m -XX:+HeapDumpOnOutOfMemoryError -XX:-UsePerfData'
 	"""
 	A space-delimited string of JVM arguments to use by default when running ``java`` processes, unless overridden 
 	by a per-test/dirconfig ``jvmArgs`` or a ``jvmArgs=`` keyword argument.  
@@ -154,6 +154,8 @@ class JavaTestPlugin(object):
 	By default the maximum heap size is limited to 512MB, but you may wish to set a larger heap limit if you are 
 	starting processes that require more memory - but be careful that the test machine has sufficient resources to 
 	cope with multiple tests running concurrently without risking out of memory conditions. 
+	Also by default the ``-XX:-UsePerfData`` option is used to avoid creation of ``hsperfdata_XXX`` files 
+	in the temp directory (typically the test output directory) which aren't useful and can prevent test cleanup. 
 	
 	This is converted to a ``list[str]`` when the plugin is setup ready for use by the test. 
 	If a key named ``jvmArgs`` exists in the test or directory descriptor's ``user-data`` that value takes 

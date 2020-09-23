@@ -30,14 +30,11 @@
 	-->
 
 	<!-- Make sure temporary files go to the test output dir not the OS's default temp directory. -->
-	<property name="defaultEnvironsTempDir" value="pysys.utils.fileutils.mkdir(self.runner.output+'/tmp')"/>
+	<property name="defaultEnvironsTempDir" value="self.output"/>
 
 	<property name="javaHome" value="${env.JAVA_HOME}" pathMustExist="true"/>
 	<property name="defaultEnvirons.JAVA_HOME" value="${javaHome}"/>
 
-	<!-- User-defined properties (use lowerCamelCase for property names) -->
-	
-	
 	<!-- Custom test framework plugins, if needed -->
 
 	<pythonpath value="./pysys/pysys-extensions" />
