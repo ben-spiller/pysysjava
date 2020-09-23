@@ -2,7 +2,7 @@
 <pysystest type="auto">
 	
 	<description>
-		<title>JUnit nested PySys test</title>
+		<title>Sample project</title>
 		<purpose><![CDATA[
 		
 		]]></purpose>
@@ -20,7 +20,4 @@
 		</modes>
 	</classification>
 
-	<data>
-		<class name="JUnitTest" module="${pysysjavaDir}/junittest"/>
-	</data>
 </pysystest>

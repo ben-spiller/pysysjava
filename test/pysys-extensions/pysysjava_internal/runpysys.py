@@ -3,6 +3,7 @@ import os
 import logging
 
 import pysys
+import pysysjava
 
 class RunPySysPlugin(object):
 	"""
@@ -14,7 +15,7 @@ class RunPySysPlugin(object):
 		self.project = self.owner.project
 		self.log = logging.getLogger('pysys.runpysys')
 
-	def runPySys(self, args, stdouterr, background=True, workingDir=None, **kwargs):
+	def runPySys(self, args, stdouterr, background=True, workingDir=None, environs={}, **kwargs):
 		"""
 		Run PySys with the specified arguments. 
 		
@@ -25,13 +26,18 @@ class RunPySysPlugin(object):
 		The main environment variables needed by this project are passed through. 
 		
 		"""
-		env = self.owner.createEnvirons(command=pysys.constants.PYTHON_EXE, overrides={
-			'PYSYS_APP_HOME': self.project.testRootDir+'/..',
+		env = {
 			'JAVA_HOME': self.project.javaHome,
 			'JUNIT_CLASSPATH': self.project.junitFrameworkClasspath,
 			'JACOCO_DIR': self.project.jacocoDir,
 			'PYTHONPATH': os.pathsep.join(sys.path), # Coverage can get confused if this is different than the parent process
-		})
+			
+			'PYSYSJAVA_TARGET_DIR': os.path.normpath(self.project.appHome+'/target'),
+			'PYSYSJAVA_DIR': os.path.dirname(pysysjava.__file__), # TODO: just needed temporarily until PySys supports loading test modules from pythonpath
+		}
+		env.update(environs)
+
+		env = self.owner.createEnvirons(command=pysys.constants.PYTHON_EXE, overrides=env)
 		workingDir = workingDir or self.owner.input
 		if args[0] == 'run' and not workingDir.startswith(self.owner.output): args = args+['--outdir', self.owner.output+'/'+stdouterr]
 		

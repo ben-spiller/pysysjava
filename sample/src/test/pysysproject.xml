@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pysysproject>
+	<requires-pysys>1.6.1</requires-pysys>
+	<requires-python>3.6</requires-python>
+	
+	<!-- Pre-defined properties include: ${testRootDir}, ${outDirName}, ${os}, ${osfamily}, ${startDate}, ${startTime}, ${hostname}. -->
+	
+	<!-- Property identifying the home directory of the application build being tested. -->
+	<property name="appHome" value="${env.PYSYS_APP_HOME}" default="${testRootDir}/../../target" pathMustExist="true"/>
+	<property name="testJarsDir" value="${appHome}/pysys-test-jars" pathMustExist="true"/>
+
+	<!-- Put PySys outputs and temporary files under target/ to follow convention. -->
+	<property name="pysysRunnerDirName" value="${testRootDir}/../../target/pysys/__pysys_runner_${outDirName}"/>
+
+	<!-- If provided, the specified command line will be executed (in testRootDir) to populate the vcsCommit field 
+	in runner.runDetails with the current commit number from your version control system. 
+	-->
+	<property name="versionControlGetCommitCommand" value="git show -s --format=%h"/>
+
+	<!-- 
+	The defaultEnvirons. prefix can be used to provide a default environment variable for use by 
+	all processes that PySys starts. For example, to set Java(R)'s JAVA_TOOL_OPTIONS environment variable to
+	set a default limit on max heap size to avoid each process using up a large proportion of the machine's virtual 
+	address space (can be overridden with command line args if needed) see the property below. This could be useful 
+	if you are starting JVMs via mechanisms other that startJava() (e.g. shell scripts) which will not pick up the 
+	defaultJVMArgs plugin/user-data property. 
+	-->
+	<!--
+	<property name="defaultEnvirons.JAVA_TOOL_OPTIONS" value="-Xmx512M"/>
+	-->
+
+	<!-- Make sure temporary files go to the test output dir not the OS's default temp directory. -->
+	<property name="defaultEnvironsTempDir" value="pysys.utils.fileutils.mkdir(self.runner.output+'/tmp')"/>
+
+	<property name="javaHome" value="${env.JAVA_HOME}" pathMustExist="true"/>
+	<property name="defaultEnvirons.JAVA_HOME" value="${javaHome}"/>
+
+	<!-- User-defined properties (use lowerCamelCase for property names) -->
+	
+	
+	<!-- Custom test framework plugins, if needed -->
+
+	<pythonpath value="./pysys/pysys-extensions" />
+	<test-plugin classname="pysysjava.testplugin.JavaTestPlugin" alias="java">
+		<!-- TODO: put plugin properties here -->
+	</test-plugin>
+	
+	<writers>
+		<writer classname="pysys.writer.testoutput.TestOutputArchiveWriter">
+			<property name="destDir" value="__pysys_output_archives/"/>
+			<property name="maxTotalSizeMB" value="1024.0"/>
+		</writer>
+		
+		<writer classname="pysys.writer.outcomes.JUnitXMLResultsWriter">
+			<property name="outputDir" value="__pysys_junit_xml"/>
+		</writer>
+
+		<writer classname="pysysjava.coverage.JavaCoverageWriter" alias="javaCoverageWriter">
+			<property name="jacocoDir" value="${testJarsDir}"/>
+			<property name="classpath" value="${appHome}/*.jar"/>
+			<property name="sourceDirs" value="${testRootDir}/../main/java"/>
+
+			<property name="destDir" value="__coverage_java.${outDirName}"/>
+			<property name="destArchive" value="JavaCoverage.zip"/>
+			
+			<property name="agentArgs" value='includes=myorg.*'/>
+
+			<property name="reportArgs" value='--name "MyServer Java Coverage Report"'/>
+		</writer>
+
+		<writer classname="pysys.writer.ci.GitHubActionsCIWriter"></writer>
+		<writer classname="pysys.writer.ci.TravisCIWriter"></writer>
+		
+		<writer classname="pysys.writer.console.ConsoleSummaryResultsWriter"></writer>
+	</writers>
+
+	<default-file-encodings>
+		<default-file-encoding pattern="run.log" encoding="utf-8"/>
+		
+		<default-file-encoding pattern="*.xml"  encoding="utf-8"/>
+		<default-file-encoding pattern="*.json" encoding="utf-8"/>
+		<default-file-encoding pattern="*.yaml" encoding="utf-8"/>
+	</default-file-encodings>	
+	
+	<!-- Add project-specific text to be appended to the "pysys run -h". -->
+	<project-help>
+	</project-help>
+</pysysproject>

@@ -12,7 +12,7 @@ class PySysTest(BaseTest):
 		else:
 			self.addOutcome(FAILED, 'Expected failure due to compilation error')
 
-		self.java.compile('WarningsTest.java', output='warnings', args=['-Xlint'], timeout=60) # set timeout just to check we can pass through xargs to startProcess
+		self.java.compile('WarningsTest.java', output='warnings', arguments=['-Xlint'], timeout=60) # set timeout just to check we can pass through xargs to startProcess
 		
 		# make the classpath long which will force us to use an @args filename
 		self.java.compile('ClasspathTest.java', output='classpath', 

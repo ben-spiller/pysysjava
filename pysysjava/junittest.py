@@ -201,7 +201,7 @@ class JUnitTest(BaseTest):
 		
 		kwargs = {
 			'classOrJar': launcher[0],
-			'args': args,
+			'arguments': args,
 			'expectedExitStatus': 'in [0, 1]', # allow failing tests to be dealt with later, but not complete failure to execure the launcher
 			'onError': lambda process: [self.logFileContents(process.stderr), self.getExprFromFile(process.stderr, '.+')][-1],
 			'displayName': 'JUnit %s'%' '.join(a for a in selectionArgs if a not in ['-p', '-c']),

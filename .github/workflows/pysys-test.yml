@@ -107,7 +107,7 @@ jobs:
         uses: codecov/codecov-action@v1
         if: steps.pysys.outputs.artifact_PythonCoverageDir
         with:
-          file: test/__coverage_python.${{matrix.test-run-id}}/coverage.xml
+          file: ${{ steps.pysys.outputs.artifact_PythonCoverageDir }}/coverage.xml
         
       # If any tests fail, PySys will return an error code, so we need "if: always()" so the following steps will run
 

@@ -8,7 +8,7 @@
 
 		<user-data name="junitStripPrefixes" value=" myorg.mytest1, myorg ,"/>
 
-		<user-data name="javaClasspath" value="${appHome}/target/logging-jars/*.jar"/>
+		<user-data name="javaClasspath" value="${pysysjavaTargetDir}/logging-jars/*.jar"/>
 		<user-data name="jvmArgs" value="-Xmx256M"/>
 
 		<user-data name="junitTimeoutSecs" value="600"/>

@@ -203,13 +203,13 @@ class JavaTestPlugin(object):
 		self.owner.addCleanupFunction(lambda: [deletedir(self.owner.output+'/'+d) for d in os.listdir(self.owner.output)
 			if d.startswith('hsperfdata_')] if os.path.exists(self.owner.output) else None, ignoreErrors=True)
 		
-	def compile(self, input=None, output='javaclasses', classpath=None, args=None, **kwargs):
+	def compile(self, input=None, output='javaclasses', classpath=None, arguments=None, **kwargs):
 		"""Compile Java source files into classes. By default we compile Java files from the test's input directory to 
 		``self.output/javaclasses``. 
 		
 		For example::
 		
-			self.java.compile(self.input, args=['--Werror'])
+			self.java.compile(self.input, arguments=['--Werror'])
 		
 		:param input: Typically a directory (relative to the test Input dir) in which to search for 
 			classpaths; alternatively a list of Java source files. By default we compile source files under the 
@@ -220,7 +220,7 @@ class JavaTestPlugin(object):
 			be used (which by default is empty). The classpath can be specified as a list or a single string delimited 
 			by ``;``, newline or ``os.pathsep``; see `toClasspathList()` for details. 
 		:type classpath: str or list[str]
-		:param list[str] args: List of compiler arguments such as ``--Werror`` or ``-nowarn`` (to control warn 
+		:param list[str] arguments: List of compiler arguments such as ``--Werror`` or ``-nowarn`` (to control warn 
 			behaviour). If not specified, the ``defaultCompilerArgs`` plugin property is used. 
 		:param kwargs: Additional keyword arguments such as ``timeout=`` will be passed to 
 			`pysys.basetest.BaseTest.startProcess`. 
@@ -229,7 +229,7 @@ class JavaTestPlugin(object):
 		:rtype: pysys.process.Process
 		"""
 		# need to escape windows \ else it gets removed; do this the same on all platforms for consistency)
-		if args is None: args = self._splitShellArgs(self.defaultCompilerArgs)
+		if arguments is None: arguments = self._splitShellArgs(self.defaultCompilerArgs)
 		if input is None: input = self.owner.input
 		
 		if isstring(input): input = [input]
@@ -251,7 +251,7 @@ class JavaTestPlugin(object):
 		
 		classpath = self.toClasspathList(classpath)
 
-		args = list(args)
+		args = list(arguments)
 		
 		output = mkdir(os.path.join(self.owner.output, output))
 		if os.listdir(output): self.log.warn('Compiling Java to an output directory that already contains some files: %s', output)
@@ -295,7 +295,7 @@ class JavaTestPlugin(object):
 				f.write('"%s"'%a.replace('\\','\\\\')+'\n')
 		return ['@'+argsFilename]
 
-	def startJava(self, classOrJar, args=[], classpath=None, jvmArgs=None, jvmProps={}, disableCoverage=False, stdouterr=None, **kwargs):
+	def startJava(self, classOrJar, arguments=[], classpath=None, jvmArgs=None, jvmProps={}, disableCoverage=False, stdouterr=None, **kwargs):
 		"""
 		Start a Java process to execute the specified class or .jar file. 
 		
@@ -305,7 +305,7 @@ class JavaTestPlugin(object):
 				stdouterr='my_server', background=True)
 		
 			self.java.defaultClasspath = [self.project.appHome+'/mydeps.jar']
-			self.java.compile(self.input, output=self.output+'/javaclasses', args=['--Werror'])
+			self.java.compile(self.input, output=self.output+'/javaclasses', arguments=['--Werror'])
 			self.java.startJava('myorg.MyHttpTestClient', ['127.0.0.1', port], stdouterr='httpclient', 
 				classpath=self.java.defaultClasspath+[self.output+'/javaclasses'], timeout=60)
 		
@@ -317,7 +317,7 @@ class JavaTestPlugin(object):
 			Since some jar names contain a version number, a ``*`` glob expression can be used in the .jar file 
 			provided it matches exactly one jar and still ends with the ``.jar`` suffix.
 			
-		:param list[str] args: Command line arguments for the specified class. 
+		:param list[str] arguments: Command line arguments for the specified class. 
 		
 		:param classpath: The classpath to use, or None if the ``self.defaultClasspath`` should 
 			be used (which by default is empty). The classpath can be specified as a list or a single string delimited 
@@ -357,7 +357,9 @@ class JavaTestPlugin(object):
 			jvmArgs.append('-D%s=%s'%(k, v))
 		originalClasspath = classpath
 
-		displayName = kwargs.pop('displayName', 'java %s'%(os.path.basename(stdouterr or classOrJar)))
+		shortName = os.path.basename(stdouterr[0] if isinstance(stdouterr, tuple) else (stdouterr or classOrJar))
+
+		displayName = kwargs.pop('displayName', 'java %s'%shortName)
 
 		if classOrJar.endswith('.jar'):
 			assert not originalClasspath, 'Java does not accept any classpath options when executing a .jar'
@@ -377,7 +379,7 @@ class JavaTestPlugin(object):
 			jvmArgs = ['-classpath', os.pathsep.join(classpath)] + jvmArgs
 			jvmArgs.append(classOrJar)
 
-		return self.owner.startProcess(self.javaExecutable, self._argsOrArgsFile(jvmArgs+args, stdouterr or 'java.%s'%os.path.basename(classOrJar)), displayName=displayName, stdouterr=stdouterr, **kwargs)
+		return self.owner.startProcess(self.javaExecutable, self._argsOrArgsFile(jvmArgs+arguments, shortName), stdouterr=stdouterr, **kwargs)
 
 	def toClasspathList(self, classpath):
 		"""

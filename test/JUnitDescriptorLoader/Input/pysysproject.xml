@@ -2,7 +2,7 @@
 <pysysproject>
 	<!-- PySys project file for nested tests -->
 
-	<property name="appHome" value="${env.PYSYS_APP_HOME}" pathMustExist="true"/>
+	<property name="pysysjavaTargetDir" value="${env.PYSYSJAVA_TARGET_DIR}" pathMustExist="true"/>
 
 	<property name="javaHome" value="${env.JAVA_HOME}" pathMustExist="true"/>
 	<property name="defaultEnvirons.JAVA_HOME" value="${javaHome}"/>

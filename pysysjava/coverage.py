@@ -204,6 +204,6 @@ class JavaCoverageWriter(CollectTestOutputWriter):
 		
 		try:
 			self.archiveAndPublish()
-		except PermissionError: # can occur transiently on Windows due to file system locking
+		except PermissionError: # pragma: no cover - can occur transiently on Windows due to file system locking
 			time.sleep(5.0)
 			self.archiveAndPublish()

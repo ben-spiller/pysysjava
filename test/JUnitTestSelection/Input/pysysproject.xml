@@ -2,13 +2,13 @@
 <pysysproject>
 	<!-- PySys project file for nested tests -->
 
-	<property name="appHome" value="${env.PYSYS_APP_HOME}" pathMustExist="true"/>
-
 	<property name="javaHome" value="${env.JAVA_HOME}" pathMustExist="true"/>
 	<property name="defaultEnvirons.JAVA_HOME" value="${javaHome}"/>
 
 	<property name="junitFrameworkClasspath" value="${env.JUNIT_CLASSPATH}"/>
-	
+
+	<property name="pysysjavaDir" value="${env.PYSYSJAVA_DIR}"/>
+
 	<!-- 
 	This sets Java(R)'s JAVA_TOOL_OPTIONS environment variable to set a default limit on max heap size to avoid each 
 	process using up a large proportion of the machine's virtual address space which can cause problem with rlimits
