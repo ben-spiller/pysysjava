@@ -44,8 +44,8 @@ public class MyServer
 			server.createContext("/sensorValues", new GetSensorValuesHandler());
 	
 			log.debug("Initializing server with args: {}", Arrays.asList(args));
-			log.info("Started MyServer v{} on port {}", VERSION, config.port);
 			server.start();
+			log.info("Started MyServer v{} on port {}", VERSION, config.port);
 		} catch (Exception ex)
 		{
 			log.error("Server failed: {}", ex.getMessage(), ex);

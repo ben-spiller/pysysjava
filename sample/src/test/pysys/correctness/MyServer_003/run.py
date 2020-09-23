@@ -12,6 +12,7 @@ class PySysTest(pysys.basetest.BaseTest):
 			info={'port':port},
 			background=True,
 			)
+		self.waitForGrep('my_server.out', 'Started MyServer .*on port .*', errorExpr=[' (ERROR|FATAL) '], process=server) 
 	
 		self.startPython([self.input+'/httpget.py', f'http://127.0.0.1:{server.info["port"]}/sensorValues'], 
 			stdouterr='sensorValues')
