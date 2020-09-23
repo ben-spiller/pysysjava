@@ -1,12 +1,12 @@
 # PySys-Java Sample
-[![PySys tests](../../workflows/PySys/badge.svg)](../../actions)
+[![PySys tests](https://github.com/ben-spiller/pysysjava/workflows/PySys-Java-Sample/badge.svg)](https://github.com/ben-spiller/pysysjava/actions)
 [![codecov](https://codecov.io/gh/ben-spiller/pysysjava/branch/main/graph/badge.svg)](https://codecov.io/gh/ben-spiller/pysysjava)
 
 This project shows how to use the PySys-Java plugins for the PySys system test framework to test a sample Java 
 application (a small REST/HTTP server). 
 
-Explore the tests in this sample to get an idea for what is possible with PySys-Java, or fork this repo to get started 
-with your own project.
+Explore the tests in this sample to get an idea for what is possible with PySys-Java, or fork it to get started 
+with your own Java/PySys project.
 
 # License
 
