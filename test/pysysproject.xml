@@ -33,9 +33,12 @@
 	<property name="defaultEnvironsTempDir" value="self.output"/>
 	
 	<!-- Custom test framework plugins -->
-	<pythonpath value=".." />
+	<pythonpath value=".." /> <!-- For -->
+	
 	<pythonpath value="./pysys-extensions" />
-	<test-plugin classname="pysysjava.testplugin.JavaTestPlugin" alias="java"/>
+	<test-plugin   classname="pysysjava.javaplugin.JavaPlugin" alias="java"/>
+	<runner-plugin classname="pysysjava.javaplugin.JavaPlugin" alias="java"/>
+	
 	<test-plugin classname="pysysjava_internal.runpysys.RunPySysPlugin" alias="pysys"/>
 
 	<writers>

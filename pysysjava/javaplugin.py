@@ -14,7 +14,7 @@ from pysys.constants import *
 from pysys.utils.pycompat import isstring
 from pysys.utils.fileutils import *
 
-log = logging.getLogger('pysys.pysysjava.JavaTestPlugin')
+log = logging.getLogger('pysys.pysysjava.javaplugin')
 
 def walkDirTree(dir, dirIgnores=None, followlinks=False):
 	"""
@@ -104,14 +104,20 @@ def walkDirTreeContents(dir, dirIgnores=None, followlinks=False):
 		for c in contents:
 			yield c
 
-class JavaTestPlugin(object):
+class JavaPlugin(object):
 	"""
-	This is a PySys test plugin that for compiling and running Java applications from a PySys testcase. 
+	This is a PySys test plugin that for compiling and running Java applications from a PySys testcase (or from 
+	the runner). 
 	
 	You can access the methods of this class from any test using ``self.java.XXX``. To enable this, just add it to your 
 	project configuration with an alias such as ``java``::
 	
-		<test-plugin classname="pysysjava.javatestplugin.JavaTestPlugin" alias="java"/>
+		<test-plugin classname="pysysjava.javaplugin.JavaPlugin" alias="java"/>
+	
+	For advanced cases (compiling or starting Java from a runner class or plugin) you can also use this class as a 
+	runner plugin::
+
+		<runner-plugin classname="pysysjava.javaplugin.JavaPlugin" alias="java"/>
 	
 	This plugin assumes the existence of a project property named ``javaHome`` that contains the path to the JDK, 
 	with a ``bin/`` subdirectory containing executables such as ``java`` and ``javac``. 
@@ -121,7 +127,7 @@ class JavaTestPlugin(object):
 	on a per-test/per-directory basis by adding ``<user-data name="..." value="...">`` to your ``pysystest.xml`` 
 	or ``pysysdirconfig.xml`` file. For example::
 	
-		<test-plugin classname="pysysjava.javatestplugin.JavaTestPlugin" alias="java">
+		<test-plugin classname="pysysjava.javaplugin.JavaPlugin" alias="java">
 			<property name="defaultJVMArgs" value="-Xmx256m -XX:+HeapDumpOnOutOfMemoryError"/>
 		</test-plugin>
 		
@@ -175,8 +181,8 @@ class JavaTestPlugin(object):
 	
 	"""
 
-	def setup(self, testObj):
-		self.owner = testObj
+	def setup(self, owner):
+		self.owner = owner # Usually a BaseTest, but since this is a dual-purpose plugin could also be a runner
 		self.project = self.owner.project
 		
 		# This message isn't useful for debugging errors so suppress it
@@ -196,7 +202,7 @@ class JavaTestPlugin(object):
 		
 		# Assume both of these methods make a copy of the static value (which makes it safe for tests to mutate the 
 		# lists)
-		descriptorUserData = testObj.descriptor.userData if hasattr(testObj, 'descriptor') else {} # Also support using it from a runner
+		descriptorUserData = owner.descriptor.userData if hasattr(owner, 'descriptor') else {} # Also support using it from a runner
 		self.defaultClasspath = self.toClasspathList(self.project.expandProperties(
 			descriptorUserData.get('javaClasspath', self.defaultClasspath)))
 		self.defaultJVMArgs = self._splitShellArgs(self.project.expandProperties(
@@ -399,7 +405,7 @@ class JavaTestPlugin(object):
 		
 		It is recommended to use absolute not relative paths for classpath entries. 
 		
-		>>> plugin = JavaTestPlugin()
+		>>> plugin = JavaPlugin()
 
 		>>> plugin.toClasspathList(['a.jar', 'b.jar'])
 		['a.jar', 'b.jar']

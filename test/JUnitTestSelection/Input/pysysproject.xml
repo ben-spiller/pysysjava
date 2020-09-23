@@ -20,7 +20,7 @@
 	<property name="defaultEnvironsTempDir" value="self.output"/>
 	
 	<!-- Custom test framework plugins -->
-	<test-plugin classname="pysysjava.testplugin.JavaTestPlugin" alias="java"/>
+	<test-plugin classname="pysysjava.javaplugin.JavaPlugin" alias="java"/>
 	
 	<writers>
 	</writers>

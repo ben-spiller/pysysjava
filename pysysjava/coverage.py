@@ -38,7 +38,7 @@ class JavaCoverageWriter(CollectTestOutputWriter):
 	in pysysproject.xml (e.g. to ``__coverage_java.${outDirName}``). 
 
 	When enabled, the `getCoverageJVMArgs` method can be used to generate the JVM arguments needed to collect coverage 
-	data (for example, `pysysjava.testplugin.JavaTestPlugin.startJava` calls this method). You must configure the 
+	data (for example, `pysysjava.javaplugin.JavaPlugin.startJava` calls this method). You must configure the 
 	writer with the alias ``javaCoverageWriter`` so that the plugin knows to use it when starting Java processes. 
 
 	Note that this writer uses ``output=file`` JaCoCo agent option which 
@@ -81,7 +81,7 @@ class JavaCoverageWriter(CollectTestOutputWriter):
 	If this property is not set then no HTML or XML report will be generated. 
 	
 	Glob ``*`` expressions can be used. For full details of how this plugin handles the classpath string see 
-	`pysysjava.testplugin.JavaTestPlugin.toClasspathList()`.
+	`pysysjava.javaplugin.JavaPlugin.toClasspathList()`.
 	"""
 	
 	sourceDirs = ''
@@ -116,7 +116,7 @@ class JavaCoverageWriter(CollectTestOutputWriter):
 		Get the JVM arguments needed to add Java coverage to a new Java process, or empty if this coverage writer is 
 		not currently enabled. 
 		
-		This is called by `pysysjava.testplugin.JavaTestPlugin.startJava` (and any custom methods that start JVMs) 
+		This is called by `pysysjava.javaplugin.JavaPlugin.startJava` (and any custom methods that start JVMs) 
 		to add coverage collection. 
 		
 		:param pysys.basetest.BaseTest owner: The BaseTest/BaseRunner owner of the process that is to be started. 
@@ -148,7 +148,7 @@ class JavaCoverageWriter(CollectTestOutputWriter):
 		return [f'-javaagent:{self.__agentJar}=sessionid={sessionid}{agentArgs}']
 
 	def cleanup(self, **kwargs):
-		java = pysysjava.testplugin.JavaTestPlugin()
+		java = pysysjava.javaplugin.JavaPlugin()
 		java.setup(self.runner)
 		
 		coverageDestDir = self.destDir

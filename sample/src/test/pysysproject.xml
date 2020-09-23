@@ -38,7 +38,7 @@
 	<!-- Custom test framework plugins, if needed -->
 
 	<pythonpath value="./pysys/pysys-extensions" />
-	<test-plugin classname="pysysjava.testplugin.JavaTestPlugin" alias="java">
+	<test-plugin classname="pysysjava.javaplugin.JavaPlugin" alias="java">
 		<!-- TODO: put plugin properties here -->
 	</test-plugin>
 	

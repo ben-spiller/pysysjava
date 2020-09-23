@@ -26,7 +26,7 @@ from pysys.utils.logutils import BaseLogFormatter
 from pysys.xml.descriptor import DescriptorLoader, TestDescriptor
 
 from pysysjava.junitxml import JUnitXMLParser
-from pysysjava.testplugin import walkDirTreeContents
+from pysysjava.javaplugin import walkDirTreeContents
 
 class JUnitTest(BaseTest):
 	"""
@@ -62,7 +62,7 @@ class JUnitTest(BaseTest):
 		  command line (*in addition* to the above arguments), e.g. ``pysys run "-XjunitArgs=-t MYTAG"``. 
 	
 	Any classpath requirements or runtime JVM arguments should be customized using the properties described 
-	in `pysysjava.testplugin` such as ``javaClasspath`` and ``jvmArgs``. 
+	in `pysysjava.javaplugin` such as ``javaClasspath`` and ``jvmArgs``. 
 	
 	The JUnit process is given Java system properties for the PySys testcase Input/ directory (``pysys.input``), 
 	the test project root directory (``pysys.project.testRootDir``), and if this PySys test has any modes defined, the current 
@@ -126,7 +126,7 @@ class JUnitTest(BaseTest):
 	def setup(self):
 		super(JUnitTest, self).setup()
 		
-		assert self.java, 'This test class requires the JavaTestPlugin test-plugin to be configured, with alias=java'
+		assert self.java, 'This test class requires the JavaPlugin test-plugin to be configured, with alias=java'
 		
 		self.junitFrameworkClasspath = self.java.toClasspathList(
 			self.junitFrameworkClasspath or self.project.getProperty('junitFrameworkClasspath', ''))
@@ -346,7 +346,7 @@ class JUnitDescriptorLoader(DescriptorLoader):
 	test classes and/or an ``id-prefix`` to add a common testId prefix indicating these are JUnit tests. 
 	
 	You can also use the ``junit*`` user-data options described in `JUnitTest` and the 
-	``javaClasspath`` and ``jvmArgs`` described in `pysysjava.testplugin.JavaTestPlugin`. 
+	``javaClasspath`` and ``jvmArgs`` described in `pysysjava.javaplugin.JavaPlugin`. 
 	
 	For example::
 	

@@ -8,7 +8,7 @@
 	<!-- Make sure temporary files go to the test output dir not the OS's default temp directory. -->
 	<property name="defaultEnvironsTempDir" value="self.output"/>
 	
-	<test-plugin classname="pysysjava.testplugin.JavaTestPlugin" alias="java"/>
+	<test-plugin classname="pysysjava.javaplugin.JavaPlugin" alias="java"/>
 	
 	<writers>
 	

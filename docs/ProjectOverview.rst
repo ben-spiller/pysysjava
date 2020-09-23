@@ -19,7 +19,7 @@ To install, just use the standard ``pip3`` executable (or ``pip.exe`` on Windows
 
 Test Plugin for Java
 --------------------
-See `pysysjava.testplugin` for information about the PySys test plugin. 
+See `pysysjava.javaplugin` for information about the PySys test (and runner) plugin. 
 
 Once configured in your PySys project, this plugin makes it easy to run Java classes and jars from your PySys 
 ``run.py`` tests, and also to compile small testing tools needed by individual test cases. 
