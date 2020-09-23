@@ -26,7 +26,7 @@ from pysys.utils.logutils import BaseLogFormatter
 from pysys.xml.descriptor import DescriptorLoader, TestDescriptor
 
 from pysysjava.junitxml import JUnitXMLParser
-from pysysjava.javaplugin import walkDirTreeContents
+from pysysjava.javaplugin import JavaPlugin, walkDirTreeContents
 
 class JUnitTest(BaseTest):
 	"""
@@ -118,15 +118,17 @@ class JUnitTest(BaseTest):
 	The time allowed in total for execution of all JUnit tests. 
 	"""
 
-	# Properties that could be overridden by a subclass if needed
-	_testGenre = 'JUnit'
-	
+	# Undocumented properties that could be overridden by a subclass if needed
 	javaclassesDir = 'javaclasses'
+	junitReportsDir = 'junit-reports'
+	_testGenre = 'JUnit'
 	
 	def setup(self):
 		super(JUnitTest, self).setup()
 		
-		assert self.java, 'This test class requires the JavaPlugin test-plugin to be configured, with alias=java'
+		# Don't assume that the alias "java" has been used; instead locate it based on class
+		self.java = next((plugin for plugin in self.testPlugins if isinstance(plugin, JavaPlugin)), None)
+		assert self.java, 'This test class requires JavaPlugin to be configured as a <test-plugin> in pysysproject.xml'
 		
 		self.junitFrameworkClasspath = self.java.toClasspathList(
 			self.junitFrameworkClasspath or self.project.getProperty('junitFrameworkClasspath', ''))
@@ -140,7 +142,7 @@ class JUnitTest(BaseTest):
 		self.java.startJava(**self.getJUnitKwArgs()) 
 
 	def validate(self):
-		self.validateJUnitReports(self.output+'/junit-reports')
+		self.validateJUnitReports(os.path.join(self.output, self.junitReportsDir))
 
 	# The methods above override the standard test class; following are where they are implemented
 
@@ -190,7 +192,7 @@ class JUnitTest(BaseTest):
 			self.log.info('Running with additional JUnit args: \n%s', '\n'.join("    arg #%-2d    : %s"%(
 				i+1, a) for i, a in enumerate(customArgs)))
 		
-		args = ['--reports-dir', self.output+'/junit-reports', 
+		args = ['--reports-dir', os.path.join(self.output, self.junitReportsDir), 
 			'--disable-ansi-colors',
 			'--classpath=%s'%os.pathsep.join(classpath),
 			]+args
