@@ -151,22 +151,34 @@
             
   <div class="section" id="pysys-java-plugins">
 <h1>PySys Java Plugins<a class="headerlink" href="#pysys-java-plugins" title="Permalink to this headline">¶</a></h1>
-<p>This is a collection of plugins for the PySys System Test Framework that allow you to easily compile and run Java(R)
-classes from your PySys tests, and a plugin that allows running JUnit tests as if they were PySys tests,
-plus support for generating Java code coverage reports.</p>
+<p>This project provides some plugins for the PySys System Test Framework that will be useful if your application
+is written in Java(R). Features include:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>compiling Java test tools from your tests;</p></li>
+<li><p>easily starting Java processes, with convenient mechanisms to specify the classname/.jar, classpath and JVM
+arguments;</p></li>
+<li><p>executing JUnit test classes just like other PySys tests (providing a unified approach between your system and
+unit testing);</p></li>
+<li><p>generating Java code coverage reports.</p></li>
+</ul>
+</div></blockquote>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
 <p>To use these plugins, you will need:</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>Python 3.6+</p></li>
 <li><p>PySys 1.6.1+</p></li>
 <li><p>Java 8+ (currently tested with Java 8 and Java 14)</p></li>
-<li><p>Optionally: JUnit 5 (if you want to run JUnit tests); JUnit 4 is supported via the JUnit 5 vintage engine</p></li>
-<li><p>Optionally: JaCoCo (if you want to generate coverage reports; currently tested with JaCoCo 0.8.6)</p></li>
+<li><p>Optionally: JUnit 5, if you want to run JUnit tests (JUnit 4 is supported via the JUnit 5 vintage engine)</p></li>
+<li><p>Optionally: JaCoCo, if you want to generate Java code coverage reports (currently tested with JaCoCo 0.8.6)</p></li>
 </ul>
 </div></blockquote>
 <p>To install, just use the standard <code class="docutils literal notranslate"><span class="pre">pip3</span></code> executable (or <code class="docutils literal notranslate"><span class="pre">pip.exe</span></code> on Windows):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip3</span> <span class="n">install</span> <span class="n">PySys</span><span class="o">-</span><span class="n">Java</span>
 </pre></div>
+</div>
 </div>
 <div class="section" id="test-plugin-for-java">
 <h2>Test Plugin for Java<a class="headerlink" href="#test-plugin-for-java" title="Permalink to this headline">¶</a></h2>
