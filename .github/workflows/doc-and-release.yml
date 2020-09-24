@@ -40,7 +40,7 @@ jobs:
         id: deps
         run: |
           # For building the Python plugin
-          pip install --upgrade setuptools wheel
+          pip install --upgrade setuptools wheel twine
 
           # For building the documentation (needs PySys)
           pip install pysys
