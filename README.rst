@@ -1,6 +1,6 @@
-.. image:: https://img.shields.io/pypi/v/PySys-Java   :alt: PyPI
+.. image:: https://img.shields.io/pypi/v/PySys-Java
 	:target: https://pypi.org/project/PySys-Java/
-.. image:: https://img.shields.io/pypi/l/PySys-Java   :alt: PyPI - License
+.. image:: https://img.shields.io/pypi/l/PySys-Java
 	:target: https://pypi.org/project/PySys-Java/
 .. image:: ../../workflows/PySys-Plugin/badge.svg
 	:target: ../../actions
