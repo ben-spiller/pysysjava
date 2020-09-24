@@ -7,11 +7,18 @@
 
 Java plugins for PySys
 ======================
-This is a collection of plugins for the PySys System Test Framework that allow you to easily compile and run Java(R) 
-classes from your PySys tests, and a plugin that allows running JUnit tests as if they were PySys tests, 
-plus support for generating Java code coverage reports. 
+This project provides some plugins for the PySys System Test Framework that will be useful if your application 
+is written in Java(R). Features include:
 
-This project also serves as a good example of how to create, test, document and package PySys plugins, including:
+	- compiling Java test tools from your tests; 
+	- easily starting Java processes, with convenient mechanisms to specify the classname/.jar, classpath and JVM 
+	  arguments; 
+	- executing JUnit test classes just like other PySys tests (providing a unified approach between your system and 
+	  unit testing); 
+	- generating Java code coverage reports. 
+
+If you are interested in creating your own PySys plugin for another language or toolset, this project also serves as a 
+good example of how to structure, test, document and package it, including:
 
 	- creating a PySys test plugin to make help methods available to all your testcases; 
 	- creating a PySys descriptor loader that dynamically creates PySys test descriptors based on the files; 
@@ -23,7 +30,7 @@ This project also serves as a good example of how to create, test, document and 
 	- generating a Python .whl package for installing them, and a GitHub Actions workflow for uploading to PyPi. 
 
 Feel free to fork this project and use as a starting point for your own plugins that add support for new 
-languages/toolsets to PySys. To make it easy to reuse code from this plugin project it has a Public Domain license. 
+languages/toolsets to PySys. To make it easy to reuse code from this plugin project it has a "Public Domain" license. 
 
 If this project inspires you to create new PySys plugins that may be useful for others in the PySys community, please 
 consider whether you could make them available as an open-source project and on PyPi so that everyone can benefit.
