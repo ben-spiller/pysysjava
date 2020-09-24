@@ -28,3 +28,14 @@ class PySysTest(pysys.basetest.BaseTest):
 		# Coverage should not include unit tests as source classes
 		self.assertThat('len(coverageFiles)>0 and "Test" not in ",".join(coverageFiles)', coverageFiles=os.listdir(s+'/target/pysys/__coverage_java.myoutdir/myorg.myserver'))
 		
+		# Since we don't test it separately, check the GitHub sample workflow files are in sync
+		self.assertDiff(self.project.testRootDir+'/../.github/workflows/pysys-java-sample.yml', 
+			self.project.testRootDir+'/../sample/.github/workflows/pysys-test.yml', 
+			replace=[
+				('sample/', ''), 
+				('[(]and adjust the path to the sample[)] ', ''),
+				('-Sample', ''),
+				],
+			ignores=[
+				"TODO: If you're copying this file, change the working-directory",
+			])

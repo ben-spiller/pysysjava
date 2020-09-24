@@ -54,6 +54,14 @@ jobs:
         shell: bash
         run: |
           python setup.py bdist_wheel
+          
+          mkdir _upload
+          cp dist/*.whl _upload/
+          
+          cp LICENSE .gitignore sample/
+          cd sample
+          zip -r --quiet ../_upload/sample.zip .
+
 
       - name: Sphinx
         shell: bash
@@ -91,7 +99,7 @@ jobs:
           tag: ${{ github.ref }}
           overwrite: true
           file_glob: true
-          file: dist/*.whl
+          file: _upload/*
 
       - name: Upload to PyPi
         if: github.event_name == 'release'

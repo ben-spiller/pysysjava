@@ -1,8 +1,8 @@
 # This workflow will run and generate coverage for a suite of tests using the PySys system test framework that use Java
 
-# Copy from this workflow (and adjust the path to the sample) if you want to run GitHub Actions tests using PySys-Java
+# Copy from this workflow if you want to run GitHub Actions tests using PySys-Java
 
-name: PySys-Sample
+name: PySys
 
 on:
   push:
@@ -53,7 +53,7 @@ jobs:
           restore-keys: ${{ matrix.test-run-id }}-m2
 
       - name: Build with Maven
-        run: mvn package --file sample/pom.xml -DskipTests
+        run: mvn package --file pom.xml -DskipTests
 
       - uses: actions/setup-python@v2
         with:
@@ -83,8 +83,7 @@ jobs:
           pip install dist/*.whl
 
       - name: Test with PySys
-        # TODO: If you're copying this file, change the working-directory to the dir containing pysysproject.xml
-        working-directory: sample/src/test
+        working-directory: src/test
         shell: bash
         id: pysys
         run: |
