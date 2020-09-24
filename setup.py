@@ -55,6 +55,7 @@ setup(
 	url=REPO_URL,
 	project_urls={ 
 		'Repository': REPO_URL,
+		'Sample':REPO_URL+'/tree/main/sample',
 		'Documentation': 'https://ben-spiller.github.io/pysysjava/',
 	},
 
