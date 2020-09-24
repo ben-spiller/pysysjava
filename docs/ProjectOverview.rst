@@ -1,17 +1,24 @@
 PySys Java Plugins
 ==================
+This project provides some plugins for the PySys System Test Framework that will be useful if your application 
+is written in Java(R). Features include:
 
-This is a collection of plugins for the PySys System Test Framework that allow you to easily compile and run Java(R) 
-classes from your PySys tests, and a plugin that allows running JUnit tests as if they were PySys tests, 
-plus support for generating Java code coverage reports. 
+	- compiling Java test tools from your tests; 
+	- easily starting Java processes, with convenient mechanisms to specify the classname/.jar, classpath and JVM 
+	  arguments; 
+	- executing JUnit test classes just like other PySys tests (providing a unified approach between your system and 
+	  unit testing); 
+	- generating Java code coverage reports. 
 
+Installation
+------------
 To use these plugins, you will need:
 
 	- Python 3.6+
 	- PySys 1.6.1+
 	- Java 8+ (currently tested with Java 8 and Java 14)
-	- Optionally: JUnit 5 (if you want to run JUnit tests); JUnit 4 is supported via the JUnit 5 vintage engine
-	- Optionally: JaCoCo (if you want to generate coverage reports; currently tested with JaCoCo 0.8.6)
+	- Optionally: JUnit 5, if you want to run JUnit tests (JUnit 4 is supported via the JUnit 5 vintage engine)
+	- Optionally: JaCoCo, if you want to generate Java code coverage reports (currently tested with JaCoCo 0.8.6)
 
 To install, just use the standard ``pip3`` executable (or ``pip.exe`` on Windows):: 
 
