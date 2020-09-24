@@ -1,6 +1,8 @@
-.. image:: ../../workflows/PySys/badge.svg
+.. image:: ../../workflows/PySys-Plugin/badge.svg
 	:target: ../../actions
-.. image:: ../../workflows/Docs/badge.svg
+.. image:: ../../workflows/PySys-Sample/badge.svg
+	:target: ../../actions
+.. image:: ../../workflows/Doc-Release/badge.svg
 	:target: ../../actions
 .. image:: https://codecov.io/gh/ben-spiller/pysysjava/branch/main/graph/badge.svg
 	:target: https://codecov.io/gh/ben-spiller/pysysjava

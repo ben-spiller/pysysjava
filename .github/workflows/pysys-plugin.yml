@@ -1,6 +1,6 @@
 # This workflow is for testing the PySys-Java plugins
 
-name: PySys
+name: PySys-Plugin
 
 on:
   push:

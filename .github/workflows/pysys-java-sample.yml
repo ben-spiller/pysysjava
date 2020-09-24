@@ -2,7 +2,7 @@
 
 # Copy from this workflow (and adjust the path to the sample) if you want to run GitHub Actions tests using PySys-Java
 
-name: PySys-Java-Sample
+name: PySys-Sample
 
 on:
   push:
