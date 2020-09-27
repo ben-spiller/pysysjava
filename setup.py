@@ -72,7 +72,7 @@ setup(
 	python_requires=">=3.6, <4",
 
 	install_requires=[
-		"PySys >= 1.6.1"
+		"PySys >= 1.6.2"
 	],
 	
 	packages=setuptools.find_packages(),
