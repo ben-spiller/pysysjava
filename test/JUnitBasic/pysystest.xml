@@ -21,7 +21,7 @@
 	</classification>
 
 	<data>
-		<class name="JUnitTest" module="${appHome}/pysysjava/junittest"/>
+		<class name="pysysjava.junittest.JUnitTest"/>
 		
 		<input path="java"/>
 		<user-data name="javaClasspath" value="${appHome}/target/logging-jars/*.jar"/>

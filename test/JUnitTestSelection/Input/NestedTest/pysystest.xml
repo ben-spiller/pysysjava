@@ -21,6 +21,6 @@
 	</classification>
 
 	<data>
-		<class name="JUnitTest" module="${pysysjavaDir}/junittest"/>
+		<class name="pysysjava.junittest.JUnitTest"/>
 	</data>
 </pysystest>
