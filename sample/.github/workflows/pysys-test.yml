@@ -24,11 +24,10 @@ jobs:
             java-version: 8
             python-version: 3.6
            
-          # TODO: re-enable this when we have PySys 1.6.2 
-          #- test-run-id: macos
-          #  os: macos-latest
-          #  java-version: 8
-          #  python-version: 3.6
+          - test-run-id: macos
+            os: macos-latest
+            java-version: 8
+            python-version: 3.6
 
           - test-run-id: win
             os: windows-latest
