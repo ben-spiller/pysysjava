@@ -7,7 +7,7 @@ class PySysTest(pysys.basetest.BaseTest):
 		server = self.java.startJava(
 			self.project.appHome+'/my-server*.jar', 
 			arguments=['--port', str(port), ], 
-			jvmProps={'log4j.configurationFile': 'file:///'+self.project.testRootDir.replace('\\','/')+'/resources/log4j2-stdout.xml'},
+			jvmProps={'log4j.configurationFile': self.project.testLogConfigURL},
 			stdouterr='my_server',
 			info={'port':port},
 			background=True,

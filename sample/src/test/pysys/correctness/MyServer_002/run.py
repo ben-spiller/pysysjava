@@ -18,7 +18,7 @@ class PySysTest(pysys.basetest.BaseTest):
 			'myorg.myserver.MyServer',
 			classpath=[self.project.appHome+'/my-server*.jar'], # Not using the default classpath here
 			arguments=['--port', str(port), ], 
-			jvmProps={'log4j.configurationFile': 'file:///'+self.project.testRootDir.replace('\\','/')+'/resources/log4j2-stdout.xml'},
+			jvmProps={'log4j.configurationFile': self.project.testLogConfigURL},
 			
 			# Usually you will want to capture process stdout and stderr. The stdouterr specifies a prefix onto which 
 			# PySys will append .out or .err for this process's output. Be sure not to reuse the filename in this test
@@ -58,7 +58,7 @@ class PySysTest(pysys.basetest.BaseTest):
 		self.java.startJava(
 			self.project.appHome+'/my-server*.jar', 
 			arguments=['--port', '-1'], 
-			jvmProps={'log4j.configurationFile': 'file:///'+self.project.testRootDir.replace('\\','/')+'/resources/log4j2-stdout.xml'},
+			jvmProps={'log4j.configurationFile': self.project.testLogConfigURL},
 			stdouterr="my_server_invalid_port", 
 			expectedExitStatus="== 123")
 

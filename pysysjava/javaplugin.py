@@ -205,10 +205,8 @@ class JavaPlugin(object):
 		# Assume both of these methods make a copy of the static value (which makes it safe for tests to mutate the 
 		# lists)
 		descriptorUserData = owner.descriptor.userData if hasattr(owner, 'descriptor') else {} # Also support using it from a runner
-		self.defaultClasspath = self.toClasspathList(self.project.expandProperties(
-			descriptorUserData.get('javaClasspath', self.defaultClasspath)))
-		self.defaultJVMArgs = self._splitShellArgs(self.project.expandProperties(
-			descriptorUserData.get('jvmArgs', self.defaultJVMArgs)))
+		self.defaultClasspath = self.toClasspathList(descriptorUserData.get('javaClasspath', self.defaultClasspath))
+		self.defaultJVMArgs = self._splitShellArgs(descriptorUserData.get('jvmArgs', self.defaultJVMArgs))
 
 		self.owner.addCleanupFunction(lambda: [deletedir(self.owner.output+'/'+d) for d in os.listdir(self.owner.output)
 			if d.startswith('hsperfdata_')] if os.path.exists(self.owner.output) else None, ignoreErrors=True)

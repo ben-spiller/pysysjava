@@ -9,6 +9,8 @@
 	<property name="appHome" value="${env.PYSYS_APP_HOME}" default="${testRootDir}/../../target" pathMustExist="true"/>
 	<property name="testJarsDir" value="${appHome}/pysys-test-jars" pathMustExist="true"/>
 
+	<property name="testLogConfigURL" value="file:///${eval:testRootDir.replace('\\','/')+'/resources/log4j2-stdout.xml'}"/>
+
 	<!-- Put PySys outputs and temporary files under target/ to follow convention. -->
 	<property name="pysysRunnerDirName" value="${testRootDir}/../../target/pysys/__pysys_runner_${outDirName}"/>
 
@@ -41,7 +43,11 @@
 			repeating in each test. Disabling PerfData avoids the creation of hsperfdata_XXX files in the 
 			test output directory that can cause file locking problems
 		-->
-		<property name="defaultJVMArgs" value="-Xmx512M -XX:+HeapDumpOnOutOfMemoryError -XX:-UsePerfData"/>
+		<property name="defaultJVMArgs">
+			-Xmx512M
+			-XX:+HeapDumpOnOutOfMemoryError
+			-XX:-UsePerfData
+		</property>
 	</test-plugin>
 	<descriptor-loader classname="pysysjava.junittest.JUnitDescriptorLoader"/>
 	<property name="junitFrameworkClasspath" value="${testJarsDir}/*junit*.jar"/>

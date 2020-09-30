@@ -9,7 +9,9 @@
 		-->
 		<user-data name="junitTestDescriptorForEach" value="class"/>
 		<input path="."/>
-		<output path="__pysys_output"/>
+		<!-- Usually this is a relative path underneath the current directory, but the following approach could be 
+			used to put PySys output from the JUnit tests under the Maven target/ folder instead. -->
+		<output path="${appHome}/pysys/junit-output"/>
 
 		<!-- To avoid the PySys test ids getting needlessly long, strip off the beginning of the Java packages. -->
 		<user-data name="junitStripPrefixes" value="myorg"/>
@@ -21,7 +23,10 @@
 		<user-data name="junitConfigArgs" value=""/>
 		
 		<!-- JavaPlugin user-data properties should be used for customizing the execution classpath and JVM args. -->
-		<user-data name="javaClasspath" value="${appHome}/my-server*.jar;${appHome}/dependency-jars/*.jar"/>
+		<user-data name="javaClasspath">
+			${appHome}/my-server*.jar
+			${appHome}/dependency-jars/*.jar
+		</user-data>
 	</data>
 
 
