@@ -23,7 +23,7 @@ from pysys.constants import *
 from pysys.basetest import BaseTest
 from pysys.utils.fileutils import *
 from pysys.utils.logutils import BaseLogFormatter
-from pysys.xml.descriptor import DescriptorLoader, TestDescriptor
+from pysys.config.descriptor import DescriptorLoader, TestDescriptor
 
 from pysysjava.junitxml import JUnitXMLParser
 from pysysjava.javaplugin import JavaPlugin, walkDirTreeContents
@@ -339,7 +339,7 @@ log = logging.getLogger('pysys.pysysjava.junittest')
 
 class JUnitDescriptorLoader(DescriptorLoader):
 	"""
-	A `pysys.xml.descriptor.DescriptorLoader` that dynamically creates a separate PySys test descriptor for each .java 
+	A `pysys.config.descriptor.DescriptorLoader` that dynamically creates a separate PySys test descriptor for each .java 
 	JUnit test class found under the ``Input/`` directory. 
 	
 	To use this, create a ``pysysdirconfig.xml`` with a user-data element ``junitTestDescriptorForEach``. 
