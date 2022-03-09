@@ -31,9 +31,10 @@ CLASSIFIERS = [
 	"Topic :: Education :: Testing",
 
 	"Programming Language :: Python",
-	"Programming Language :: Python :: 3.6", 
 	"Programming Language :: Python :: 3.7", 
 	"Programming Language :: Python :: 3.8", # see also python_requires
+	"Programming Language :: Python :: 3.9", 
+	"Programming Language :: Python :: 3.10", 
 	"Programming Language :: Python :: Implementation :: CPython",
 
 	"Natural Language :: English",
@@ -69,7 +70,7 @@ setup(
 	long_description=long_description,
 	long_description_content_type='text/x-rst',
 
-	python_requires=">=3.6, <4",
+	python_requires=">=3.7, <4",
 
 	install_requires=[
 		"PySys >= 1.6.1"
